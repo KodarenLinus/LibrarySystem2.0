@@ -28,7 +28,7 @@ public class TestController {
     @FXML
     void addBook(ActionEvent event) {
         AddBook addBook = new AddBook();
-        addBook.insertBook(Title.getText(), Location.getText(), ISBN.getText());
+        addBook.insertBook(Title.getText(), Location.getText(), Integer.parseInt(ISBN.getText()));
     }
 
 }
