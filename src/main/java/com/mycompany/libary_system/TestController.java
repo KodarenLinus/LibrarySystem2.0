@@ -19,6 +19,11 @@ public class TestController {
     
     @FXML
     private ToggleButton addNewBook;
+    
+     @FXML
+    void GoToItem(ActionEvent event) {
+
+    }
 
     @FXML
     void addBook(ActionEvent event) {
