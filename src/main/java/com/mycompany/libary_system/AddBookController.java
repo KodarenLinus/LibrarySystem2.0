@@ -28,19 +28,9 @@ public class AddBookController {
      @FXML
     void GoToItem(ActionEvent event) {
         
-          try {
-            Parent root = FXMLLoader.load(getClass().getResource("AddItemsChoice.fxml"));
-            Scene scene = new Scene(root);
-            
-            //Hämtar nuvarande fönster
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            
-            stage.setScene(scene);
-            stage.setTitle("Library System");
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String fxmlf = "AddItemsChoice.fxml";
+        ChangeWindow changeWindow = new ChangeWindow();
+        changeWindow.windowChange(event, fxmlf);
     }
 
     @FXML
