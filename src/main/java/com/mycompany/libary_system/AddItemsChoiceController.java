@@ -35,7 +35,6 @@ public class AddItemsChoiceController {
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
         
-
     }
 
 }

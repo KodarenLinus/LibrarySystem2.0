@@ -14,13 +14,16 @@ import java.sql.SQLException;
  * @author Linus
  */
 public class AddDVD {
-    private ConnDB connDB = new ConnDB();
+    
 
     //En metod för att lägga till items av typen book!!!!!
     void insertDVD (String title, String location) {
         
+        DatabaseConnector connDB = new ConnDB();
+        Connection conn = connDB.connect();
+        
         try {
-            Connection conn = DriverManager.getConnection(connDB.getDbUrl(), connDB.getDbUsername(), connDB.getDbPassword());
+            
         
             //Lägger till itemet i items!!
             PreparedStatement stmt1 = conn.prepareStatement("INSERT INTO Item (GenreID, CategoryID, Title, Location, Available) VALUES (?, ?, ?, ?, ?)");

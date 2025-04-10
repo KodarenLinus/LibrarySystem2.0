@@ -13,19 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.TextField;
+
 /**
  *
  * @author Linus
  */
 public class AddBook {
-    private ConnDB connDB = new ConnDB();
 
     //En metod för att lägga till items av typen book!!!!!
     void insertBook (String title, String location, int isbn) {
         
+        DatabaseConnector connDB = new ConnDB();
+        Connection conn = connDB.connect();
+        
         try {
-            Connection conn = DriverManager.getConnection(connDB.getDbUrl(), connDB.getDbUsername(), connDB.getDbPassword());
         
             //Lägger till itemet i items!!
             PreparedStatement stmt1 = conn.prepareStatement("INSERT INTO Item (GenreID, CategoryID, Title, Location, Available) VALUES (?, ?, ?, ?, ?)");
