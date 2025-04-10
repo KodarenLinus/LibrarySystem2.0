@@ -21,7 +21,7 @@ public class Loan {
         // Add temp loanRow to temporary loanrow list
     }
     
-      public void removeALoanRow() {
+    public void removeALoanRow() {
         // Remove temp loanRow to temporary loanrow list
     }
     
@@ -29,7 +29,9 @@ public class Loan {
         
         // A loop to add all items to loanRows
         for (int i = 0; loanRows.size() >= i; i++) {
+            
             // Lägger till varje item i en loanrow, eller carten
+            
         }
     
     }

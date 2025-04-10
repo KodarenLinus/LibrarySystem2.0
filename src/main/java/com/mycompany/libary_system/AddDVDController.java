@@ -35,6 +35,7 @@ public class AddDVDController {
         String fxmlf = "AddItemsChoice.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
+
     }
 
     @FXML

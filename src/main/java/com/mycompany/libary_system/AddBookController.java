@@ -27,10 +27,11 @@ public class AddBookController {
     
      @FXML
     void GoToItem(ActionEvent event) {
-        
+       
         String fxmlf = "AddItemsChoice.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
+
     }
 
     @FXML

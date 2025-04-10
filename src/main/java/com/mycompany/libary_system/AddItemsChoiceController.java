@@ -18,22 +18,23 @@ import javafx.stage.Stage;
  * @author Linus
  */
 public class AddItemsChoiceController {
-    
+
     @FXML
     void AddBook(ActionEvent event) throws IOException {
-       
+        
         String fxmlf = "AddBook.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
 
     }
-
+    
     @FXML
     void AddDvD(ActionEvent event) {
         
         String fxmlf = "AddDVD.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
+
         
     }
 
