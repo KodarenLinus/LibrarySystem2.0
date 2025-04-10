@@ -37,7 +37,8 @@ public class AddBookController {
     @FXML
     void addBook(ActionEvent event) {
         AddBook addBook = new AddBook();
-        addBook.insertBook(Title.getText(), Location.getText(), Integer.parseInt(ISBN.getText()));
+        Book book = new Book(Title.getText(), Location.getText(), Integer.parseInt(ISBN.getText()));
+        addBook.insertBook(book);
     }
 
 }

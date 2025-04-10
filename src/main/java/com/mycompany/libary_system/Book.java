@@ -1,0 +1,73 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.libary_system;
+
+import java.util.ArrayList;
+
+/**
+ *
+ * @author Linus
+ */
+public class Book implements Items{
+    private int itemID;
+    private String title;
+    private ArrayList<Integer> authorsID;
+    private String genreName;
+    private String categoryName;
+    private String location;
+    private boolean available;
+    private int isbn;
+    
+    
+    public Book(String title, String location, int isbn) {
+        this.title = title;
+        this.location = location;
+        this.isbn = isbn;
+    }
+
+    @Override
+    public int getItemID() {
+        return itemID;
+    }
+
+    @Override
+    public String getGenreName() {
+        return genreName;
+    }
+
+    @Override
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public String getLocation() {
+        return location;
+    }
+
+    @Override
+    public boolean getAvailable() {
+        return available;
+    }
+    
+    public int getIsbn () {
+        return isbn;
+    }
+    
+    public Integer getAuthors () {
+        
+        // Loopar igenom lista med authors
+        for (int authorID : authorsID) {
+            return authorID; // Retunera varje author;
+        }
+        
+        return null; //
+    }
+}

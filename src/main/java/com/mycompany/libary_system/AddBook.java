@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 public class AddBook {
 
     //En metod för att lägga till items av typen book!!!!!
-    void insertBook (String title, String location, int isbn) {
+    void insertBook (Book book) {
         
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
@@ -32,14 +32,14 @@ public class AddBook {
             PreparedStatement stmt1 = conn.prepareStatement("INSERT INTO Item (GenreID, CategoryID, Title, Location, Available) VALUES (?, ?, ?, ?, ?)");
                 stmt1.setInt(1, 1);
                 stmt1.setInt(2, 1);
-                stmt1.setString(3, title);
-                stmt1.setString(4, location);
+                stmt1.setString(3, book.getTitle());
+                stmt1.setString(4, book.getLocation());
                 stmt1.setBoolean(5, true);
                 stmt1.executeUpdate();
             
             //Lägger till itemet i book tablen
             PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO Book (ItemID, ISBN, PublisherID) VALUES ((SELECT max(ItemID) From item), ?, ?)");
-                stmt2.setInt(1, isbn);
+                stmt2.setInt(1, book.getIsbn());
                 stmt2.setInt(2, 1);
                 stmt2.executeUpdate();
 

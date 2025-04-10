@@ -17,7 +17,7 @@ public class AddDVD {
     
 
     //En metod för att lägga till items av typen book!!!!!
-    void insertDVD (String title, String location) {
+    void insertDVD (DVD dvd) {
         
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
@@ -29,8 +29,8 @@ public class AddDVD {
             PreparedStatement stmt1 = conn.prepareStatement("INSERT INTO Item (GenreID, CategoryID, Title, Location, Available) VALUES (?, ?, ?, ?, ?)");
                 stmt1.setInt(1, 1);
                 stmt1.setInt(2, 1);
-                stmt1.setString(3, title);
-                stmt1.setString(4, location);
+                stmt1.setString(3, dvd.getTitle());
+                stmt1.setString(4, dvd.getLocation());
                 stmt1.setBoolean(5, true);
                 stmt1.executeUpdate();
             
