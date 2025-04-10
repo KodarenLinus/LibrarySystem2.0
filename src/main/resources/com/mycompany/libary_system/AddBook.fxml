@@ -60,5 +60,8 @@
         </content>
       </ScrollPane>
       <Button layoutX="34.0" layoutY="25.0" mnemonicParsing="false" onAction="#GoToItem" prefHeight="35.0" prefWidth="125.0" text="Go back to item" />
+
+      <Label alignment="CENTER" layoutX="341.0" layoutY="34.0" prefHeight="17.0" prefWidth="183.0" text="Add Book" />
+
    </children>
 </AnchorPane>

@@ -18,31 +18,23 @@ import javafx.stage.Stage;
  * @author Linus
  */
 public class AddItemsChoiceController {
-    
+
     @FXML
     void AddBook(ActionEvent event) throws IOException {
         
-           try {
-            Parent root = FXMLLoader.load(getClass().getResource("AddBook.fxml"));
-            Scene scene = new Scene(root);
-            
-            //Hämtar nuvarande fönster
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            
-            stage.setScene(scene);
-            stage.setTitle("Library System");
-            stage.show();
-            
-        } catch (Exception e) {
-            
-            e.printStackTrace();
-        }
+        String fxmlf = "AddBook.fxml";
+        ChangeWindow changeWindow = new ChangeWindow();
+        changeWindow.windowChange(event, fxmlf);
 
     }
-
+    
     @FXML
-    void AddDvD(ActionEvent event) throws IOException {
+    void AddDvD(ActionEvent event) {
         
+        String fxmlf = "AddDVD.fxml";
+        ChangeWindow changeWindow = new ChangeWindow();
+        changeWindow.windowChange(event, fxmlf);
+
         
 
     }

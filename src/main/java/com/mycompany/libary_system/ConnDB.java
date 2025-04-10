@@ -9,9 +9,11 @@ package com.mycompany.libary_system;
  * @author Linus
  */
 public class ConnDB {
+
     private static final String dbUrl = "jdbc:mysql://localhost:3306/librarySystem";
     private static final String dbUsername = "root"; 
     private static final String dbPassword = "Finnträsk69";
+
     
     public ConnDB() {
         
