@@ -20,7 +20,7 @@ public class DVD implements Items {
     private String location;
     private boolean available;
     
-    
+    // Konstruktor
     public DVD (String title, String location) {
         this.title = title;
         this.location = location;
