@@ -4,44 +4,55 @@
  */
 package com.mycompany.libary_system;
 
-import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
 
 /**
  *
- * @author Linus
+ * @author emildahlback
  */
-public class AddItemsChoiceController {
+public class AddCustomerController {
+    
+    
+    @FXML
+    private TextField Email;
 
     @FXML
-    void AddBook(ActionEvent event) throws IOException {
-        
-        String fxmlf = "AddBook.fxml";
-        ChangeWindow changeWindow = new ChangeWindow();
-        changeWindow.windowChange(event, fxmlf);
+    private TextField firstName;
 
+    @FXML
+    private TextField lastName;
+
+    @FXML
+    private TextField telNr;
+
+    @FXML
+    private ToggleButton addCustomer;
+    
+    
+    @FXML
+    void addCustomer(ActionEvent event) {
+        AddCustomer addCustomer = new AddCustomer();
+        addCustomer.insertCustomer(firstName.getText(), lastName.getText(), Integer.parseInt(telNr.getText()), Email.getText());
+    
     }
     
     @FXML
-    void AddDvD(ActionEvent event) {
-        
-        String fxmlf = "AddDVD.fxml";
-        ChangeWindow changeWindow = new ChangeWindow();
-        changeWindow.windowChange(event, fxmlf);
-    }
-    
-    @FXML
-    void BackToMenu(ActionEvent event) {
+    void backToMenu(ActionEvent event) {
         
         String fxmlf = "StartMenu.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }
-
+    
 }
+    
+

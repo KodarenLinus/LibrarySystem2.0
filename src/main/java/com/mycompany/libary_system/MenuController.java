@@ -15,33 +15,32 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author Linus
+ * @author emildahlback
  */
-public class AddItemsChoiceController {
-
-    @FXML
-    void AddBook(ActionEvent event) throws IOException {
-        
-        String fxmlf = "AddBook.fxml";
-        ChangeWindow changeWindow = new ChangeWindow();
-        changeWindow.windowChange(event, fxmlf);
-
-    }
+public class MenuController {
+    
     
     @FXML
-    void AddDvD(ActionEvent event) {
+    void addItem(ActionEvent event) throws IOException{
         
-        String fxmlf = "AddDVD.fxml";
+        String fxmlf = "AddItemsChoice.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }
     
     @FXML
-    void BackToMenu(ActionEvent event) {
+    void manageCustomer(ActionEvent event) throws IOException{
         
-        String fxmlf = "StartMenu.fxml";
+        String fxmlf = "addCustomer.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }
-
+ 
+    @FXML
+    void backToMenu(ActionEvent event) throws IOException{
+        
+        String fxmlf = "LoginView.fxml";
+        ChangeWindow changeWindow = new ChangeWindow();
+        changeWindow.windowChange(event, fxmlf);
+    }
 }
