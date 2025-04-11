@@ -20,7 +20,7 @@ public class Libary_System extends Application {
    @Override
     public void start(Stage stage) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("StartMenu.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("LoginView.fxml"));
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle("Library System");

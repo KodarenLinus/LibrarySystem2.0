@@ -16,7 +16,7 @@ import java.sql.SQLException;
 public class AddDVD {
     private ConnDB connDB = new ConnDB();
 
-    //En metod för att lägga till items av typen book!!!!!
+    //En metod för att lägga till items av typen DVD!!!!!
     void insertDVD (String title, String location) {
         
         try {

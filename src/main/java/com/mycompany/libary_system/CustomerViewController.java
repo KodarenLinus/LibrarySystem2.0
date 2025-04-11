@@ -13,35 +13,25 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+
 /**
  *
- * @author Linus
+ * @author emildahlback
  */
-public class AddItemsChoiceController {
-
+public class CustomerViewController {
     @FXML
-    void AddBook(ActionEvent event) throws IOException {
+    void loanItem(ActionEvent event) throws IOException{
         
-        String fxmlf = "AddBook.fxml";
-        ChangeWindow changeWindow = new ChangeWindow();
-        changeWindow.windowChange(event, fxmlf);
-
-    }
-    
-    @FXML
-    void AddDvD(ActionEvent event) {
-        
-        String fxmlf = "AddDVD.fxml";
+        String fxmlf = "LoanItem.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }
     
     @FXML
-    void BackToMenu(ActionEvent event) {
+    void logOut(ActionEvent event) throws IOException{
         
-        String fxmlf = "StartMenu.fxml";
+        String fxmlf = "LoginView.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }
-
 }
