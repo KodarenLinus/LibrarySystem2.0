@@ -24,8 +24,10 @@ public class AddCustomer {
     
     void insertCustomer(String firstName, String lastName, int telNr, String Email){
         
+        DatabaseConnector connDB = new ConnDB();
+        Connection conn = connDB.connect();
+        
         try {
-            Connection conn = DriverManager.getConnection(connDB.getDbUrl(), connDB.getDbUsername(), connDB.getDbPassword());
             
             PreparedStatement stmt1 = conn.prepareStatement
             ("INSERT INTO Customer (CustomerID, CustomerCategoryID, CategoryName, FirstName, LastName, Email, Adress, TelNumber, UserID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");

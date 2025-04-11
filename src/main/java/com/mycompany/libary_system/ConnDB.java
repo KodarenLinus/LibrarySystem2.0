@@ -4,33 +4,27 @@
  */
 package com.mycompany.libary_system;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 /**
  *
  * @author Linus
  */
-public class ConnDB {
 
-    private static final String dbUrl = "jdbc:mysql://localhost:3306/librarySystem";
-    private static final String dbUsername = "root"; 
-    private static final String dbPassword = "Finnträsk69";
-
+public class ConnDB implements DatabaseConnector {
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/Finnträsk69";
+    private static final String DB_USERNAME = "root"; 
+    private static final String DB_PASSWORD = "Finnträsk69";
     
-    public ConnDB() {
-        
-    }
-    
-    public String getDbUrl()
-    {
-        return dbUrl;
-    }
-    
-    public String getDbUsername()
-    {
-        return dbUsername;
-    }
-     
-    public String getDbPassword()
-    {
-        return dbPassword;
+    @Override
+    public Connection connect() {
+        try {
+            return DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+        } catch (SQLException e) {
+            System.out.println("Failed to connect to DB: " + e.getMessage());
+            return null;
+        }
     }
 }
