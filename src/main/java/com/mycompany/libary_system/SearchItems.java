@@ -17,44 +17,55 @@ import java.util.ArrayList;
 public class SearchItems {
     
 public ArrayList<Items> search(String searchText) {
+        //Lista för att spara våra items
         ArrayList<Items> results = new ArrayList<>();
+        
+        // DB connection
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
-
+        
+        //Våra sql query
         String query = "SELECT itemID, title, location FROM item WHERE title LIKE ?";
+        String query1 = "SELECT * FROM BOOK WHERE itemID = ?";
+        String query2 = "SELECT * FROM DVD WHERE itemID = ?";
+        
         try {
+            //Förbereder en SQL-sats
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, "%" + searchText + "%");
             ResultSet rs = stmt.executeQuery();
-
+            
+            //Loppar igenom alla resultat vi får av SQL-satsen!!!
             while (rs.next()) {
                 int id = rs.getInt("itemID");
                 String title = rs.getString("title");
                 String location = rs.getString("location");
                 
-                //K
-                PreparedStatement stmt1 = conn.prepareStatement("SELECT * FROM BOOK WHERE itemID = ?");
-                PreparedStatement stmt2 = conn.prepareStatement("SELECT * FROM DVD WHERE itemID = ?");
+                // Förbereder SQL-satser för att hämta data från DB!!!!
+                PreparedStatement stmt1 = conn.prepareStatement(query1);
+                PreparedStatement stmt2 = conn.prepareStatement(query2);
                 stmt1.setInt(1, id);
                 stmt2.setInt(1, id);
-
-                if (stmt1.executeQuery() != null) {
-                    ResultSet rs1 = stmt1.executeQuery();
-
-                    while (rs1.next()) {
-                        int isbn = rs1.getInt("ISBN");
-                        Book book = new Book(title, location, isbn);
-                        book.setItemID(id);
-                        results.add(book);
+                
+                //Kör en sql query mot book tabelen
+                ResultSet rs1 = stmt1.executeQuery();
+                
+                //F år den ett result set (finns itemet i book) körs koden i if blocket
+                if (rs1.next()) {
+                    int isbn = rs1.getInt("ISBN");
+                    Book book = new Book(title, location, isbn);
+                    book.setItemID(id);
+                    results.add(book);
+                } else {
+                    // Om itemet inte finns i book kollar vi ifall det finns i DVD tablen
+                    ResultSet rs2 = stmt2.executeQuery();
+                    if (rs2.next()) {
+                        DVD dvd = new DVD(title, location);
+                        dvd.setItemID(id);
+                        results.add(dvd);
                     }
-                } 
-                else if (stmt2.executeQuery() != null) {
-                    DVD dvd = new DVD(title, location);
-                    dvd.setItemID(id);
-                    results.add(dvd);
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
