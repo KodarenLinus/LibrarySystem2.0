@@ -16,88 +16,88 @@ import java.util.ArrayList;
  * @author emildahlback
  */
 public class LoanItem {
-
-    public void addToLoanRows (int custID, ArrayList<Items> itemsToLoan) {
-                
-        // Skapar ett connection objekt ocj spara en SQL query i en String.
+    
+    // Här hämtar vi kundvagn och lägger in den i loanrows!!!!
+    public void addToLoanRows(int custID, ArrayList<Items> itemsToLoan) {
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
-        
-        //SQL-statments
-        String sql = "INSERT INTO loan (customerID) VALUES (?)";
-        String selectMaxLoanId = "SELECT MAX(loanid) FROM loan WHERE customerID = ?";
-        String selectCategoryId = "SELECT categoryID FROM item WHERE itemID = ?";
-        String sql_ = "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate) VALUES (?, ?, ?, ?)";
-        
-        LocalDate today = LocalDate.now();
-        
-        // Add 1 week
-        LocalDate inOneWeek = today.plusWeeks(1);
-        
-        // Add 2 weeks
-        LocalDate inTwoWeeks = today.plusWeeks(2);
 
-        // Add 1 month
-        LocalDate nextMonth = today.plusMonths(1);
-        
-        try ( 
-            PreparedStatement stmt = conn.prepareStatement(sql);    
-            PreparedStatement getLoanIDStmt = conn.prepareStatement(selectMaxLoanId);
-            PreparedStatement stmt1 = conn.prepareStatement(sql_);
-            PreparedStatement getCategoryIDStmt = conn.prepareStatement(selectCategoryId);
-        ){
-            // Sätter kund id på loanet
-            stmt.setInt(1, custID);
-            stmt.executeUpdate();
-            
-            // hämtar lånet baserats på kundens senast lån
-            getLoanIDStmt.setInt(1, custID);
-            ResultSet rs = getLoanIDStmt.executeQuery();
-            
-            // Kollar igenom resultsetet
-            if (rs.next()) {
-                //Sparar loanID i en lokal variabel
-                int loanID = rs.getInt(1);
-                
-                //Lopar igenom alla våra items i våran kundvagn
-                for (Items item : itemsToLoan) {
-                    stmt1.setInt(1, loanID);
-                    stmt1.setInt(2, item.getItemID());
-                    stmt1.setString(3, today.toString()); 
-                    
-                    //Lägg till if statment som väljer vilket datum saker skall göras.
-                    getCategoryIDStmt.setInt(1, item.getItemID());
-                    ResultSet rs1 = getCategoryIDStmt.executeQuery();
-                    if (rs1.next()) {
-                        int categoryID = rs1.getInt("categoryID");
+        try {
+            int loanID = insertLoanAndGetID(conn, custID);
+            if (loanID == -1) return;
 
-                        // kollar items category och väljer hur länge som man får låna itemet!!
-                        switch (categoryID) {
-                            case 1:
-                                stmt1.setString(4, nextMonth.toString());
-                                break;
-                            case 2:
-                                stmt1.setString(4, inTwoWeeks.toString());
-                                break;
-                            case 3:
-                                stmt1.setString(4, inOneWeek.toString());
-                                break;
-                            default:
-                                stmt1.setString(4, today.toString()); 
-                                break;
-                        }
-                    }
-                            
-                    //spara in våra loanrows
-                    stmt1.addBatch();
-                }
-                
-                //Skickar in dem i databasen
-                stmt1.executeBatch();
-            }
+            insertLoanRows(conn, loanID, itemsToLoan);
 
         } catch (SQLException e) {
-            e.printStackTrace(); 
+            e.printStackTrace();
         }
+    }
+    
+    // Gör insert för ett lån i databasen samt hämtar kundens senast inloggning
+    private int insertLoanAndGetID(Connection conn, int custID) throws SQLException {
+        String insertLoanSQL = "INSERT INTO loan (customerID) VALUES (?)";
+        String getLoanIDSQL = "SELECT MAX(loanid) FROM loan WHERE customerID = ?";
+
+        try (
+            PreparedStatement insertStmt = conn.prepareStatement(insertLoanSQL);
+            PreparedStatement getLoanIDStmt = conn.prepareStatement(getLoanIDSQL)
+        ) {
+            insertStmt.setInt(1, custID);
+            insertStmt.executeUpdate();
+
+            getLoanIDStmt.setInt(1, custID);
+            ResultSet rs = getLoanIDStmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+
+        return -1; //Hittar vi inget loan retunerar vi -1 vilket antyder att kunden inte har ett loan
+    }
+    
+    // Här för vi in loanRows till databasen!!!
+    private void insertLoanRows(Connection conn, int loanID, ArrayList<Items> itemsToLoan) throws SQLException {
+        String getCategorySQL = "SELECT categoryID FROM item WHERE itemID = ?";
+        String insertLoanRowSQL = "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate) VALUES (?, ?, ?, ?)";
+
+        LocalDate today = LocalDate.now();
+
+        try (
+                PreparedStatement getCategoryStmt = conn.prepareStatement(getCategorySQL);
+                PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRowSQL)
+        )   {
+                for (Items item : itemsToLoan) {
+                    LocalDate endDate = getLoanEndDate(getCategoryStmt, item.getItemID(), today);
+
+                    insertLoanRowStmt.setInt(1, loanID);
+                    insertLoanRowStmt.setInt(2, item.getItemID());
+                    insertLoanRowStmt.setString(3, today.toString());
+                    insertLoanRowStmt.setString(4, endDate.toString());
+                    insertLoanRowStmt.addBatch();
+            }
+
+            insertLoanRowStmt.executeBatch();
+        }
+    }
+    
+    // En metod som håller koll på de olika kategoriernas lån lägnd och som håller koll på dagens datum!!!
+    // metoden retunera ett datum baserat på kategori och dagens datum!!
+    private LocalDate getLoanEndDate(PreparedStatement categoryStmt, int itemID, LocalDate date) throws SQLException {
+        categoryStmt.setInt(1, itemID);
+        ResultSet rs = categoryStmt.executeQuery();
+
+        if (rs.next()) {
+            int categoryID = rs.getInt("categoryID");
+
+            switch (categoryID) {
+                case 1: return date.plusMonths(1);
+                case 2: return date.plusWeeks(2);
+                case 3: return date.plusWeeks(1);
+                default: return date;
+            }
+        }
+
+        return date;
     }
 }
