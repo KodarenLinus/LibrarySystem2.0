@@ -10,9 +10,15 @@ package com.mycompany.libary_system;
  */
 public class LoanRow {
     private int itemID;
+    private int loanID;
 
     public LoanRow(int itemID) {
+        this.loanID = loanID;
         this.itemID = itemID;
+    }
+    
+    public int getLoanID() {
+        return loanID;
     }
 
     public int getItemID() {

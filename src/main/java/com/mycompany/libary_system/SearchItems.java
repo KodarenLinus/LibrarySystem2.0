@@ -25,7 +25,7 @@ public ArrayList<Items> search(String searchText) {
         Connection conn = connDB.connect();
         
         //Våra sql query
-        String query = "SELECT itemID, title, location FROM item WHERE title LIKE ?";
+        String query = "SELECT itemID, title, location FROM item WHERE title LIKE ? and available = true";
         String query1 = "SELECT * FROM BOOK WHERE itemID = ?";
         String query2 = "SELECT * FROM DVD WHERE itemID = ?";
         

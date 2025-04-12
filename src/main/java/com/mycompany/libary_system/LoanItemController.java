@@ -5,6 +5,7 @@
 package com.mycompany.libary_system;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -49,12 +50,16 @@ public class LoanItemController {
         changeWindow.windowChange(event, fxmlf);
     }
     
+    
     @FXML
     void makeOrder(ActionEvent event) throws IOException{
         
         String fxmlf = "CustomerView.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
+        LoanItem loanItem = new LoanItem();
+        ArrayList<Items> itemsToLoan = new ArrayList<>(itemCartList.getItems());
+        loanItem.addToLoanRows(10, itemsToLoan);
     }
     
     @FXML
@@ -62,6 +67,7 @@ public class LoanItemController {
         
         // Gör så att vi visar titlen på våra items!!!!
         ItemList.setCellFactory(list -> new ListCell<Items>() {
+            @Override
             protected void updateItem(Items item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
@@ -72,8 +78,8 @@ public class LoanItemController {
             }
         });
 
-        // Updaterar våran item lista i real tid!!!
-        ScearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
+            // Updaterar våran item lista i real tid!!!
+            ScearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
             SearchItems searchItems = new SearchItems();
             ItemList.getItems().clear();
             ItemList.getItems().addAll(searchItems.search(newValue));
