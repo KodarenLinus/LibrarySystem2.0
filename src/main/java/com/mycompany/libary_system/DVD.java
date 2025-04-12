@@ -25,7 +25,11 @@ public class DVD implements Items {
         this.title = title;
         this.location = location;
     }
-
+    
+    public void setItemID(int itemID) {
+        this.itemID = itemID;
+    }
+    
     @Override
     public int getItemID() {
         return itemID;
@@ -65,5 +69,11 @@ public class DVD implements Items {
         }
         
         return null; //
+    }
+    
+    
+    @Override
+    public String toString() {
+        return title; // Display only the title in ListView
     }
 }

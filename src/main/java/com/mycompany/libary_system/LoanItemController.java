@@ -11,6 +11,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 /**
@@ -18,6 +22,24 @@ import javafx.stage.Stage;
  * @author emildahlback
  */
 public class LoanItemController {
+    
+    @FXML
+    private ListView<Items> ItemList;
+
+    @FXML
+    private TextField ScearchItem;
+
+    @FXML
+    private ListView<Items> itemCartList;
+    
+     @FXML
+    void addToCart(MouseEvent event) {
+         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
+
+        if (selectedItem != null && !itemCartList.getItems().contains(selectedItem)) {
+            itemCartList.getItems().add(selectedItem);
+        }
+    }
     
     @FXML
     void backToMenu(ActionEvent event) throws IOException{
@@ -35,4 +57,26 @@ public class LoanItemController {
         changeWindow.windowChange(event, fxmlf);
     }
     
+    @FXML
+    public void initialize()  {
+        
+        // Gör så att vi visar titlen på våra items!!!!
+        ItemList.setCellFactory(list -> new ListCell<Items>() {
+            protected void updateItem(Items item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.toString()); 
+                }
+            }
+        });
+
+        // Updaterar våran item lista i real tid!!!
+        ScearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
+            SearchItems searchItems = new SearchItems();
+            ItemList.getItems().clear();
+            ItemList.getItems().addAll(searchItems.search(newValue));
+        });
+    }
 }

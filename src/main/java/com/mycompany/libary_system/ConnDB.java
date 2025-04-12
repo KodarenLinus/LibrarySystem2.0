@@ -14,9 +14,9 @@ import java.sql.SQLException;
  */
 
 public class ConnDB implements DatabaseConnector {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/Finnträsk69";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/book_libary";
     private static final String DB_USERNAME = "root"; 
-    private static final String DB_PASSWORD = "Finnträsk69";
+    private static final String DB_PASSWORD = "LinusS";
     
     @Override
     public Connection connect() {

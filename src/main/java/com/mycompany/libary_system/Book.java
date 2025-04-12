@@ -26,7 +26,11 @@ public class Book implements Items{
         this.location = location;
         this.isbn = isbn;
     }
-
+    
+    public void setItemID(int itemID) {
+        this.itemID = itemID;
+    }
+    
     @Override
     public int getItemID() {
         return itemID;
@@ -69,5 +73,11 @@ public class Book implements Items{
         }
         
         return null; //
+    }
+    
+    
+    @Override
+    public String toString() {
+        return title; // Display only the title in ListView
     }
 }
