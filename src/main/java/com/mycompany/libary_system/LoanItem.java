@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 public class LoanItem {
 
-    public boolean addToLoanRows (int custID, ArrayList<Items> itemsToLoan) {
+    public void addToLoanRows (int custID, ArrayList<Items> itemsToLoan) {
                 
         // Skapar ett connection objekt ocj spara en SQL query i en String.
         DatabaseConnector connDB = new ConnDB();
@@ -94,13 +94,10 @@ public class LoanItem {
                 
                 //Skickar in dem i databasen
                 stmt1.executeBatch();
-                return true;
             }
 
         } catch (SQLException e) {
             e.printStackTrace(); 
         }
-
-        return false;
     }
 }
