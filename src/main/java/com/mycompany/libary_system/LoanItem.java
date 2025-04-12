@@ -23,8 +23,8 @@ public class LoanItem {
         Connection conn = connDB.connect();
 
         try {
-            int loanID = insertLoanAndGetID(conn, custID);
-            if (loanID == -1) return;
+            int loanID = insertLoanAndGetID(conn, custID); //Hämtar loanID för kund!
+            if (loanID == -1) return; //om vi inte har något lån avbryter vi metoden!
 
             insertLoanRows(conn, loanID, itemsToLoan);
 
@@ -64,17 +64,17 @@ public class LoanItem {
         LocalDate today = LocalDate.now();
 
         try (
-                PreparedStatement getCategoryStmt = conn.prepareStatement(getCategorySQL);
-                PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRowSQL)
+            PreparedStatement getCategoryStmt = conn.prepareStatement(getCategorySQL);
+            PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRowSQL)
         )   {
-                for (Items item : itemsToLoan) {
-                    LocalDate endDate = getLoanEndDate(getCategoryStmt, item.getItemID(), today);
+            for (Items item : itemsToLoan) {
+                LocalDate endDate = getLoanEndDate(getCategoryStmt, item.getItemID(), today);
 
-                    insertLoanRowStmt.setInt(1, loanID);
-                    insertLoanRowStmt.setInt(2, item.getItemID());
-                    insertLoanRowStmt.setString(3, today.toString());
-                    insertLoanRowStmt.setString(4, endDate.toString());
-                    insertLoanRowStmt.addBatch();
+                insertLoanRowStmt.setInt(1, loanID);
+                insertLoanRowStmt.setInt(2, item.getItemID());
+                insertLoanRowStmt.setString(3, today.toString());
+                insertLoanRowStmt.setString(4, endDate.toString());
+                insertLoanRowStmt.addBatch();
             }
 
             insertLoanRowStmt.executeBatch();
