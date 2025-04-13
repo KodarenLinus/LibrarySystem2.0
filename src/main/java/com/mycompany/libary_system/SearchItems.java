@@ -29,9 +29,14 @@ public ArrayList<Items> search(String searchText) {
         String query1 = "SELECT * FROM BOOK WHERE itemID = ?";
         String query2 = "SELECT * FROM DVD WHERE itemID = ?";
         
-        try {
+        try (
             //Förbereder en SQL-sats
-            PreparedStatement stmt = conn.prepareStatement(query);
+            PreparedStatement stmt = conn.prepareStatement(query);   
+            // Förbereder SQL-satser för att hämta data från DB!!!!
+            PreparedStatement stmt1 = conn.prepareStatement(query1);
+            PreparedStatement stmt2 = conn.prepareStatement(query2);
+        ){
+            
             stmt.setString(1, "%" + searchText + "%");
             ResultSet rs = stmt.executeQuery();
             
@@ -41,9 +46,7 @@ public ArrayList<Items> search(String searchText) {
                 String title = rs.getString("title");
                 String location = rs.getString("location");
                 
-                // Förbereder SQL-satser för att hämta data från DB!!!!
-                PreparedStatement stmt1 = conn.prepareStatement(query1);
-                PreparedStatement stmt2 = conn.prepareStatement(query2);
+               
                 stmt1.setInt(1, id);
                 stmt2.setInt(1, id);
                 

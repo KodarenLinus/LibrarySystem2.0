@@ -35,7 +35,7 @@ public class LoanItemController {
     
      @FXML
     void addToCart(MouseEvent event) {
-         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
+        Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
 
         if (selectedItem != null && !itemCartList.getItems().contains(selectedItem)) {
             itemCartList.getItems().add(selectedItem);
@@ -57,6 +57,8 @@ public class LoanItemController {
         String fxmlf = "CustomerView.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
+        
+        // Skapar ett lån utifrån vad vi har i kundvagnen!!!
         LoanItem loanItem = new LoanItem();
         ArrayList<Items> itemsToLoan = new ArrayList<>(itemCartList.getItems());
         loanItem.addToLoanRows(10, itemsToLoan);

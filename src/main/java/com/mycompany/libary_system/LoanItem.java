@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 /**
  *
  * @author emildahlback
@@ -40,7 +40,7 @@ public class LoanItem {
 
         try (
             PreparedStatement insertStmt = conn.prepareStatement(insertLoanSQL);
-            PreparedStatement getLoanIDStmt = conn.prepareStatement(getLoanIDSQL)
+            PreparedStatement getLoanIDStmt = conn.prepareStatement(getLoanIDSQL);
         ) {
             insertStmt.setInt(1, custID);
             insertStmt.executeUpdate();
@@ -59,7 +59,7 @@ public class LoanItem {
     // Här för vi in loanRows till databasen!!!
     private void insertLoanRows(Connection conn, int loanID, ArrayList<Items> itemsToLoan) throws SQLException {
         String getCategorySQL = "SELECT categoryID FROM item WHERE itemID = ?";
-        String insertLoanRowSQL = "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate) VALUES (?, ?, ?, ?)";
+        String insertLoanRowSQL = "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate, ActiveLoan) VALUES (?, ?, ?, ?, ?)";
 
         LocalDate today = LocalDate.now();
 
@@ -74,6 +74,7 @@ public class LoanItem {
                 insertLoanRowStmt.setInt(2, item.getItemID());
                 insertLoanRowStmt.setString(3, today.toString());
                 insertLoanRowStmt.setString(4, endDate.toString());
+                insertLoanRowStmt.setBoolean(5, true); // Låneraden ska alltid vara aktivt när vi skapar ett loanRow
                 insertLoanRowStmt.addBatch();
             }
 
@@ -92,8 +93,8 @@ public class LoanItem {
 
             switch (categoryID) {
                 case 1: return date.plusMonths(1);
-                case 2: return date.plusWeeks(2);
-                case 3: return date.plusWeeks(1);
+                case 2: return date.plusWeeks(1);
+                case 3: return date.plusWeeks(2);
                 default: return date;
             }
         }

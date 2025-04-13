@@ -30,6 +30,7 @@ public class CustomerViewController {
     @FXML
     void logOut(ActionEvent event) throws IOException{
         
+        Session.getInstance().clear(); // Tar bort sessionen!!!
         String fxmlf = "LoginView.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);

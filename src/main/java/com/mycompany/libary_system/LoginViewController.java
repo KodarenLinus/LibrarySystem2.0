@@ -11,6 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 /**
@@ -19,15 +21,29 @@ import javafx.stage.Stage;
  */
 public class LoginViewController{
     
+    @FXML
+    private TextField userName;
+
+    @FXML
+    private PasswordField userPassword;
     
     @FXML
     void loginButton(ActionEvent event) throws IOException{
         
+        Login login = new Login();
+    boolean isLoggedIn = login.doLogin(userName.getText(), userPassword.getText());
+
+    if (isLoggedIn) {
+        
         String fxmlf = "CustomerView.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
+    } else {
+            System.out.println("Login failed: wrong username or password");
+            // You could also show a popup alert here
+        }
     }
-    
+        
     @FXML
     void loginButtonEmployee(ActionEvent event) throws IOException{
         
