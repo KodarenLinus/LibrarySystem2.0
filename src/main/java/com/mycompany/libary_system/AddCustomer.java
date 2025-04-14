@@ -20,32 +20,34 @@ import javafx.scene.control.TextField;
  * @author emildahlback
  */
 public class AddCustomer {
-    private ConnDB connDB = new ConnDB();
     
-    void insertCustomer(String firstName, String lastName, int telNr, String Email){
-        
-        DatabaseConnector connDB = new ConnDB();
-        Connection conn = connDB.connect();
-        
-        try {
-            
-            PreparedStatement stmt1 = conn.prepareStatement
-            ("INSERT INTO Customer (CustomerID, CustomerCategoryID, CategoryName, FirstName, LastName, Email, Adress, TelNumber, UserID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            
-                stmt1.setInt(1, 10);
-                stmt1.setInt(2, 1);
-                stmt1.setString(3, "Staff");
-                stmt1.setString(4, firstName);
-                stmt1.setString(5, lastName);
-                stmt1.setString(6, Email);
-                stmt1.setString(7, "luleå");
-                stmt1.setInt(8, telNr);
-                stmt1.setInt(9, 2);
-                
-                stmt1.executeUpdate();
-            
-        } catch (SQLException ex){
-            
-        }
+    
+    void insertCustomer(Customer customer){
+    
+    DatabaseConnector connDB = new ConnDB();
+    Connection conn = connDB.connect();
+
+    try {
+        PreparedStatement stmt1 = conn.prepareStatement(
+            "INSERT INTO Customer (CustomerID, CustomerCategoryID, CategoryName, FirstName, LastName, Email, Adress, TelNumber, UserID, PasswordCustomer) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        );
+
+        stmt1.setNull(1, java.sql.Types.INTEGER); // Du kan generera unikt ID i databasen istället
+        stmt1.setInt(2, 10);  // Exempel: Staff
+        stmt1.setString(3, "Studenet");
+        stmt1.setString(4, customer.getFirstName());
+        stmt1.setString(5, customer.getLastName());
+        stmt1.setString(6, customer.getEmail());
+        stmt1.setString(7, "ltu"); // Du kan byta till riktig adress senare
+        stmt1.setInt(8, customer.getTelNr());
+        stmt1.setInt(9, 2); // T.ex. användar-ID om du har inloggning
+        stmt1.setString(10, customer.getPassword());
+
+        stmt1.executeUpdate();
+
+    } catch (SQLException ex){
+        ex.printStackTrace(); // Bra att skriva ut för felsökning
     }
+}
 }

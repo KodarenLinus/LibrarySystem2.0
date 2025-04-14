@@ -53,7 +53,7 @@ public ArrayList<Items> search(String searchText) {
                 //Kör en sql query mot book tabelen
                 ResultSet rs1 = stmt1.executeQuery();
                 
-                //F år den ett result set (finns itemet i book) körs koden i if blocket
+                //Får den ett result set (finns itemet i book) körs koden i if blocket
                 if (rs1.next()) {
                     int isbn = rs1.getInt("ISBN");
                     Book book = new Book(title, location, isbn);

@@ -4,12 +4,14 @@
  */
 package com.mycompany.libary_system;
 
+import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -23,7 +25,7 @@ public class AddCustomerController {
     
     
     @FXML
-    private TextField Email;
+    private TextField email;
 
     @FXML
     private TextField firstName;
@@ -35,15 +37,70 @@ public class AddCustomerController {
     private TextField telNr;
 
     @FXML
-    private ToggleButton addCustomer;
+    private ToggleButton addNewCustomer;
+    
+    @FXML
+    private ListView<Customer> customerList;
+    
+    @FXML
+    private TextField searchCustomers;
+    
+    @FXML 
+    private TextField password;
+    
+    
+    @FXML
+    public void initialize() {
+        // Gör så att vi visar titlen på våra items!!!!
+        customerList.setCellFactory(list -> new ListCell<Customer>() {
+            @Override
+            protected void updateItem(Customer customer, boolean empty) {
+                super.updateItem(customer, empty);
+                if (empty || customer == null) {
+                    setText(null);
+                } else {
+                    setText(customer.toString()); 
+                }
+            }
+        });
+
+            // Updaterar våran item lista i real tid!!!
+                searchCustomers.textProperty().addListener((observable, oldValue, newValue) -> {
+                SearchCustomer searchCustomers = new SearchCustomer();
+                customerList.getItems().clear();
+                customerList.getItems().addAll(searchCustomers.searchCustomer(newValue));
+});
+    }
     
     
     @FXML
     void addCustomer(ActionEvent event) {
+        
+
+        try {
+        // Ladda FXML-filen för popupen
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("newDVDPop.fxml"));
+        Parent root = loader.load();  // Här laddas rootkomponenten från FXML-filen
+
+        // Skapa en ny Stage (popup)
+        Stage stage = new Stage();
+        stage.setTitle("Popup Title");
+
+        // Sätt scenen för popupen
+        stage.setScene(new Scene(root));
+
+        // Visa popupen och vänta på att den stängs
+        stage.showAndWait();
+
         AddCustomer addCustomer = new AddCustomer();
-        addCustomer.insertCustomer(firstName.getText(), lastName.getText(), Integer.parseInt(telNr.getText()), Email.getText());
+        Customer customer = new Customer(firstName.getText(), lastName.getText(), Integer.parseInt(telNr.getText()), email.getText(), password.getText());
+        addCustomer.insertCustomer(customer);
+        } catch (Exception e) {
+        e.printStackTrace();
     
     }
+}
+    
     
     @FXML
     void backToMenu(ActionEvent event) {
