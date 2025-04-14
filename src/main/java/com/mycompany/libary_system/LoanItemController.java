@@ -33,7 +33,7 @@ public class LoanItemController {
     @FXML
     private ListView<Items> itemCartList;
     
-     @FXML
+    @FXML
     void addToCart(MouseEvent event) {
         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
 

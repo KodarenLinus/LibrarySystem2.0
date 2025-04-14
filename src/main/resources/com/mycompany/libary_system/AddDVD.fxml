@@ -48,7 +48,7 @@
                         <TextField fx:id="Location" layoutX="214.0" layoutY="14.0" prefHeight="25.0" prefWidth="394.0" />
                      </children>
                   </Pane>
-                  <ToggleButton id="9" fx:id="addNewBook" layoutX="242.0" layoutY="491.0" mnemonicParsing="false" onAction="#addBook" text="Lägg till ny bok" />
+                  <ToggleButton id="9" fx:id="addNewBook" layoutX="229.0" layoutY="303.0" mnemonicParsing="false" onAction="#addDVD" prefHeight="44.0" prefWidth="125.0" text="Lägg till ny DVD" />
                </children>
             </AnchorPane>
         </content>

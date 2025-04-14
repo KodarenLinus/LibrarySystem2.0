@@ -13,7 +13,7 @@ public class Session {
     private static Session instance;
     private int userId;
     private String email;
-    private String category; // Optional if you want to track "employee", "customer", etc.
+    private String category;
 
     private Session() {}
 

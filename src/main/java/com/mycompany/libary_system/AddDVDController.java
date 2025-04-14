@@ -39,7 +39,7 @@ public class AddDVDController {
     }
 
     @FXML
-    void addBook(ActionEvent event) {
+    void addDVD(ActionEvent event) {
         AddDVD addDVD = new AddDVD();
         DVD dvd = new DVD(Title.getText(), Location.getText());
         addDVD.insertDVD(dvd);

@@ -69,7 +69,7 @@ public ArrayList<Items> search(String searchText) {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
