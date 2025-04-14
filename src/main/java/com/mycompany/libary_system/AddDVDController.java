@@ -27,7 +27,7 @@ public class AddDVDController {
     private TextField Title;
 
     @FXML
-    private ToggleButton addNewBook;
+    private ToggleButton addNewDVD;
 
     @FXML
     void GoToItem(ActionEvent event) {
@@ -39,10 +39,29 @@ public class AddDVDController {
     }
 
     @FXML
-    void addBook(ActionEvent event) {
+    void addDVD(ActionEvent event) {
+        
+        try {
+        // Ladda FXML-filen för popupen
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("newDVDPop.fxml"));
+        Parent root = loader.load();  // Här laddas rootkomponenten från FXML-filen
+
+        // Skapa en ny Stage (popup)
+        Stage stage = new Stage();
+        stage.setTitle("Popup Title");
+
+        // Sätt scenen för popupen
+        stage.setScene(new Scene(root));
+
+        // Visa popupen och vänta på att den stängs
+        stage.showAndWait();
+
         AddDVD addDVD = new AddDVD();
         DVD dvd = new DVD(Title.getText(), Location.getText());
         addDVD.insertDVD(dvd);
+        } catch (Exception e) {
+        e.printStackTrace();
+    }
     }
 
 }

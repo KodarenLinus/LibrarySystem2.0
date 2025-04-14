@@ -34,7 +34,7 @@
       </MenuBar>
       <ScrollPane layoutY="59.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="59.0">
         <content>
-          <AnchorPane prefHeight="571.0" prefWidth="617.0">
+          <AnchorPane prefHeight="376.0" prefWidth="622.0">
                <children>
                   <Pane prefHeight="52.0" prefWidth="622.0">
                      <children>
@@ -54,7 +54,7 @@
                         <Label layoutX="29.0" layoutY="18.0" prefHeight="17.0" prefWidth="95.0" text="ISBN" />
                      </children>
                   </Pane>
-                  <ToggleButton id="9" fx:id="addNewBook" layoutX="242.0" layoutY="491.0" mnemonicParsing="false" onAction="#addBook" text="Lägg till ny bok" />
+                  <ToggleButton id="9" fx:id="addNewBook" layoutX="242.0" layoutY="297.0" mnemonicParsing="false" onAction="#addBook" text="Lägg till ny bok" />
                </children>
             </AnchorPane>
         </content>
