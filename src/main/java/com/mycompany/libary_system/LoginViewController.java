@@ -40,7 +40,7 @@ public class LoginViewController{
         changeWindow.windowChange(event, fxmlf);
     } else {
             System.out.println("Login failed: wrong username or password");
-            // You could also show a popup alert here
+            // Lägg till 
         }
     }
         

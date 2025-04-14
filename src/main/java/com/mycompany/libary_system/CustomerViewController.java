@@ -20,7 +20,7 @@ import javafx.stage.Stage;
  */
 public class CustomerViewController {
     @FXML
-    void loanItem(ActionEvent event) throws IOException{
+    void loanItem(ActionEvent event) throws IOException {
         
         String fxmlf = "LoanItem.fxml";
         ChangeWindow changeWindow = new ChangeWindow();

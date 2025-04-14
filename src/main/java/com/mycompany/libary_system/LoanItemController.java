@@ -61,7 +61,8 @@ public class LoanItemController {
         // Skapar ett lån utifrån vad vi har i kundvagnen!!!
         LoanItem loanItem = new LoanItem();
         ArrayList<Items> itemsToLoan = new ArrayList<>(itemCartList.getItems());
-        loanItem.addToLoanRows(10, itemsToLoan);
+        Session session = Session.getInstance();
+        loanItem.addToLoanRows(session.getUserId(), itemsToLoan);
     }
     
     @FXML
