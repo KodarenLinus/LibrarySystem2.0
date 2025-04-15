@@ -30,8 +30,8 @@ public class AddBook {
         
             //Lägger till itemet i items!!
             PreparedStatement stmt1 = conn.prepareStatement("INSERT INTO Item (GenreID, CategoryID, Title, Location, Available) VALUES (?, ?, ?, ?, ?)");
-                stmt1.setInt(1, 1);
-                stmt1.setInt(2, 1);
+                stmt1.setInt(1, 10);
+                stmt1.setInt(2, 9);
                 stmt1.setString(3, book.getTitle());
                 stmt1.setString(4, book.getLocation());
                 stmt1.setBoolean(5, true);
@@ -40,7 +40,7 @@ public class AddBook {
             //Lägger till itemet i book tablen
             PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO Book (ItemID, ISBN, PublisherID) VALUES ((SELECT max(ItemID) From item), ?, ?)");
                 stmt2.setInt(1, book.getIsbn());
-                stmt2.setInt(2, 1);
+                stmt2.setInt(2, 7);
                 stmt2.executeUpdate();
 
         } catch (SQLException ex){

@@ -25,7 +25,8 @@ public class AddBookController {
     @FXML
     private ToggleButton addNewBook;
     
-     @FXML
+    
+    @FXML
     void GoToItem(ActionEvent event) {
        
         String fxmlf = "AddItemsChoice.fxml";
@@ -36,9 +37,28 @@ public class AddBookController {
 
     @FXML
     void addBook(ActionEvent event) {
+    try {
+        // Ladda FXML-filen för popupen
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("newBookPop.fxml"));
+        Parent root = loader.load();  // Här laddas rootkomponenten från FXML-filen
+
+        // Skapa en ny Stage (popup)
+        Stage stage = new Stage();
+        stage.setTitle("Popup Title");
+
+        // Sätt scenen för popupen
+        stage.setScene(new Scene(root));
+
+        // Visa popupen och vänta på att den stängs
+        stage.showAndWait();
+
+        // Efter att popupen har stängts, lägg till boken i databasen
         AddBook addBook = new AddBook();
         Book book = new Book(Title.getText(), Location.getText(), Integer.parseInt(ISBN.getText()));
         addBook.insertBook(book);
-    }
 
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    }
 }

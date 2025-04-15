@@ -26,8 +26,8 @@ public class AddDVD {
             
             //Lägger till itemet i items!!
             PreparedStatement stmt1 = conn.prepareStatement("INSERT INTO Item (GenreID, CategoryID, Title, Location, Available) VALUES (?, ?, ?, ?, ?)");
-                stmt1.setInt(1, 1);
-                stmt1.setInt(2, 1);
+                stmt1.setInt(1, 10);
+                stmt1.setInt(2, 9);
                 stmt1.setString(3, dvd.getTitle());
                 stmt1.setString(4, dvd.getLocation());
                 stmt1.setBoolean(5, true);
