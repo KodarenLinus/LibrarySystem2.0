@@ -30,7 +30,6 @@ public class AddBook {
         Connection conn = connDB.connect();
         
         try {
-        
             //Lägger till itemet i items!!
             PreparedStatement stmt1 = conn.prepareStatement("INSERT INTO Item (GenreID, CategoryID, Title, Location, Available) VALUES (?, ?, ?, ?, ?)");
                 stmt1.setInt(1, 10);
