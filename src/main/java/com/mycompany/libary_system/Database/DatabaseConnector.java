@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.libary_system;
+package com.mycompany.libary_system.Database;
 
 import java.sql.Connection;
 
@@ -10,6 +10,6 @@ import java.sql.Connection;
  *
  * @author Linus
  */
-interface DatabaseConnector {
+public interface DatabaseConnector {
     Connection connect();
 }

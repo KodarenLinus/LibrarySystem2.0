@@ -2,8 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.libary_system;
+package com.mycompany.libary_system.Search;
 
+import com.mycompany.libary_system.Models.Book;
+import com.mycompany.libary_system.Database.ConnDB;
+import com.mycompany.libary_system.Models.DVD;
+import com.mycompany.libary_system.Database.DatabaseConnector;
+import com.mycompany.libary_system.Models.Items;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -53,7 +58,7 @@ public ArrayList<Items> search(String searchText) {
                 //Kör en sql query mot book tabelen
                 ResultSet rs1 = stmt1.executeQuery();
                 
-                //F år den ett result set (finns itemet i book) körs koden i if blocket
+                //Får den ett result set (finns itemet i book) körs koden i if blocket
                 if (rs1.next()) {
                     int isbn = rs1.getInt("ISBN");
                     Book book = new Book(title, location, isbn);

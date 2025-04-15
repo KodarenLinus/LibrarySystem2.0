@@ -2,28 +2,30 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.libary_system;
+package com.mycompany.libary_system.Models;
 
+import com.mycompany.libary_system.Models.Items;
 import java.util.ArrayList;
 
 /**
  *
  * @author Linus
  */
-public class DVD implements Items {
-    
+public class Book implements Items{
     private int itemID;
     private String title;
-    private ArrayList<Integer> directorsID;
+    private ArrayList<Integer> authorsID;
     private String genreName;
     private String categoryName;
     private String location;
     private boolean available;
+    private int isbn;
     
-    // Konstruktor
-    public DVD (String title, String location) {
+    
+    public Book(String title, String location, int isbn) {
         this.title = title;
         this.location = location;
+        this.isbn = isbn;
     }
     
     public void setItemID(int itemID) {
@@ -60,12 +62,15 @@ public class DVD implements Items {
         return available;
     }
     
-    public Integer getDirector () {
+    public int getIsbn () {
+        return isbn;
+    }
+    
+    public Integer getAuthors () {
         
-        // loppar igenom list med directors
-        for (int directorID : directorsID)
-        {
-            return directorID; // Retunera varje author;
+        // Loopar igenom lista med authors
+        for (int authorID : authorsID) {
+            return authorID; // Retunera varje author;
         }
         
         return null; //

@@ -1,9 +1,11 @@
-package com.mycompany.libary_system;
+package com.mycompany.libary_system.Controllers;
 
+import com.mycompany.libary_system.Logic.AddBook;
+import com.mycompany.libary_system.Models.Book;
+import com.mycompany.libary_system.Utils.ChangeWindow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ToggleButton;

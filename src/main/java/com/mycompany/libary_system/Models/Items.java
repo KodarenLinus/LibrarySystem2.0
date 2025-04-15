@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.libary_system;
+package com.mycompany.libary_system.Models;
 
 /**
  *
@@ -10,7 +10,7 @@ package com.mycompany.libary_system;
  */
 
 // Ett interface för items som vi 
-interface Items {
+public interface Items {
     int getItemID();
     String getGenreName();
     String getCategoryName();

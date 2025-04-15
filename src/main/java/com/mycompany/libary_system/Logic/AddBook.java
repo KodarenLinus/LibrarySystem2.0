@@ -2,8 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.libary_system;
+package com.mycompany.libary_system.Logic;
 
+import com.mycompany.libary_system.Models.Book;
+import com.mycompany.libary_system.Database.DatabaseConnector;
+import com.mycompany.libary_system.Database.ConnDB;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -21,7 +24,7 @@ import java.util.logging.Logger;
 public class AddBook {
 
     //En metod för att lägga till items av typen book!!!!!
-    void insertBook (Book book) {
+    public void insertBook (Book book) {
         
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();

@@ -14,7 +14,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.libary_system.AddCustomerController">
    <children>
-      <ListView layoutX="7.0" layoutY="60.0" prefHeight="257.0" prefWidth="268.0" />
+      <ListView fx:id="customerList" layoutX="7.0" layoutY="60.0" prefHeight="257.0" prefWidth="268.0" />
       <HBox alignment="CENTER_LEFT" layoutX="300.0" layoutY="76.0" prefHeight="50.0" prefWidth="292.0" spacing="20.0">
          <children>
             <Label prefHeight="24.0" prefWidth="160.0" text="Förnamn">
@@ -52,9 +52,20 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="Email" prefHeight="26.0" prefWidth="311.0" />
+            <TextField fx:id="email" prefHeight="26.0" prefWidth="311.0" />
          </children>
       </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="300.0" layoutY="223.0" prefHeight="50.0" prefWidth="292.0" spacing="20.0">
+         <children>
+            <Label prefHeight="24.0" prefWidth="160.0" text="Lösenord">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="password" prefHeight="26.0" prefWidth="311.0" />
+         </children>
+      </HBox>
+      <ToggleButton fx:id="addNewCustomer" layoutX="430.0" layoutY="273.0" mnemonicParsing="false" onAction="#addCustomer" text="Lägg till ny kund" />
       <Text layoutX="95.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sök kund">
          <font>
             <Font size="18.0" />
@@ -79,13 +90,12 @@
           </Menu>
         </menus>
       </MenuBar>
-      <TextField fx:id="searchCustomer" layoutX="40.0" layoutY="330.0" prefHeight="28.0" prefWidth="180.0" promptText="Sök på efternamn" />
+      <TextField fx:id="searchCustomers" layoutX="40.0" layoutY="330.0" prefHeight="28.0" prefWidth="180.0" promptText="Sök på efternamn" />
       <Text layoutX="414.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lägg till ny kund">
          <font>
             <Font size="18.0" />
          </font>
       </Text>
-      <ToggleButton layoutX="429.0" layoutY="238.0" mnemonicParsing="false" onAction="#addCustomer" text="Lägg till ny kund" />
       <ToggleButton layoutX="482.0" layoutY="331.0" mnemonicParsing="false" onAction="#backToMenu" text="Tillbaka" />
    </children>
 </AnchorPane>

@@ -2,8 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.libary_system;
+package com.mycompany.libary_system.Controllers;
 
+import com.mycompany.libary_system.Utils.ChangeWindow;
+import com.mycompany.libary_system.Utils.Session;
 import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
