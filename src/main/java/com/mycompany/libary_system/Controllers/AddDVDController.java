@@ -7,6 +7,7 @@ package com.mycompany.libary_system.Controllers;
 import com.mycompany.libary_system.Logic.AddDVD;
 import com.mycompany.libary_system.Utils.ChangeWindow;
 import com.mycompany.libary_system.Models.DVD;
+import com.mycompany.libary_system.Utils.PopUpWindow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -43,28 +44,13 @@ public class AddDVDController {
 
     @FXML
     void addDVD(ActionEvent event) {
+        PopUpWindow popUpWindow = new PopUpWindow();
+        String fxmlf = "newDVDPop.fxml";
+        popUpWindow.popUpChange(event, fxmlf);
         
-        try {
-        // Ladda FXML-filen för popupen
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("newDVDPop.fxml"));
-        Parent root = loader.load();  // Här laddas rootkomponenten från FXML-filen
-
-        // Skapa en ny Stage (popup)
-        Stage stage = new Stage();
-        stage.setTitle("Popup Title");
-
-        // Sätt scenen för popupen
-        stage.setScene(new Scene(root));
-
-        // Visa popupen och vänta på att den stängs
-        stage.showAndWait();
-
         AddDVD addDVD = new AddDVD();
         DVD dvd = new DVD(Title.getText(), Location.getText());
         addDVD.insertDVD(dvd);
-        } catch (Exception e) {
-        e.printStackTrace();
-    }
     }
 
 }
