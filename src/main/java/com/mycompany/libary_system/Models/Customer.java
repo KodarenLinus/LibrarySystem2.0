@@ -62,7 +62,7 @@ public class Customer {
     
     @Override
     public String toString() {
-        return lastName; // Display only the title in ListView
+        return firstName + " " + lastName; // Display only the title in ListView
     }
 }
 
