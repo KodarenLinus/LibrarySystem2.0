@@ -3,6 +3,7 @@ module com.mycompany.libary_system {
     requires javafx.controls;
     requires javafx.fxml;
 
-    opens com.mycompany.libary_system to javafx.fxml;
+    opens com.mycompany.libary_system.Controllers to javafx.fxml;
+    exports com.mycompany.libary_system.Controllers;
     exports com.mycompany.libary_system;
 }

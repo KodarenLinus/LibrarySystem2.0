@@ -21,7 +21,7 @@ public class ChangeWindow {
         
          try {
              
-            Parent root = FXMLLoader.load(getClass().getResource(fmxlf));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/mycompany/libary_system/" + fmxlf));
             Scene scene = new Scene(root);
             
             //Hämtar nuvarande fönster

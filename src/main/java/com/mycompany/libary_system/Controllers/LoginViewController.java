@@ -33,16 +33,16 @@ public class LoginViewController{
     void loginButton(ActionEvent event) throws IOException{
         
         Login login = new Login();
-    boolean isLoggedIn = login.doLogin(userName.getText(), userPassword.getText());
+        boolean isLoggedIn = login.doLogin(userName.getText(), userPassword.getText());
 
-    if (isLoggedIn) {
-        
-        String fxmlf = "CustomerView.fxml";
-        ChangeWindow changeWindow = new ChangeWindow();
-        changeWindow.windowChange(event, fxmlf);
-    } else {
-            System.out.println("Login failed: wrong username or password");
-            // Lägg till 
+        if (isLoggedIn) {
+
+            String fxmlf = "CustomerView.fxml";
+            ChangeWindow changeWindow = new ChangeWindow();
+            changeWindow.windowChange(event, fxmlf);
+        } else {
+                System.out.println("Login failed: wrong username or password");
+                // Lägg till 
         }
     }
         

@@ -57,8 +57,8 @@ public class AddCustomerController {
     public void initialize() {
         // Gör så att vi visar titlen på våra items!!!!
         customerList.setCellFactory(list -> new ListCell<Customer>() {
-            
-            protected void updateCustomer(Customer customer, boolean empty) {
+            @Override
+            protected void updateItem(Customer customer, boolean empty) {
                 super.updateItem(customer, empty);
                 if (empty || customer == null) {
                     setText(null);
