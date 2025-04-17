@@ -8,6 +8,7 @@ import com.mycompany.libary_system.Logic.AddCustomer;
 import com.mycompany.libary_system.Utils.ChangeWindow;
 import com.mycompany.libary_system.Models.Customer;
 import com.mycompany.libary_system.Search.SearchCustomer;
+import com.mycompany.libary_system.Utils.PopUpWindow;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -83,18 +84,9 @@ public class AddCustomerController {
 
         try {
         // Ladda FXML-filen för popupen
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("newDVDPop.fxml"));
-        Parent root = loader.load();  // Här laddas rootkomponenten från FXML-filen
-
-        // Skapa en ny Stage (popup)
-        Stage stage = new Stage();
-        stage.setTitle("Popup Title");
-
-        // Sätt scenen för popupen
-        stage.setScene(new Scene(root));
-
-        // Visa popupen och vänta på att den stängs
-        stage.showAndWait();
+        PopUpWindow popUpWindow = new PopUpWindow();
+        String fxmlf = "newDVDPop.fxml";
+        popUpWindow.popUp(event, fxmlf);
 
         AddCustomer addCustomer = new AddCustomer();
         Customer customer = new Customer(firstName.getText(), lastName.getText(), Integer.parseInt(telNr.getText()), email.getText(), password.getText());

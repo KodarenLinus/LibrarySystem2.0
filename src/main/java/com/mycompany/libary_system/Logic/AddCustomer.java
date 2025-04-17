@@ -32,20 +32,18 @@ public class AddCustomer {
 
     try {
         PreparedStatement stmt1 = conn.prepareStatement(
-            "INSERT INTO Customer (CustomerID, CustomerCategoryID, CategoryName, FirstName, LastName, Email, Adress, TelNumber, UserID, PasswordCustomer) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO Customer (CustomerCategoryID, CategoryName, FirstName, LastName, Email, Adress, TelNumber, PasswordCustomer) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
-        stmt1.setNull(1, java.sql.Types.INTEGER); // Du kan generera unikt ID i databasen istället
-        stmt1.setInt(2, 10);  // Exempel: Staff
-        stmt1.setString(3, "Studenet");
-        stmt1.setString(4, customer.getFirstName());
-        stmt1.setString(5, customer.getLastName());
-        stmt1.setString(6, customer.getEmail());
-        stmt1.setString(7, "ltu"); // Du kan byta till riktig adress senare
-        stmt1.setInt(8, customer.getTelNr());
-        stmt1.setInt(9, 2); // T.ex. användar-ID om du har inloggning
-        stmt1.setString(10, customer.getPassword());
+        stmt1.setInt(1, 3);  // Exempel: Staff
+        stmt1.setString(2, "Studenet");
+        stmt1.setString(3, customer.getFirstName());
+        stmt1.setString(4, customer.getLastName());
+        stmt1.setString(5, customer.getEmail());
+        stmt1.setString(6, "ltu"); // Du kan byta till riktig adress senare
+        stmt1.setInt(7, customer.getTelNr());
+        stmt1.setString(8, customer.getPassword());
 
         stmt1.executeUpdate();
 
