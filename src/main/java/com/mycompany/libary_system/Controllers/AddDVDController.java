@@ -46,7 +46,7 @@ public class AddDVDController {
     void addDVD(ActionEvent event) {
         PopUpWindow popUpWindow = new PopUpWindow();
         String fxmlf = "newDVDPop.fxml";
-        popUpWindow.popUpChange(event, fxmlf);
+        popUpWindow.popUp(event, fxmlf);
         
         AddDVD addDVD = new AddDVD();
         DVD dvd = new DVD(Title.getText(), Location.getText());

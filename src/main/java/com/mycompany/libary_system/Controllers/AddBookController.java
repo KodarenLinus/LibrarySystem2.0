@@ -42,7 +42,7 @@ public class AddBookController {
     void addBook(ActionEvent event) {       
         PopUpWindow popUpWindow = new PopUpWindow();
         String fxmlf = "newBookPop.fxml";
-        popUpWindow.popUpChange(event, fxmlf);
+        popUpWindow.popUp(event, fxmlf);
         // Efter att popupen har stängts, lägg till boken i databasen
         AddBook addBook = new AddBook();
         Book book = new Book(Title.getText(), Location.getText(), Integer.parseInt(ISBN.getText()));

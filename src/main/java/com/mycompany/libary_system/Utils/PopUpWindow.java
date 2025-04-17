@@ -16,7 +16,7 @@ import javafx.stage.Stage;
  * @author Linus
  */
 public class PopUpWindow {
-    public void popUpChange(Event event, String fmxlf) {
+    public void popUp(Event event, String fmxlf) {
          try {
             // Ladda FXML-filen för popupen
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/libary_system/" + fmxlf));
