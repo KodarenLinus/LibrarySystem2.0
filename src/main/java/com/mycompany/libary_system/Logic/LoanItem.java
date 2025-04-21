@@ -25,57 +25,63 @@ public class LoanItem {
     // Här hämtar vi kundvagn och lägger in den i loanrows!!!!
     public void addToLoanRows(int custID, ArrayList<Items> itemsToLoan, Event event) {
         DatabaseConnector connDB = new ConnDB();
-        Connection conn = connDB.connect();
-        String getNumberOfLoans = "SELECT COUNT(loanrowID) AS total FROM LoanRow WHERE (ActiveLoan = true) AND (LoanID IN (SELECT LoanID FROM Loan WHERE CustomerID = ?))";
-        String getAllowedLoan = "SELECT LoanLimit FROM CustomerCategory WHERE CustomerCategoryID IN (SELECT CustomerCategoryID FROM Customer WHERE CustomerID = ?)";
-        int allowedLoan = 0;
-        
-        try (
-            PreparedStatement getNumberOfLoansStmt = conn.prepareStatement(getNumberOfLoans);
-            PreparedStatement getAllowedLoanStmt = conn.prepareStatement(getAllowedLoan); 
-        ) {
-            getAllowedLoanStmt.setInt(1, custID);
-            ResultSet rs1 = getAllowedLoanStmt.executeQuery();
-            if (rs1.next()) {
-                allowedLoan = rs1.getInt("LoanLimit");
+        try (Connection conn = connDB.connect()) {
+            int currentLoans = getActiveLoanCount(conn, custID);
+            int allowedLoan = getAllowedLoanLimit(conn, custID);
+            
+            //Kollar om användaren har för många aktiva lån, men också om loanlimit överskrids med aktiva lån + kundvagnen
+            if (exceedsLoanLimit(currentLoans, itemsToLoan.size(), allowedLoan)) {
+                boolean cartTooBig = currentLoans < allowedLoan;
+                handleLoanLimitExceeded(event, cartTooBig);
+                return;
             }
-            
-            getNumberOfLoansStmt.setInt(1, custID);
-            ResultSet rs = getNumberOfLoansStmt.executeQuery();
-            int count = 0;
 
-            while (rs.next()) {
-                count = rs.getInt("total");
-            }
-            if (count < allowedLoan) {    
-                for (Items item : itemsToLoan) {
-                    count++;
-                }
+            int loanID = insertLoanAndGetID(conn, custID);
+            if (loanID == -1) return;
 
-                //Kör bara koden om man har lån
-                if (count <= allowedLoan) {                
-                    int loanID = insertLoanAndGetID(conn, custID); //Hämtar loanID för kund!
-                    if (loanID == -1) return; //om vi inte har något lån avbryter vi metoden!
+            insertLoanRows(conn, loanID, itemsToLoan);
 
-                    insertLoanRows(conn, loanID, itemsToLoan);
-                } else {
-                    PopUpWindow popUpWindow = new PopUpWindow();
-                    String fxmlf = "PopUpToManyActiveLoansAndCartItems.fxml";
-                    popUpWindow.popUp(event, fxmlf);
-                }
-            
-            } else {
-                PopUpWindow popUpWindow = new PopUpWindow();
-                String fxmlf = "PopUpToManyActiveLoans.fxml";
-                popUpWindow.popUp(event, fxmlf);
-            
-            }
-            
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
     
+    // Hämtar aktiva lån
+    private int getActiveLoanCount(Connection conn, int custID) throws SQLException {
+        String sql = "SELECT COUNT(loanrowID) AS total FROM LoanRow WHERE ActiveLoan = true AND LoanID IN (SELECT LoanID FROM Loan WHERE CustomerID = ?)";
+        try (
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            stmt.setInt(1, custID);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? rs.getInt("total") : 0;
+        }
+    }
+    
+    // Hämtar användarens Loan Limit
+    private int getAllowedLoanLimit(Connection conn, int custID) throws SQLException {
+        String sql = "SELECT LoanLimit FROM CustomerCategory WHERE CustomerCategoryID IN (SELECT CustomerCategoryID FROM Customer WHERE CustomerID = ?)";
+        try (
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            stmt.setInt(1, custID);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? rs.getInt("LoanLimit") : 0;
+        }
+    }
+    
+    // En metod som retunera två olika sätt att överskida loan limit
+    private boolean exceedsLoanLimit(int currentLoans, int cartSize, int allowedLoan) {
+        return currentLoans >= allowedLoan || (currentLoans + cartSize) > allowedLoan;
+    }
+    
+    // Hantera överskirden loan limit... Dvs vilken output som skall skickas till användaren.
+    private void handleLoanLimitExceeded(Event event, boolean cartTooBig) {
+        PopUpWindow popUpWindow = new PopUpWindow();
+        String fxml = cartTooBig ? "PopUpToManyActiveLoansAndCartItems.fxml" : "PopUpToManyActiveLoans.fxml";
+        popUpWindow.popUp(event, fxml);
+    }
+
     // Gör insert för ett lån i databasen samt hämtar kundens senast inloggning
     private int insertLoanAndGetID(Connection conn, int custID) throws SQLException {
         String insertLoanSQL = "INSERT INTO loan (customerID) VALUES (?)";
