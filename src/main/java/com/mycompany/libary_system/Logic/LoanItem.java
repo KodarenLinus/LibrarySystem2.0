@@ -7,12 +7,14 @@ package com.mycompany.libary_system.Logic;
 import com.mycompany.libary_system.Database.DatabaseConnector;
 import com.mycompany.libary_system.Database.ConnDB;
 import com.mycompany.libary_system.Models.Items;
+import com.mycompany.libary_system.Utils.PopUpWindow;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import javafx.event.Event;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 /**
  *
@@ -21,16 +23,54 @@ import java.util.ArrayList;
 public class LoanItem {
     
     // Här hämtar vi kundvagn och lägger in den i loanrows!!!!
-    public void addToLoanRows(int custID, ArrayList<Items> itemsToLoan) {
+    public void addToLoanRows(int custID, ArrayList<Items> itemsToLoan, Event event) {
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
+        String getNumberOfLoans = "SELECT COUNT(loanrowID) AS total FROM LoanRow WHERE (ActiveLoan = true) AND (LoanID IN (SELECT LoanID FROM Loan WHERE CustomerID = ?))";
+        String getAllowedLoan = "SELECT LoanLimit FROM CustomerCategory WHERE CustomerCategoryID IN (SELECT CustomerCategoryID FROM Customer WHERE CustomerID = ?)";
+        int allowedLoan = 0;
+        
+        try (
+            PreparedStatement getNumberOfLoansStmt = conn.prepareStatement(getNumberOfLoans);
+            PreparedStatement getAllowedLoanStmt = conn.prepareStatement(getAllowedLoan); 
+        ) {
+            getAllowedLoanStmt.setInt(1, custID);
+            ResultSet rs1 = getAllowedLoanStmt.executeQuery();
+            if (rs1.next()) {
+                allowedLoan = rs1.getInt("LoanLimit");
+            }
+            
+            getNumberOfLoansStmt.setInt(1, custID);
+            ResultSet rs = getNumberOfLoansStmt.executeQuery();
+            int count = 0;
 
-        try {
-            int loanID = insertLoanAndGetID(conn, custID); //Hämtar loanID för kund!
-            if (loanID == -1) return; //om vi inte har något lån avbryter vi metoden!
+            while (rs.next()) {
+                count = rs.getInt("total");
+            }
+            if (count < allowedLoan) {    
+                for (Items item : itemsToLoan) {
+                    count++;
+                }
 
-            insertLoanRows(conn, loanID, itemsToLoan);
+                //Kör bara koden om man har lån
+                if (count <= allowedLoan) {                
+                    int loanID = insertLoanAndGetID(conn, custID); //Hämtar loanID för kund!
+                    if (loanID == -1) return; //om vi inte har något lån avbryter vi metoden!
 
+                    insertLoanRows(conn, loanID, itemsToLoan);
+                } else {
+                    PopUpWindow popUpWindow = new PopUpWindow();
+                    String fxmlf = "PopUpToManyActiveLoansAndCartItems.fxml";
+                    popUpWindow.popUp(event, fxmlf);
+                }
+            
+            } else {
+                PopUpWindow popUpWindow = new PopUpWindow();
+                String fxmlf = "PopUpToManyActiveLoans.fxml";
+                popUpWindow.popUp(event, fxmlf);
+            
+            }
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }

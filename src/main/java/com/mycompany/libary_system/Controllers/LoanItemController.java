@@ -67,7 +67,7 @@ public class LoanItemController {
         LoanItem loanItem = new LoanItem();
         ArrayList<Items> itemsToLoan = new ArrayList<>(itemCartList.getItems());
         Session session = Session.getInstance();
-        loanItem.addToLoanRows(session.getUserId(), itemsToLoan);
+        loanItem.addToLoanRows(session.getUserId(), itemsToLoan, event);
     }
     
     @FXML
