@@ -29,6 +29,11 @@ public class LoginViewController{
     @FXML
     private PasswordField userPassword;
     
+    /**
+     * Hanterar inloggning för användare
+     *
+     * @param event ActionEvent som triggas när användaren vill logga in
+     */
     @FXML
     void loginButton(ActionEvent event) throws IOException{
         

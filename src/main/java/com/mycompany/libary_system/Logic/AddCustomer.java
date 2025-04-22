@@ -24,18 +24,22 @@ import javafx.scene.control.TextField;
  */
 public class AddCustomer {
     
-    
+    /**
+     * Lägger till en customer i databasen
+     *
+     * @param Ett Customer objekt som vi skickar till databasen
+     */
     public void insertCustomer(Customer customer){
     
     DatabaseConnector connDB = new ConnDB();
     Connection conn = connDB.connect();
+    String insertCustomer = "INSERT INTO Customer (CustomerCategoryID, CategoryName, FirstName, LastName, Email, Adress, TelNumber, PasswordCustomer) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-    try {
-        PreparedStatement stmt1 = conn.prepareStatement(
-            "INSERT INTO Customer (CustomerCategoryID, CategoryName, FirstName, LastName, Email, Adress, TelNumber, PasswordCustomer) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-        );
-
+    try (
+         PreparedStatement stmt1 = conn.prepareStatement(insertCustomer);   
+    ){
+        // Lägger till värden i customer tabelen
         stmt1.setInt(1, 3);  // Exempel: Staff
         stmt1.setString(2, "Studenet");
         stmt1.setString(3, customer.getFirstName());

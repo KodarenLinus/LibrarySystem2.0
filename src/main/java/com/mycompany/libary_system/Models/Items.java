@@ -9,7 +9,7 @@ package com.mycompany.libary_system.Models;
  * @author Linus
  */
 
-// Ett interface för items som vi 
+// Ett interface för items
 public interface Items {
     int getItemID();
     String getGenreName();

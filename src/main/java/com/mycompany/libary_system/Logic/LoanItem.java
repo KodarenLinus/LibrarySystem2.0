@@ -138,6 +138,7 @@ public class LoanItem {
             PreparedStatement insertStmt = conn.prepareStatement(insertLoanSQL);
             PreparedStatement getLoanIDStmt = conn.prepareStatement(getLoanIDSQL);
         ) {
+            // Lägger in värden i loan tabelen
             insertStmt.setInt(1, custID);
             insertStmt.executeUpdate();
 
@@ -173,7 +174,8 @@ public class LoanItem {
         )   {
             for (Items item : itemsToLoan) {
                 LocalDate endDate = calculatetLoanEndDate(getCategoryStmt, item.getItemID(), today);
-
+                
+                // Lägger in värden i loanRow tabelen
                 insertLoanRowStmt.setInt(1, loanID);
                 insertLoanRowStmt.setInt(2, item.getItemID());
                 insertLoanRowStmt.setString(3, today.toString());

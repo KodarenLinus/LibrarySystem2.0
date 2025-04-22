@@ -16,29 +16,31 @@ import java.sql.ResultSet;
  */
 public class Login {
     
-    // En metod som kollar inlognings uppgifter
+    /**
+     * Lägger till valt objekt i kundvagnen om det inte redan finns där.
+     *
+     * @param String username en sträng vi sparar användarnamnet som skrivs i användarnamn rutan
+     * @param String password en sträng vi sparar lösenordet som skrivs i lösenord rutan
+     * @return en boolean true eller false baserat på om man matchar användarnamn med rätt lösenord
+     */
     public boolean doLogin (String username, String password) {
         
-        // DB connection
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
         
-        String sql = "SELECT customerID, passwordCustomer From Customer where Email = ?";
+        String getCustomerLogin = "SELECT customerID, passwordCustomer From Customer where Email = ?";
         
         try (
-            PreparedStatement stmt = conn.prepareStatement(sql);      
+            PreparedStatement customerStmt = conn.prepareStatement(getCustomerLogin);      
         ) {
+            customerStmt.setString(1, username);
+            ResultSet rsCustomer = customerStmt.executeQuery();
             
-            stmt.setString(1, username);
-            ResultSet rs = stmt.executeQuery();
-            
-            //Loppar igenom alla resultat vi får av SQL-satsen!!!
-            while (rs.next()) {
-                String password_ = rs.getString("passwordCustomer");
+            while (rsCustomer.next()) {
+                String password_ = rsCustomer.getString("passwordCustomer");
                 
-                //Kollar lösenord och skapar en session
                 if (password_.equals(password)){
-                    int customerId = rs.getInt("CustomerID");
+                    int customerId = rsCustomer.getInt("CustomerID");
                     Session.getInstance().setUser(customerId, username); 
                     return true;
                 }

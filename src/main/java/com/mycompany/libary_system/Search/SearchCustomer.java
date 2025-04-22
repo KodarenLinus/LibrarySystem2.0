@@ -18,7 +18,13 @@ import java.util.ArrayList;
  * @author emildahlback
  */
 public class SearchCustomer {
-
+    
+     /**
+     * söker upp customer baserat på vad man skriver i sök rutan
+     *
+     * @param en sträng som innehåller det användaren skrivit i sök rutan
+     * @return En arrayLista som innehåller customer eller om sökning inte får någon träff så retuneras inget.
+     */
     public ArrayList<Customer> searchCustomer(String searchText) {
         
         ArrayList<Customer> results = new ArrayList<>();
@@ -26,16 +32,17 @@ public class SearchCustomer {
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
 
-        // Sök i förnamn eller efternamn
-        String query = "SELECT CustomerID, FirstName, LastName, TelNumber, Email, PasswordCustomer FROM Customer " +
+        String customerSearch = "SELECT CustomerID, FirstName, LastName, TelNumber, Email, PasswordCustomer FROM Customer " +
                        "WHERE FirstName LIKE ? OR LastName LIKE ?";
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (
+            PreparedStatement customerSearchStmt = conn.prepareStatement(customerSearch)
+        ) {
 
-            stmt.setString(1, "%" + searchText + "%");
-            stmt.setString(2, "%" + searchText + "%");
+            customerSearchStmt.setString(1, "%" + searchText + "%");
+            customerSearchStmt.setString(2, "%" + searchText + "%");
 
-            ResultSet rs = stmt.executeQuery();
+            ResultSet rs = customerSearchStmt.executeQuery();
 
             while (rs.next()) {
                 int id = rs.getInt("CustomerID");
