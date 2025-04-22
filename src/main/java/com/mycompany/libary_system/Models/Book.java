@@ -77,6 +77,14 @@ public class Book implements Items{
         return null; //
     }
     
+    
+     /**
+    * Overrides equals-metoden från Object för att jämföra två DVD-objekt.
+    * Två Book-objekt anses vara lika om de har samma itemID.
+    *
+    * @param obj Objektet som ska jämföras med det aktuella objektet.
+    * @return true om objekten är av samma klass och har samma itemID, annars false.
+    */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -85,6 +93,13 @@ public class Book implements Items{
         return itemID == other.getItemID();
     }
 
+    
+     /**
+    * Genererar ett hashvärde baserat på itemID.
+    * Detta används för att säkerställa att två lika objekt (enligt equals) får samma hashvärde.
+    *
+    * @return hashvärde för objektet.
+    */
     @Override
     public int hashCode() {
         return Objects.hash(itemID);

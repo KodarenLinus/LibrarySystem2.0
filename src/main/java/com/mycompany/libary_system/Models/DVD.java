@@ -70,9 +70,17 @@ public class DVD implements Items {
             return directorID; // Retunera varje author;
         }
         
-        return null; //
+        return null; 
     }
     
+    
+    /**
+    * Overrides equals-metoden från Object för att jämföra två DVD-objekt.
+    * Två DVD-objekt anses vara lika om de har samma itemID.
+    *
+    * @param obj Objektet som ska jämföras med det aktuella objektet.
+    * @return true om objekten är av samma klass och har samma itemID, annars false.
+    */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -81,6 +89,13 @@ public class DVD implements Items {
         return itemID == other.getItemID();
     }
 
+        
+    /**
+    * Genererar ett hashvärde baserat på itemID.
+    * Detta används för att säkerställa att två lika objekt (enligt equals) får samma hashvärde.
+    *
+    * @return hashvärde för objektet.
+    */
     @Override
     public int hashCode() {
         return Objects.hash(itemID);

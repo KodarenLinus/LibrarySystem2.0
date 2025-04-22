@@ -22,7 +22,15 @@ import javafx.event.Event;
  */
 public class LoanItem {
     
-    // Här hämtar vi kundvagn och lägger in den i loanrows!!!!
+    /**
+    * Lägger till objekt i lån (LoanRow) för en viss kund.
+    * Kontrollerar först om kunden får låna fler objekt utifrån sin lånegräns.
+    * Om gränsen överskrids visas ett popup-meddelande.
+    *
+    * @param custID ID för kunden som lånar
+    * @param itemsToLoan Lista med objekt som ska lånas
+    * @param event Event som triggar popup-fönster vid fel
+    */
     public void addToLoanRows(int custID, ArrayList<Items> itemsToLoan, Event event) {
         DatabaseConnector connDB = new ConnDB();
         try (Connection conn = connDB.connect()) {
@@ -46,7 +54,14 @@ public class LoanItem {
         }
     }
     
-    // Hämtar aktiva lån
+    /**
+    * Hämtar antalet aktiva lån som en kund har.
+    *
+    * @param conn Databasanslutning
+    * @param custID ID för kunden
+    * @return Antalet aktiva lån
+    * @throws SQLException vid fel i SQL-frågan
+    */
     private int getActiveLoanCount(Connection conn, int custID) throws SQLException {
         String sql = "SELECT COUNT(loanrowID) AS total FROM LoanRow WHERE ActiveLoan = true AND LoanID IN (SELECT LoanID FROM Loan WHERE CustomerID = ?)";
         try (
@@ -58,7 +73,14 @@ public class LoanItem {
         }
     }
     
-    // Hämtar användarens Loan Limit
+    /**
+    * Hämtar den tillåtna lånegränsen för en kund baserat på deras kundkategori.
+    *
+    * @param conn Databasanslutning
+    * @param custID ID för kunden
+    * @return Max antal objekt kunden får låna
+    * @throws SQLException vid fel i SQL-frågan
+    */
     private int getAllowedLoanLimit(Connection conn, int custID) throws SQLException {
         String sql = "SELECT LoanLimit FROM CustomerCategory WHERE CustomerCategoryID IN (SELECT CustomerCategoryID FROM Customer WHERE CustomerID = ?)";
         try (
@@ -70,19 +92,44 @@ public class LoanItem {
         }
     }
     
-    // En metod som retunera två olika sätt att överskida loan limit
+    /**
+    * Kontrollerar om kundens nuvarande aktiva lån plus kundvagn överskrider lånegränsen.
+    *
+    * @param currentLoans Antal aktiva lån kunden har
+    * @param cartSize Antal objekt i kundvagnen
+    * @param allowedLoan Max tillåtna lån
+    * @return true om gränsen överskrids, annars false
+    */
     private boolean exceedsLoanLimit(int currentLoans, int cartSize, int allowedLoan) {
         return currentLoans >= allowedLoan || (currentLoans + cartSize) > allowedLoan;
     }
     
-    // Hantera överskirden loan limit... Dvs vilken output som skall skickas till användaren.
+    /**
+    * Visar ett popup-fönster om kunden försöker låna för många objekt.
+    *
+    * @param event Event som triggar popup
+    * @param cartTooBig Om felet beror på att kundvagnen innehåller för många objekt
+    */
     private void handleLoanLimitExceeded(Event event, boolean cartTooBig) {
         PopUpWindow popUpWindow = new PopUpWindow();
-        String fxml = cartTooBig ? "PopUpToManyActiveLoansAndCartItems.fxml" : "PopUpToManyActiveLoans.fxml";
+        String fxml;
+        if (cartTooBig == true) {
+            fxml = "PopUpToManyActiveLoansAndCartItems.fxml";
+        } else {
+            fxml = "PopUpToManyActiveLoans.fxml";
+        }
+        
         popUpWindow.popUp(event, fxml);
     }
 
-    // Gör insert för ett lån i databasen samt hämtar kundens senast inloggning
+    /**
+    * Skapar ett nytt lån i databasen och returnerar ID:t för det nya lånet.
+    *
+    * @param conn Databasanslutning
+    * @param custID ID för kunden
+    * @return Det nya lånets ID eller -1 om något går fel
+    * @throws SQLException vid fel i SQL-frågan
+    */
     private int createLoanAndReturnID(Connection conn, int custID) throws SQLException {
         String insertLoanSQL = "INSERT INTO loan (customerID) VALUES (?)";
         String getLoanIDSQL = "SELECT MAX(loanid) FROM loan WHERE customerID = ?";
@@ -102,10 +149,18 @@ public class LoanItem {
             }
         }
 
-        return -1; //Hittar vi inget loan retunerar vi -1 vilket antyder att kunden inte har ett loan
+        return -1;
     }
     
-    // Här för vi in loanRows till databasen!!!
+    /**
+    * Lägger till flera rader i LoanRow-tabellen för ett lån.
+    * Varje objekt får ett start- och slutdatum för utlåningen.
+    *
+    * @param conn Databasanslutning
+    * @param loanID ID för det skapade lånet
+    * @param itemsToLoan Objekt som ska lånas
+    * @throws SQLException vid fel i SQL-frågan
+    */
     private void insertLoanRows(Connection conn, int loanID, ArrayList<Items> itemsToLoan) throws SQLException {
         String getCategorySQL = "SELECT categoryID FROM item WHERE itemID = ?";
         String insertLoanRowSQL = "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate, ActiveLoan) VALUES (?, ?, ?, ?, ?)";
@@ -123,7 +178,7 @@ public class LoanItem {
                 insertLoanRowStmt.setInt(2, item.getItemID());
                 insertLoanRowStmt.setString(3, today.toString());
                 insertLoanRowStmt.setString(4, endDate.toString());
-                insertLoanRowStmt.setBoolean(5, true); // Låneraden ska alltid vara aktivt när vi skapar ett loanRow
+                insertLoanRowStmt.setBoolean(5, true);
                 insertLoanRowStmt.addBatch();
             }
 
@@ -131,8 +186,16 @@ public class LoanItem {
         }
     }
     
-    // En metod som håller koll på de olika kategoriernas lån lägnd och som håller koll på dagens datum!!!
-    // metoden retunera ett datum baserat på kategori och dagens datum!!
+    /**
+    * Beräknar lånets slutdatum beroende på objektets kategori.
+    * T.ex. böcker lånas i en månad, filmer i en vecka, etc.
+    *
+    * @param categoryStmt Förberedd SQL-fråga för att hämta kategoriID
+    * @param itemID ID för objektet
+    * @param date Startdatum för lånet
+    * @return Uträknat slutdatum för lånet
+    * @throws SQLException vid fel i SQL-frågan
+    */
     private LocalDate calculatetLoanEndDate(PreparedStatement categoryStmt, int itemID, LocalDate date) throws SQLException {
         categoryStmt.setInt(1, itemID);
         ResultSet rs = categoryStmt.executeQuery();

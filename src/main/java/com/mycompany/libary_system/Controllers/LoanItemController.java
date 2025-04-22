@@ -38,6 +38,11 @@ public class LoanItemController {
     @FXML
     private ListView<Items> itemCartList;
     
+    /**
+     * Lägger till valt objekt i kundvagnen om det inte redan finns där.
+     *
+     * @param event MouseEvent som triggar när man klickar på ett objekt i listan
+     */
     @FXML
     void addToCart(MouseEvent event) {
         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
@@ -48,6 +53,11 @@ public class LoanItemController {
         }
     }
     
+    /**
+     * Tar bort valt objekt från kundvagnen.
+     *
+     * @param event MouseEvent som triggar när man klickar på ett objekt i kundvagnen
+     */
     @FXML
     void removeFromCart(MouseEvent event) {
          Items selectedItem = itemCartList.getSelectionModel().getSelectedItem();
@@ -81,10 +91,13 @@ public class LoanItemController {
         loanItem.addToLoanRows(session.getUserId(), itemsToLoan, event);
     }
     
+     /**
+     * Initierar vyn när den laddas. Ställer in hur objekt listas, hämtar alla objekt och lägger till sökfunktionalitet.
+     */
     @FXML
     public void initialize()  {
         
-        // Gör så att vi visar titlen på våra items!!!!
+        // Visar titel för varje objekt i listan
         ItemList.setCellFactory(list -> new ListCell<Items>() {
             @Override
             protected void updateItem(Items item, boolean empty) {
@@ -97,13 +110,13 @@ public class LoanItemController {
             }
         });
         
-        // Visar alla våra items när sidan laddas in!!
+        // Laddar in alla objekt vid start
         SearchItems searchItems = new SearchItems();
         ArrayList<Items> allItems = searchItems.search("");
         allItems.removeAll(itemCartList.getItems());
         ItemList.getItems().setAll(allItems);
         
-        // Updaterar våran item lista i real tid!!!
+        // Söker efter objekt i realtid och visar matchningar
         ScearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
             ArrayList<Items> searchResults = searchItems.search(newValue);
             searchResults.removeAll(itemCartList.getItems());
@@ -111,7 +124,9 @@ public class LoanItemController {
         });
     }
     
-    // en metod som vi använder för att uppdatera våra items i de olika listorna (kundvagn och tillgängliga items)
+    /**
+    * Uppdaterar listan med tillgängliga objekt baserat på söktermen och tar bort de som redan finns i kundvagnen.
+    */
     private void refreshItemList() {
         String searchTerm = ScearchItem.getText();
         SearchItems searchItems = new SearchItems();
