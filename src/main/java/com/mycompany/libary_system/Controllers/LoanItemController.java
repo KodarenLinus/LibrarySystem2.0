@@ -44,6 +44,17 @@ public class LoanItemController {
 
         if (selectedItem != null && !itemCartList.getItems().contains(selectedItem)) {
             itemCartList.getItems().add(selectedItem);
+            refreshItemList();
+        }
+    }
+    
+    @FXML
+    void removeFromCart(MouseEvent event) {
+         Items selectedItem = itemCartList.getSelectionModel().getSelectedItem();
+
+        if (selectedItem != null) {
+            itemCartList.getItems().remove(selectedItem);
+            refreshItemList();
         }
     }
     
@@ -85,12 +96,27 @@ public class LoanItemController {
                 }
             }
         });
-
-            // Updaterar våran item lista i real tid!!!
-            ScearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
-            SearchItems searchItems = new SearchItems();
-            ItemList.getItems().clear();
-            ItemList.getItems().addAll(searchItems.search(newValue));
+        
+        // Visar alla våra items när sidan laddas in!!
+        SearchItems searchItems = new SearchItems();
+        ArrayList<Items> allItems = searchItems.search("");
+        allItems.removeAll(itemCartList.getItems());
+        ItemList.getItems().setAll(allItems);
+        
+        // Updaterar våran item lista i real tid!!!
+        ScearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
+            ArrayList<Items> searchResults = searchItems.search(newValue);
+            searchResults.removeAll(itemCartList.getItems());
+            ItemList.getItems().setAll(searchResults);
         });
+    }
+    
+    // en metod som vi använder för att uppdatera våra items i de olika listorna (kundvagn och tillgängliga items)
+    private void refreshItemList() {
+        String searchTerm = ScearchItem.getText();
+        SearchItems searchItems = new SearchItems();
+        ArrayList<Items> searchResults = new ArrayList<>(searchItems.search(searchTerm));
+        searchResults.removeAll(itemCartList.getItems());
+        ItemList.getItems().setAll(searchResults);
     }
 }

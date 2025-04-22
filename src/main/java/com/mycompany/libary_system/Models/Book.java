@@ -6,6 +6,7 @@ package com.mycompany.libary_system.Models;
 
 import com.mycompany.libary_system.Models.Items;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  *
@@ -76,6 +77,18 @@ public class Book implements Items{
         return null; //
     }
     
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Book other = (Book) obj;
+        return itemID == other.getItemID();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(itemID);
+    }
     
     @Override
     public String toString() {

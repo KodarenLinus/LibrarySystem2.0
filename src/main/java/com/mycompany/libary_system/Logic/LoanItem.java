@@ -36,7 +36,7 @@ public class LoanItem {
                 return;
             }
 
-            int loanID = insertLoanAndGetID(conn, custID);
+            int loanID = createLoanAndReturnID(conn, custID);
             if (loanID == -1) return;
 
             insertLoanRows(conn, loanID, itemsToLoan);
@@ -83,7 +83,7 @@ public class LoanItem {
     }
 
     // Gör insert för ett lån i databasen samt hämtar kundens senast inloggning
-    private int insertLoanAndGetID(Connection conn, int custID) throws SQLException {
+    private int createLoanAndReturnID(Connection conn, int custID) throws SQLException {
         String insertLoanSQL = "INSERT INTO loan (customerID) VALUES (?)";
         String getLoanIDSQL = "SELECT MAX(loanid) FROM loan WHERE customerID = ?";
 
@@ -117,7 +117,7 @@ public class LoanItem {
             PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRowSQL)
         )   {
             for (Items item : itemsToLoan) {
-                LocalDate endDate = getLoanEndDate(getCategoryStmt, item.getItemID(), today);
+                LocalDate endDate = calculatetLoanEndDate(getCategoryStmt, item.getItemID(), today);
 
                 insertLoanRowStmt.setInt(1, loanID);
                 insertLoanRowStmt.setInt(2, item.getItemID());
@@ -133,7 +133,7 @@ public class LoanItem {
     
     // En metod som håller koll på de olika kategoriernas lån lägnd och som håller koll på dagens datum!!!
     // metoden retunera ett datum baserat på kategori och dagens datum!!
-    private LocalDate getLoanEndDate(PreparedStatement categoryStmt, int itemID, LocalDate date) throws SQLException {
+    private LocalDate calculatetLoanEndDate(PreparedStatement categoryStmt, int itemID, LocalDate date) throws SQLException {
         categoryStmt.setInt(1, itemID);
         ResultSet rs = categoryStmt.executeQuery();
 

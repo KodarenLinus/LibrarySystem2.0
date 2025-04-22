@@ -33,7 +33,7 @@
         </menus>
       </MenuBar>
       <ListView fx:id="ItemList" layoutY="60.0" onMouseClicked="#addToCart" prefHeight="280.0" prefWidth="264.0" />
-      <ListView fx:id="itemCartList" layoutX="393.0" layoutY="60.0" prefHeight="200.0" prefWidth="200.0" />
+      <ListView fx:id="itemCartList" layoutX="393.0" layoutY="60.0" onMouseClicked="#removeFromCart" prefHeight="200.0" prefWidth="200.0" />
       <RadioButton layoutX="264.0" layoutY="364.0" mnemonicParsing="false" text="Visa böcker" />
       <RadioButton layoutX="365.0" layoutY="364.0" mnemonicParsing="false" text="Visa filmer" />
       <TextField fx:id="ScearchItem" layoutX="45.0" layoutY="360.0" promptText="Sök böcker" />
