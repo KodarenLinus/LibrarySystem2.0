@@ -43,7 +43,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>com.mycompany.libary_system.Libary_System</mainClass>
+                    <mainClass>com.mycompany.library_system.Library_System</mainClass>
                 </configuration>
                 <executions>
                     <execution>
