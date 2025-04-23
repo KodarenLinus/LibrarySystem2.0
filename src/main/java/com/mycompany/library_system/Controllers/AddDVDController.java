@@ -49,7 +49,7 @@ public class AddDVDController {
         popUpWindow.popUp(event, fxmlf);
         
         AddDVD addDVD = new AddDVD();
-        DVD dvd = new DVD(Title.getText(), Location.getText());
+        DVD dvd = new DVD(Title.getText(), Location.getText(), 3, "");
         addDVD.insertDVD(dvd);
     }
 

@@ -16,6 +16,8 @@ public class Book implements Items{
     private int itemID;
     private String title;
     private ArrayList<Integer> authorsID;
+    private int genreID;
+    private int categoryID;
     private String genreName;
     private String categoryName;
     private String location;
@@ -23,10 +25,12 @@ public class Book implements Items{
     private int isbn;
     
     
-    public Book(String title, String location, int isbn) {
+    public Book(String title, String location, int isbn, int categoryID, String categoryName) {
         this.title = title;
         this.location = location;
         this.isbn = isbn;
+        this.categoryID = categoryID;
+        this.categoryName = categoryName;
     }
     
     public void setItemID(int itemID) {
@@ -36,6 +40,16 @@ public class Book implements Items{
     @Override
     public int getItemID() {
         return itemID;
+    }
+    
+    @Override
+    public int getGenreID() {
+        return genreID;
+    }
+
+    @Override
+    public int getCategoryID() {
+        return categoryID;
     }
 
     @Override

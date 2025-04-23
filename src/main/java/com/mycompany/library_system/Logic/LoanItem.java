@@ -18,9 +18,17 @@ import javafx.event.Event;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 /**
  *
- * @author emildahlback
+ * En klass som hantera lån och lägger in dem i databasen
+ * 
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class LoanItem {
+    
+    // Items kategoriers
+    private static final int BOOK = 1;
+    private static final int BOOK_COURSE_LITRATURE = 2;
+    private static final int DVD = 3;
+    
     
     /**
     * Lägger till objekt i lån (LoanRow) för en viss kund.
@@ -206,9 +214,9 @@ public class LoanItem {
             int categoryID = rs.getInt("categoryID");
 
             switch (categoryID) {
-                case 1: return date.plusMonths(1);
-                case 2: return date.plusWeeks(1);
-                case 3: return date.plusWeeks(2);
+                case BOOK: return date.plusMonths(1);
+                case BOOK_COURSE_LITRATURE: return date.plusWeeks(1);
+                case DVD: return date.plusWeeks(2);
                 default: return date;
             }
         }

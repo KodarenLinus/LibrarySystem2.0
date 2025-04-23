@@ -39,13 +39,21 @@ public class AddBookController {
     }
 
     @FXML
-    void addBook(ActionEvent event) {       
-        PopUpWindow popUpWindow = new PopUpWindow();
-        String fxmlf = "newBookPop.fxml";
-        popUpWindow.popUp(event, fxmlf);
-        // Efter att popupen har stängts, lägg till boken i databasen
-        AddBook addBook = new AddBook();
-        Book book = new Book(Title.getText(), Location.getText(), Integer.parseInt(ISBN.getText()));
-        addBook.insertBook(book);
+    void addBook(ActionEvent event) {
+        try {
+            int isbn = Integer.parseInt(ISBN.getText());
+            
+            PopUpWindow popUpWindow = new PopUpWindow();
+            String fxmlf = "newBookPop.fxml";
+            popUpWindow.popUp(event, fxmlf);
+
+            // Efter att popupen har stängts, lägg till boken i databasen
+            AddBook addBook = new AddBook();
+            Book book = new Book(Title.getText(), Location.getText(), isbn, 3, "");
+            addBook.insertBook(book);
+        } catch (NumberFormatException e){
+            // En pop-up som säger att vi måste skiva enbart heltal
+        }
+       
     }
 }

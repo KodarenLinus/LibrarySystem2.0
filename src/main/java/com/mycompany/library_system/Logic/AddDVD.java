@@ -14,6 +14,8 @@ import java.sql.SQLException;
 
 /**
  *
+ * En klass som hantera Dvd:er som skall läggas in i databasen
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class AddDVD {

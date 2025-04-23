@@ -17,15 +17,19 @@ public class DVD implements Items {
     private int itemID;
     private String title;
     private ArrayList<Integer> directorsID;
+    private int genreID;
+    private int categoryID;
     private String genreName;
     private String categoryName;
     private String location;
     private boolean available;
     
     // Konstruktor
-    public DVD (String title, String location) {
+    public DVD (String title, String location, int categoryID, String categoryName) {
         this.title = title;
         this.location = location;
+        this.categoryID = categoryID;
+        this.categoryName = categoryName;
     }
     
     public void setItemID(int itemID) {
@@ -35,6 +39,16 @@ public class DVD implements Items {
     @Override
     public int getItemID() {
         return itemID;
+    }
+    
+    @Override
+    public int getGenreID() {
+        return genreID;
+    }
+
+    @Override
+    public int getCategoryID() {
+        return categoryID;
     }
 
     @Override

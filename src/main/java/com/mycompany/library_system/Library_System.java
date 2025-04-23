@@ -24,6 +24,7 @@ import javafx.stage.Stage;
  * @author Linus, Emil, Oliver, Viggo
  * @version 1.0
  * @since 2025-05-20
+ * 
  */
 public class Library_System extends Application {
 

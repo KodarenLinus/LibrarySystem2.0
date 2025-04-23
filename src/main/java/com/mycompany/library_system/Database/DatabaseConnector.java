@@ -8,6 +8,8 @@ import java.sql.Connection;
 
 /**
  *
+ * Ett interface för databaskoppling
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public interface DatabaseConnector {

@@ -33,7 +33,7 @@ public class SearchItems {
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
         
-        String itemSearch = "SELECT itemID, title, location FROM item WHERE title LIKE ? and available = true";
+        String itemSearch = "SELECT itemID, title, CategoryID, CategoryName, location FROM item WHERE title LIKE ? and available = true";
         String itemSearchInBook = "SELECT * FROM BOOK WHERE itemID = ?";
         String itemSearchInDVD = "SELECT * FROM DVD WHERE itemID = ?";
         
@@ -49,6 +49,8 @@ public class SearchItems {
                 int id = rsItem.getInt("itemID");
                 String title = rsItem.getString("title");
                 String location = rsItem.getString("location");
+                String categoryName = rsItem.getString("CategoryName");
+                int categoryID = rsItem.getInt("CategoryID");
                
                 bookStmt.setInt(1, id);
                 dvdStmt.setInt(1, id);
@@ -56,14 +58,14 @@ public class SearchItems {
                 ResultSet rsBook = bookStmt.executeQuery();
                 if (rsBook.next()) {
                     int isbn = rsBook.getInt("ISBN");
-                    Book book = new Book(title, location, isbn);
+                    Book book = new Book(title, location, isbn, categoryID, categoryName);
                     book.setItemID(id);
                     results.add(book);
                     
                 } else {
                     ResultSet rsDVD = dvdStmt.executeQuery();
                     if (rsDVD.next()) {
-                        DVD dvd = new DVD(title, location);
+                        DVD dvd = new DVD(title, location, categoryID, categoryName);
                         dvd.setItemID(id);
                         results.add(dvd);
                     }

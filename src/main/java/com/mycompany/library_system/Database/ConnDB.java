@@ -10,6 +10,8 @@ import java.sql.SQLException;
 
 /**
  *
+ * Den här klassen hanterar våran databas koppling
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 

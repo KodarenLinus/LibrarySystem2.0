@@ -19,6 +19,8 @@ import java.util.logging.Logger;
 
 /**
  *
+ * En klass som hantera böcker som skall läggas in i databasen
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class AddBook {
@@ -53,7 +55,7 @@ public class AddBook {
             stmt2.executeUpdate();
 
         } catch (SQLException ex){
-
+            
         }
     }
 }

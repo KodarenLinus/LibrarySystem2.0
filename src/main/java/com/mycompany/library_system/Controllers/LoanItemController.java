@@ -17,6 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -46,10 +47,28 @@ public class LoanItemController {
     @FXML
     void addToCart(MouseEvent event) {
         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
-
-        if (selectedItem != null && !itemCartList.getItems().contains(selectedItem)) {
-            itemCartList.getItems().add(selectedItem);
-            refreshItemList();
+        
+        // Kategorier som inte får läggas till i varukorgen
+        final int REFERENSLITTERATUR = 4;
+        final int MAGAZINES = 5;
+        
+        if (selectedItem != null) {
+            
+            int categoryId = selectedItem.getCategoryID();
+            if (categoryId == REFERENSLITTERATUR || categoryId == MAGAZINES) {
+                // Visa popup-varning
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Ej tillåtet");
+                alert.setHeaderText("Kan inte läggas till");
+                alert.setContentText(selectedItem.getCategoryName() + " är inte tillåten i kundvagnen.");
+                alert.showAndWait();
+                return;
+            }
+            
+            if (!itemCartList.getItems().contains(selectedItem)) {
+                itemCartList.getItems().add(selectedItem);
+                refreshItemList();
+            }
         }
     }
     
@@ -80,9 +99,10 @@ public class LoanItemController {
     @FXML
     void makeOrder(ActionEvent event) throws IOException{
         
-        String fxmlf = "CustomerView.fxml";
+        
+        /*String fxmlf = "CustomerView.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
-        changeWindow.windowChange(event, fxmlf);
+        changeWindow.windowChange(event, fxmlf);*/
         
         // Skapar ett lån utifrån vad vi har i kundvagnen!!!
         LoanItem loanItem = new LoanItem();
