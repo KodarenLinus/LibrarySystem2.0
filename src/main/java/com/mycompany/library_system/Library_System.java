@@ -13,7 +13,17 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author Linus
+ * Library System
+ * 
+ * Detta program simulerar ett bibliotekssystem där användare kan låna och återlämna objekt.
+ * Systemet hanterar användare, lånebara objekt och håller koll på lån och återlämning.
+ * Programmet kommunicerar med en relationsdatabas (MySQL).
+ *
+ * Startpunkten för programmet är denna klass.
+ * 
+ * @author Linus, Emil, Oliver, Viggo
+ * @version 1.0
+ * @since 2025-05-20
  */
 public class Library_System extends Application {
 
@@ -26,7 +36,7 @@ public class Library_System extends Application {
             stage.setTitle("Library System");
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace(); // 🔍 Key to debugging FXML load problems
+            e.printStackTrace();
         }
     }
 

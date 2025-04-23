@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class AddBook {
 

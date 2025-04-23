@@ -8,7 +8,7 @@ import java.sql.Connection;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public interface DatabaseConnector {
     Connection connect();

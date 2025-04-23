@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 
 public class ConnDB implements DatabaseConnector {
