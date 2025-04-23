@@ -15,7 +15,7 @@ import javafx.stage.Stage;
  *
  * @author Linus
  */
-public class Libary_System extends Application {
+public class Library_System extends Application {
 
    @Override
     public void start(Stage stage) {
