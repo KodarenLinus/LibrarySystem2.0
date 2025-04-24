@@ -25,6 +25,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
+/**
+ * Controller för att lägga till nya böcker i bibliotekssystemet.
+ * Hanterar användarinput, validering och inmatning till databasen.
+ * 
+ * @author Linus, Emil, Oliver, Viggo
+ */
 public class AddBookController {
 
     @FXML
@@ -46,7 +52,11 @@ public class AddBookController {
     @FXML
     private ToggleButton addNewBook;
     
-    
+    /**
+    * Navigerar användaren till föregående vy där man väljer typ av objekt att lägga till.
+    *
+    * @param event ActionEvent från knapptryckning
+    */
     @FXML
     void GoToItem(ActionEvent event) {
        
@@ -56,13 +66,19 @@ public class AddBookController {
 
     }
 
+    /**
+    * Försöker lägga till en ny bok efter att ha validerat användarens input.
+    * Visar popup-fönster vid framgång, eller felmeddelande vid ogiltig input.
+    *
+    * @param event ActionEvent från användarens knapptryckning
+    */
     @FXML
     void addBook(ActionEvent event) {
         String title;
         String header; 
         String content;
         
-        // Kollar att alla fält är ifyllda!
+        // Kontrollera att alla fält är ifyllda
         if (!isFormValid()) {
             title = "Alla fält är inte ifyllda";
             header ="Du måste fylla i alla fälten"; 
@@ -74,6 +90,7 @@ public class AddBookController {
         }
         
         try {
+            // Hämta och konvertera data från formuläret
             int isbn = Integer.parseInt(ISBN.getText());
             Category selectedCategory = Category.getValue();
             Genre selectedGenre = Genre.getValue();
@@ -81,8 +98,11 @@ public class AddBookController {
             // Borde kanske vara en alert
             PopUpWindow popUpWindow = new PopUpWindow();
             String fxmlf = "newBookPop.fxml";
+            
+            // Visa bekräftelse-popup            
             popUpWindow.popUp(event, fxmlf);
             
+             // Skapa bok-objekt och spara i databasen
             Book book = new Book(
                     Title.getText(), 
                     Location.getText(), 
@@ -94,8 +114,7 @@ public class AddBookController {
             AddBook addBook = new AddBook();
             addBook.insertBook(book);
         } catch (NumberFormatException e){
-            
-            // En pop-up som säger att vi måste skiva enbart heltal
+            // ISBN måste vara ett heltal – visa felmeddelande
             title = "Ej tillåten input";
             header ="Enbart heltal i ISBN fältet"; 
             content = "Du skrev in tecken som inte är siffror. Försök igen med ett giltigt ISBN.";
@@ -107,6 +126,7 @@ public class AddBookController {
     
     @FXML
     public void initialize() throws SQLException  {
+        
         Category.setCellFactory(list -> new ListCell<Category>() {
             @Override
             protected void updateItem(Category category, boolean empty) {
@@ -121,8 +141,10 @@ public class AddBookController {
         
         int categoryIDForDVD = 2; // sätt variabelns värde till dvd kategorin
         
+        // Initiera kategori-dropdown och ta bort DVD från listan
         GetCategories getCategories = new GetCategories();
         ArrayList<Category> allCategories = getCategories.getAllCategories();
+        // Ta bort DVD-kategorin från listan eftersom detta formulär endast är avsett för böcker
         allCategories.removeIf(category -> category.getCategoryID() == categoryIDForDVD);
         Category.getItems().setAll(allCategories);
         
@@ -138,12 +160,18 @@ public class AddBookController {
             }
         });
         
+        // Initiera genre-dropdown
         GetGenres getGenres = new GetGenres();
         ArrayList<Genre> allGenres = getGenres.getAllGenres();
         Genre.getItems().setAll(allGenres);
      
     }
     
+    /**
+    * Validerar att alla fält i formuläret är korrekt ifyllda.
+    *
+    * @return true om alla fält är ifyllda, annars false
+    */
     private boolean isFormValid() {
         return !(Title.getText().isEmpty() || Location.getText().isEmpty() || ISBN.getText().isEmpty()
              || Category.getValue() == null || Genre.getValue() == null);

@@ -13,30 +13,39 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- *
- * En klass som hantera Dvd:er som skall läggas in i databasen
- * 
+ * Hanterar inmatning av DVD-objekt i databasen.
+ * Lägger först till information i Item-tabellen,
+ * följt av ett infogande i DVD-tabellen.
+ *  
  * @author Linus, Emil, Oliver, Viggo
  */
 public class AddDVD {
 
     /**
-     * Lägger till en book i databasen
+     * Lägger till en DVD i databasen.
+     * Använder RETURN_GENERATED_KEYS för att hämta ItemID efter första insert.
      *
-     * @param Ett dvd objekt som vi skickar till databasen
+     * @param dvd Ett DVD-objekt som innehåller titel, genre, kategori, plats och regissör.
      */
     public void insertDVD (DVD dvd) {
         
+         // Skapar en databasanslutning
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
-        String insertToItem = "INSERT INTO Item (GenreID, CategoryID, GenreName, CategoryName, Title, Location, Available) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        String insertToDVD = "INSERT INTO DvD (ItemID, DirectorID) VALUES ((SELECT max(ItemID) From item), ?)";
+        
+        // SQL-fråga för att infoga i Item-tabellen
+        String insertToItem = "INSERT INTO Item (GenreID, CategoryID, GenreName, CategoryName, Title, Location, Available) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
+        // SQL-fråga för att infoga i DVD-tabellen
+        String insertToDVD = "INSERT INTO DVD (ItemID, DirectorID) "
+                + "VALUES (?, ?)";
                 
         try (
             PreparedStatement stmt1 = conn.prepareStatement(insertToItem);
             PreparedStatement stmt2 = conn.prepareStatement(insertToDVD);
         ){
-            // lägger till värden i item tabelen
+            // lägger till värden i item-tabelen
             stmt1.setInt(1, dvd.getGenreID());
             stmt1.setInt(2, dvd.getCategoryID());
             stmt1.setString(3, dvd.getGenreName());
@@ -46,12 +55,23 @@ public class AddDVD {
             stmt1.setBoolean(7, true);
             stmt1.executeUpdate();
             
-            // lägger till värden i dvd tabelen
-            stmt2.setInt(1, 1);
+            // Hämta genererat ItemID
+            int generatedItemID = -1;
+            try (var generatedKeys = stmt1.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    generatedItemID = generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Kunde inte hämta genererat ItemID.");
+                }
+            }
+
+            // Lägger till värden i DVD-tabellen
+            stmt2.setInt(1, generatedItemID);
+            stmt2.setInt(2, 1); // TODO: Hårdkodad DirectorID – byt till dynamisk hantering
             stmt2.executeUpdate();
 
         } catch (SQLException ex){
-
+            ex.printStackTrace();
         }
     }
 }

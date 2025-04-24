@@ -18,30 +18,39 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * En klass som hantera böcker som skall läggas in i databasen
+ * Hanterar inmatning av bokobjekt till databasen.
+ * Utför INSERT till både Item- och Book-tabellerna.
  * 
- * @author Linus, Emil, Oliver, Viggo
+ * @author Linus
  */
 public class AddBook {
 
      /**
-     * Lägger till en book i databasen
+     * Lägger till en bok i databasen.
+     * Först infogas bokens metadata i Item-tabellen,
+     * därefter läggs tillhörande information in i Book-tabellen.
      *
-     * @param Ett book objekt som vi skickar till databasen
+     * @param book Ett bokobjekt som innehåller titel, genre, kategori, plats och ISBN.
      */
     public void insertBook (Book book) {
         
+        // Skapar en databasanslutning
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
-        String insertToItem = "INSERT INTO Item (GenreID, CategoryID, GenreName, CategoryName, Title, Location, Available) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        String insertToBook = "INSERT INTO Book (ItemID, ISBN, PublisherID) VALUES ((SELECT max(ItemID) From item), ?, ?)";
+        
+        // SQL-fråga för att infoga i Item-tabellen
+        String insertToItem = "INSERT INTO Item (GenreID, CategoryID, GenreName, CategoryName, Title, Location, Available) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
+        // SQL-fråga för att infoga i Book-tabellen
+        String insertToBook = "INSERT INTO Book (ItemID, ISBN, PublisherID)"
+                + "VALUES (?, ?, ?)";
         
         try (
             PreparedStatement stmt1 = conn.prepareStatement(insertToItem);
             PreparedStatement stmt2 = conn.prepareStatement(insertToBook);
         ){
-            // Lägger in värden för item tabelen
+            // Lägger in värden för item-tabelen
             stmt1.setInt(1, book.getGenreID());
             stmt1.setInt(2, book.getCategoryID());
             stmt1.setString(3, book.getGenreName());
@@ -51,13 +60,27 @@ public class AddBook {
             stmt1.setBoolean(7, true);
             stmt1.executeUpdate();
             
-            // lägger in värden för book tabelen
-            stmt2.setInt(1, book.getIsbn());
-            stmt2.setInt(2, 7);
-            stmt2.executeUpdate();
+            
+        stmt1.executeUpdate();
+
+        // Hämta det genererade ItemID:t
+        int generatedItemID = -1;
+        try (var generatedKeys = stmt1.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                generatedItemID = generatedKeys.getInt(1);
+            } else {
+                throw new SQLException("Misslyckades att hämta genererat ItemID.");
+            }
+        }
+
+        // Sätt parametrar för andra INSERT (Book)
+        stmt2.setInt(1, generatedItemID);
+        stmt2.setInt(2, book.getIsbn());
+        stmt2.setInt(3, 7); // TODO: Byt till dynamiskt PublisherID senare
+        stmt2.executeUpdate();
 
         } catch (SQLException ex){
-            
+            ex.printStackTrace();
         }
     }
 }

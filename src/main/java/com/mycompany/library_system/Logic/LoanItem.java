@@ -6,6 +6,7 @@ package com.mycompany.library_system.Logic;
 
 import com.mycompany.library_system.Database.DatabaseConnector;
 import com.mycompany.library_system.Database.ConnDB;
+import com.mycompany.library_system.Models.CategoryType;
 import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Utils.AlertHandler;
 import com.mycompany.library_system.Utils.PopUpWindow;
@@ -23,13 +24,7 @@ import javafx.event.Event;
  * 
  * @author Linus, Emil, Oliver, Viggo
  */
-public class LoanItem {
-    
-    // Items kategoriers
-    private static final int BOOK = 1;
-    private static final int BOOK_COURSE_LITRATURE = 2;
-    private static final int DVD = 3;
-    
+public class LoanItem {    
     
     /**
     * Lägger till objekt i lån (LoanRow) för en viss kund.
@@ -224,15 +219,20 @@ public class LoanItem {
 
         if (rs.next()) {
             int categoryID = rs.getInt("categoryID");
+            CategoryType categoryType = CategoryType.fromId(categoryID);
 
-            switch (categoryID) {
-                case BOOK: return date.plusMonths(1);
-                case BOOK_COURSE_LITRATURE: return date.plusWeeks(1);
-                case DVD: return date.plusWeeks(2);
-                default: return date;
+            switch (categoryType) {
+                case BOOK: 
+                    return date.plusMonths(1);                    
+                case COURSE_LITERATURE: 
+                    return date.plusWeeks(1);
+                case DVD: 
+                    return date.plusWeeks(2);
+                default: 
+                    return date;
             }
         }
-
         return date;
     }
+     
 }

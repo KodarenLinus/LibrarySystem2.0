@@ -13,29 +13,41 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- *
- * @author Linus
+ * Klass för att hämta kategorier från databasen.
+ * Hämtar alla kategorier från Category-tabellen.
+ * 
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class GetCategories {
    
+    /**
+     * Hämtar alla kategorier från databasen.
+     *
+     * @return En lista med Category-objekt
+     * @throws SQLException Om databasfrågan misslyckas
+     */
     public ArrayList<Category> getAllCategories () throws SQLException {
-        
         ArrayList<Category> categoryList = new ArrayList<>();
         
+        // Skapar en databasanslutning
         ConnDB connDB = new ConnDB();
         Connection conn = connDB.connect();
+        
+        // En SQL-fråga för att hämta alla categorier
         String selectAllCategories = "SELECT * FROM Category";
         
-        PreparedStatement categoryStmt = conn.prepareStatement(selectAllCategories);
-        ResultSet rsCategory = categoryStmt.executeQuery();
-            
+        try (
+            PreparedStatement categoryStmt = conn.prepareStatement(selectAllCategories);
+            ResultSet rsCategory = categoryStmt.executeQuery();
+        ) {
             while (rsCategory.next()) {
                 int categoryID = rsCategory.getInt("CategoryID");
                 String categoryName = rsCategory.getString("CategoryName");
-                
+
                 Category category = new Category(categoryID, categoryName);
                 categoryList.add(category);
             }
+        }
             
         return categoryList;
     }
