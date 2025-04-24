@@ -11,6 +11,7 @@ import com.mycompany.library_system.Models.Category;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import com.mycompany.library_system.Models.DVD;
 import com.mycompany.library_system.Models.Genre;
+import com.mycompany.library_system.Utils.AlertHandler;
 import com.mycompany.library_system.Utils.PopUpWindow;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -61,6 +62,22 @@ public class AddDVDController {
 
     @FXML
     void addDVD(ActionEvent event) {
+        
+         String title;
+        String header; 
+        String content;
+        
+        // Kollar att alla fält är ifyllda!
+        if (!isFormValid()) {
+            title = "Alla fält är inte ifyllda";
+            header ="Du måste fylla i alla fälten"; 
+            content = "Du har missat att fylla i ett eller flera fält, "
+                    + "se till att alla fält är ifyllda innan du klickar dig vidare";
+            AlertHandler alertHandler = new AlertHandler();
+            alertHandler.createAlert(title, header, content);
+            return;
+        }
+        
         Genre selectedGenre = Genre.getValue();
         PopUpWindow popUpWindow = new PopUpWindow();
         String fxmlf = "newDVDPop.fxml";
@@ -90,6 +107,10 @@ public class AddDVDController {
         ArrayList<Genre> allGenres = getGenres.getAllGenres();
         Genre.getItems().setAll(allGenres);
         
+    }
+    
+    private boolean isFormValid() {
+        return !(Title.getText().isEmpty() || Location.getText().isEmpty() || Genre.getValue() == null);
     }
 
 }

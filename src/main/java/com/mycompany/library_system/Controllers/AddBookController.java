@@ -58,6 +58,21 @@ public class AddBookController {
 
     @FXML
     void addBook(ActionEvent event) {
+        String title;
+        String header; 
+        String content;
+        
+        // Kollar att alla fält är ifyllda!
+        if (!isFormValid()) {
+            title = "Alla fält är inte ifyllda";
+            header ="Du måste fylla i alla fälten"; 
+            content = "Du har missat att fylla i ett eller flera fält, "
+                    + "se till att alla fält är ifyllda innan du klickar dig vidare";
+            AlertHandler alertHandler = new AlertHandler();
+            alertHandler.createAlert(title, header, content);
+            return;
+        }
+        
         try {
             int isbn = Integer.parseInt(ISBN.getText());
             Category selectedCategory = Category.getValue();
@@ -67,16 +82,23 @@ public class AddBookController {
             PopUpWindow popUpWindow = new PopUpWindow();
             String fxmlf = "newBookPop.fxml";
             popUpWindow.popUp(event, fxmlf);
-
-            // Efter att popupen har stängts, lägg till boken i databasen
+            
+            Book book = new Book(
+                    Title.getText(), 
+                    Location.getText(), 
+                    isbn, selectedCategory.getCategoryID(), 
+                    selectedCategory.getCategoryName(), 
+                    selectedGenre.getGenreID(), 
+                    selectedGenre.getGenreName()
+            );
             AddBook addBook = new AddBook();
-            Book book = new Book(Title.getText(), Location.getText(), isbn, selectedCategory.getCategoryID(), selectedCategory.getCategoryName(), selectedGenre.getGenreID(), selectedGenre.getGenreName());
             addBook.insertBook(book);
         } catch (NumberFormatException e){
+            
             // En pop-up som säger att vi måste skiva enbart heltal
-            String title = "Ej tillåten input";
-            String header ="Enbart heltal i ISBN fältet"; 
-            String content = ("Du får inte skriva något annat än heltal i ISBN nummer fältet");
+            title = "Ej tillåten input";
+            header ="Enbart heltal i ISBN fältet"; 
+            content = "Du skrev in tecken som inte är siffror. Försök igen med ett giltigt ISBN.";
             AlertHandler alertHandler = new AlertHandler();
             alertHandler.createAlert(title, header, content);
         }
@@ -120,5 +142,10 @@ public class AddBookController {
         ArrayList<Genre> allGenres = getGenres.getAllGenres();
         Genre.getItems().setAll(allGenres);
      
+    }
+    
+    private boolean isFormValid() {
+        return !(Title.getText().isEmpty() || Location.getText().isEmpty() || ISBN.getText().isEmpty()
+             || Category.getValue() == null || Genre.getValue() == null);
     }
 }
