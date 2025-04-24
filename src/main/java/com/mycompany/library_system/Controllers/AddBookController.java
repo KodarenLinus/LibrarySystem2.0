@@ -8,6 +8,7 @@ import com.mycompany.library_system.Models.Category;
 import com.mycompany.library_system.Models.Genre;
 import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Search.SearchItems;
+import com.mycompany.library_system.Utils.AlertHandler;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import com.mycompany.library_system.Utils.PopUpWindow;
 import java.sql.SQLException;
@@ -62,6 +63,7 @@ public class AddBookController {
             Category selectedCategory = Category.getValue();
             Genre selectedGenre = Genre.getValue();
             
+            // Borde kanske vara en alert
             PopUpWindow popUpWindow = new PopUpWindow();
             String fxmlf = "newBookPop.fxml";
             popUpWindow.popUp(event, fxmlf);
@@ -72,6 +74,11 @@ public class AddBookController {
             addBook.insertBook(book);
         } catch (NumberFormatException e){
             // En pop-up som säger att vi måste skiva enbart heltal
+            String title = "Ej tillåten input";
+            String header ="Enbart heltal i ISBN fältet"; 
+            String content = ("Du får inte skriva något annat än heltal i ISBN nummer fältet");
+            AlertHandler alertHandler = new AlertHandler();
+            alertHandler.createAlert(title, header, content);
         }
        
     }
