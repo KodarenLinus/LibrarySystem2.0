@@ -90,8 +90,11 @@ public class AddBookController {
             }
         });
         
+        int categoryIDForDVD = 2; // sätt variabelns värde till dvd kategorin
+        
         GetCategories getCategories = new GetCategories();
         ArrayList<Category> allCategories = getCategories.getAllCategories();
+        allCategories.removeIf(category -> category.getCategoryID() == categoryIDForDVD);
         Category.getItems().setAll(allCategories);
         
         Genre.setCellFactory(list -> new ListCell<Genre>() {

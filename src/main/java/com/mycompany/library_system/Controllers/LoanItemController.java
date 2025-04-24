@@ -9,6 +9,7 @@ import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Logic.LoanItem;
 import com.mycompany.library_system.Search.SearchItems;
 import com.mycompany.library_system.Login.Session;
+import com.mycompany.library_system.Utils.AlertHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
@@ -56,12 +57,12 @@ public class LoanItemController {
             
             int categoryId = selectedItem.getCategoryID();
             if (categoryId == REFERENSLITTERATUR || categoryId == MAGAZINES) {
-                // Visa popup-varning
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Ej tillåtet");
-                alert.setHeaderText("Kan inte läggas till");
-                alert.setContentText(selectedItem.getCategoryName() + " är inte tillåten i kundvagnen.");
-                alert.showAndWait();
+                // Visa alert-varning
+                String title = "Ej tillåtet";
+                String header ="Kan inte läggas till"; 
+                String content = (selectedItem.getCategoryName() + " är inte tillåten i kundvagnen.");
+                AlertHandler alertHandler = new AlertHandler();
+                alertHandler.createAlert(title, header, content);
                 return;
             }
             

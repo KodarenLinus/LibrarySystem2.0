@@ -7,6 +7,7 @@ package com.mycompany.library_system.Logic;
 import com.mycompany.library_system.Database.DatabaseConnector;
 import com.mycompany.library_system.Database.ConnDB;
 import com.mycompany.library_system.Models.Items;
+import com.mycompany.library_system.Utils.AlertHandler;
 import com.mycompany.library_system.Utils.PopUpWindow;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -48,7 +49,7 @@ public class LoanItem {
             //Kollar om användaren har för många aktiva lån, men också om loanlimit överskrids med aktiva lån + kundvagnen
             if (exceedsLoanLimit(currentLoans, itemsToLoan.size(), allowedLoan)) {
                 boolean cartTooBig = currentLoans < allowedLoan;
-                handleLoanLimitExceeded(event, cartTooBig);
+                handleLoanLimitExceeded(cartTooBig);
                 return;
             }
 
@@ -115,19 +116,30 @@ public class LoanItem {
     /**
     * Visar ett popup-fönster om kunden försöker låna för många objekt.
     *
-    * @param event Event som triggar popup
     * @param cartTooBig Om felet beror på att kundvagnen innehåller för många objekt
     */
-    private void handleLoanLimitExceeded(Event event, boolean cartTooBig) {
-        PopUpWindow popUpWindow = new PopUpWindow();
-        String fxml;
-        if (cartTooBig == true) {
-            fxml = "PopUpToManyActiveLoansAndCartItems.fxml";
+    private void handleLoanLimitExceeded(boolean cartTooBig) {
+        //PopUpWindow popUpWindow = new PopUpWindow();
+        //String fxml;
+        String title;
+        String header;
+        String content;
+
+        if (cartTooBig) {
+            //fxml = "PopUpToManyActiveLoansAndCartItems.fxml";
+            title = "För Många aktiva lån + föremål i kundvagnen";
+            header = "Du måste lämna tillbaka föremål eller ta bort föremål ur din kundvagn";
+            content = "Gå till 'Mina lån' för att lämna tillbaka föremål eller ta bort några föremål ur kundvagnen.";
         } else {
-            fxml = "PopUpToManyActiveLoans.fxml";
+            //fxml = "PopUpToManyActiveLoans.fxml";
+            title = "För Många aktiva lån";
+            header = "Du måste lämna tillbaka föremål";
+            content = "Gå till 'Mina lån' för att lämna tillbaka föremål.";
         }
         
-        popUpWindow.popUp(event, fxml);
+        //popUpWindow.popUp(event, fxml);
+        AlertHandler alertHandler = new AlertHandler();
+        alertHandler.createAlert(title, header, content);
     }
 
     /**
