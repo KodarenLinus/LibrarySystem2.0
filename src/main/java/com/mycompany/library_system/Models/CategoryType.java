@@ -12,33 +12,42 @@ package com.mycompany.library_system.Models;
     * Metoden {@code fromId(int id)} används för att konvertera ett heltal från databasen
     * till motsvarande enum-typ.
     *
-    * Det ända Kategorierna här är de som är lånabara!!!
     */
     public enum CategoryType {
-        BOOK(1),
-        COURSE_LITERATURE(2),
-        DVD(3);
+        BOOK(1, "Bok"),
+    COURSE_LITERATURE(2, "Kurslitteratur"),
+    DVD(3, "DVD"),
+    REFRENCE_COPY(4, "Referensexemplar"),
+    MAGAZINE(5, "Tidskrift");
 
-        private final int id;
+    private final int id;
+    private final String displayName;
 
-        CategoryType(int id) { 
-            this.id = id; 
-        }
-        
-        public int getId() { 
-            return id; 
-        }
-        
-        /**
-        * Returnerar enum-typen som matchar det angivna ID:t.
-        *
-        * @param id Kategorins ID från databasen
-        * @return Matchande CategoryType eller null om inget matchar
-        */
-        public static CategoryType fromId(int id) {
-            for (CategoryType type : values()) {
-                if (type.id == id) return type;
-            }
-            return null;
-        }
+    CategoryType(int id, String displayName) {
+        this.id = id;
+        this.displayName = displayName;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+    
+    /**
+    * Returnerar enum-typen som matchar det angivna ID:t.
+    *
+    * @param id Kategorins ID från databasen
+    * @return Matchande CategoryType eller null om inget matchar
+    */
+    public static CategoryType fromId(int id) {
+        for (CategoryType type : values()) {
+            if (type.id == id) return type;
+        }
+        return null;
+    }
+        
+        
+}

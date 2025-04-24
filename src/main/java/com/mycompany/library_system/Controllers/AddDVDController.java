@@ -8,6 +8,7 @@ import com.mycompany.library_system.Logic.AddDVD;
 import com.mycompany.library_system.Logic.GetCategories;
 import com.mycompany.library_system.Logic.GetGenres;
 import com.mycompany.library_system.Models.Category;
+import com.mycompany.library_system.Models.CategoryType;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import com.mycompany.library_system.Models.DVD;
 import com.mycompany.library_system.Models.Genre;
@@ -84,7 +85,8 @@ public class AddDVDController {
         popUpWindow.popUp(event, fxmlf);
         
         AddDVD addDVD = new AddDVD();
-        DVD dvd = new DVD(Title.getText(), Location.getText(), 2, "DVD", selectedGenre.getGenreID(), selectedGenre.getGenreName());
+        CategoryType dvd_ = CategoryType.DVD;
+        DVD dvd = new DVD(Title.getText(), Location.getText(), dvd_.getId(), dvd_.getDisplayName(), selectedGenre.getGenreID(), selectedGenre.getGenreName());
         addDVD.insertDVD(dvd);
     }
     
