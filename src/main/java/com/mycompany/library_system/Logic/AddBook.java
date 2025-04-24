@@ -34,7 +34,7 @@ public class AddBook {
         
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
-        String insertToItem = "INSERT INTO Item (GenreID, CategoryID, Title, Location, Available) VALUES (?, ?, ?, ?, ?)";
+        String insertToItem = "INSERT INTO Item (GenreID, CategoryID, GenreName, CategoryName, Title, Location, Available) VALUES (?, ?, ?, ?, ?, ?, ?)";
         String insertToBook = "INSERT INTO Book (ItemID, ISBN, PublisherID) VALUES ((SELECT max(ItemID) From item), ?, ?)";
         
         try (
@@ -42,11 +42,13 @@ public class AddBook {
             PreparedStatement stmt2 = conn.prepareStatement(insertToBook);
         ){
             // Lägger in värden för item tabelen
-            stmt1.setInt(1, 10);
-            stmt1.setInt(2, 9);
-            stmt1.setString(3, book.getTitle());
-            stmt1.setString(4, book.getLocation());
-            stmt1.setBoolean(5, true);
+            stmt1.setInt(1, book.getGenreID());
+            stmt1.setInt(2, book.getCategoryID());
+            stmt1.setString(3, book.getGenreName());
+            stmt1.setString(4, book.getCategoryName());
+            stmt1.setString(5, book.getTitle());
+            stmt1.setString(6, book.getLocation());
+            stmt1.setBoolean(7, true);
             stmt1.executeUpdate();
             
             // lägger in värden för book tabelen

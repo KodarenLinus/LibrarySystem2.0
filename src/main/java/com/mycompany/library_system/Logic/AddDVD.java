@@ -29,7 +29,7 @@ public class AddDVD {
         
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
-        String insertToItem = "INSERT INTO Item (GenreID, CategoryID, Title, Location, Available) VALUES (?, ?, ?, ?, ?)";
+        String insertToItem = "INSERT INTO Item (GenreID, CategoryID, GenreName, CategoryName, Title, Location, Available) VALUES (?, ?, ?, ?, ?, ?, ?)";
         String insertToDVD = "INSERT INTO DvD (ItemID, DirectorID) VALUES ((SELECT max(ItemID) From item), ?)";
                 
         try (
@@ -37,11 +37,13 @@ public class AddDVD {
             PreparedStatement stmt2 = conn.prepareStatement(insertToDVD);
         ){
             // lägger till värden i item tabelen
-            stmt1.setInt(1, 10);
-            stmt1.setInt(2, 9);
-            stmt1.setString(3, dvd.getTitle());
-            stmt1.setString(4, dvd.getLocation());
-            stmt1.setBoolean(5, true);
+            stmt1.setInt(1, dvd.getGenreID());
+            stmt1.setInt(2, dvd.getCategoryID());
+            stmt1.setString(3, dvd.getGenreName());
+            stmt1.setString(4, dvd.getCategoryName());
+            stmt1.setString(5, dvd.getTitle());
+            stmt1.setString(6, dvd.getLocation());
+            stmt1.setBoolean(7, true);
             stmt1.executeUpdate();
             
             // lägger till värden i dvd tabelen

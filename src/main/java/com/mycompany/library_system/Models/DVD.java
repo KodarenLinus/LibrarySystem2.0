@@ -25,11 +25,13 @@ public class DVD implements Items {
     private boolean available;
     
     // Konstruktor
-    public DVD (String title, String location, int categoryID, String categoryName) {
+    public DVD (String title, String location, int categoryID, String categoryName, int genreID, String genreName) {
         this.title = title;
         this.location = location;
         this.categoryID = categoryID;
         this.categoryName = categoryName;
+         this.genreID = genreID;
+        this.genreName = genreName;
     }
     
     public void setItemID(int itemID) {

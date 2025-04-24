@@ -25,12 +25,14 @@ public class Book implements Items{
     private int isbn;
     
     
-    public Book(String title, String location, int isbn, int categoryID, String categoryName) {
+    public Book(String title, String location, int isbn, int categoryID, String categoryName, int genreID, String genreName) {
         this.title = title;
         this.location = location;
         this.isbn = isbn;
         this.categoryID = categoryID;
         this.categoryName = categoryName;
+        this.genreID = genreID;
+        this.genreName = genreName;
     }
     
     public void setItemID(int itemID) {
