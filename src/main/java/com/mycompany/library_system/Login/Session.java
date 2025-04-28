@@ -11,7 +11,7 @@ package com.mycompany.library_system.Login;
 public class Session {
     
     private static Session instance;
-    private int userId;
+    private int UserId;
     private String email;
     private String category;
 
@@ -25,12 +25,12 @@ public class Session {
     }
 
     public void setUser(int userId, String email) {
-        this.userId = userId;
+        this.UserId = userId;
         this.email = email;
     }
 
     public int getUserId() {
-        return userId;
+        return UserId;
     }
 
     public String getEmail() {

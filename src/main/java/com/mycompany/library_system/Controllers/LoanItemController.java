@@ -50,13 +50,11 @@ public class LoanItemController {
        @FXML
     void FilterMagazine(ActionEvent event) {
          applyFilter();
-         //refreshItemList();
     }
 
     @FXML
     void FilterReferensBook(ActionEvent event) {
          applyFilter();
-         //refreshItemList();
     }
     
     /**
@@ -87,7 +85,7 @@ public class LoanItemController {
             
             if (!itemCartList.getItems().contains(selectedItem)) {
                 itemCartList.getItems().add(selectedItem);
-                refreshItemList();
+                applyFilter();
             }
         }
     }
@@ -103,7 +101,8 @@ public class LoanItemController {
 
         if (selectedItem != null) {
             itemCartList.getItems().remove(selectedItem);
-            refreshItemList();
+            //refreshItemList();
+            applyFilter();
         }
     }
     
@@ -162,20 +161,10 @@ public class LoanItemController {
         });
     }
     
-    /**
-    * Uppdaterar listan med tillgängliga objekt baserat på söktermen och tar bort de som redan finns i kundvagnen.
-    */
-    private void refreshItemList() {
-        String searchTerm = ScearchItem.getText();
-        SearchItems searchItems = new SearchItems();
-        ArrayList<Items> searchResults = new ArrayList<>(searchItems.search(searchTerm));
-        searchResults.removeAll(itemCartList.getItems());
-        ItemList.getItems().setAll(searchResults);
-    }
     
     /**
     * 
-    * Filtrerar bort categorier baserat på id.
+    * kollar om filter är applicerad och uppdaterar listan med items.
     * 
     */
     private void applyFilter() {

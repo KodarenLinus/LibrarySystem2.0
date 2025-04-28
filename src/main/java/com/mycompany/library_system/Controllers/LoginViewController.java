@@ -35,7 +35,7 @@ public class LoginViewController{
      * @param event ActionEvent som triggas när användaren vill logga in
      */
     @FXML
-    void loginButton(ActionEvent event) throws IOException{
+    private void loginButton(ActionEvent event) throws IOException{
         
         Login login = new Login();
         boolean isLoggedIn = login.doLogin(userName.getText(), userPassword.getText());
@@ -52,7 +52,7 @@ public class LoginViewController{
     }
         
     @FXML
-    void loginButtonEmployee(ActionEvent event) throws IOException{
+    private void loginButtonEmployee(ActionEvent event) throws IOException{
         
         String fxmlf = "StartMenu.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
