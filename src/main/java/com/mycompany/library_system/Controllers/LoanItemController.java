@@ -21,6 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -39,6 +40,24 @@ public class LoanItemController {
 
     @FXML
     private ListView<Items> itemCartList;
+    
+       @FXML
+    private RadioButton magazineFilterButton;
+
+    @FXML
+    private RadioButton referensFilterButton;
+    
+       @FXML
+    void FilterMagazine(ActionEvent event) {
+         applyFilter();
+         //refreshItemList();
+    }
+
+    @FXML
+    void FilterReferensBook(ActionEvent event) {
+         applyFilter();
+         //refreshItemList();
+    }
     
     /**
      * Lägger till valt objekt i kundvagnen om det inte redan finns där.
@@ -154,5 +173,30 @@ public class LoanItemController {
         ArrayList<Items> searchResults = new ArrayList<>(searchItems.search(searchTerm));
         searchResults.removeAll(itemCartList.getItems());
         ItemList.getItems().setAll(searchResults);
+    }
+    
+    /**
+    * 
+    * Filtrerar bort categorier baserat på id.
+    * 
+    */
+    private void applyFilter() {
+        String searchTerm = ScearchItem.getText();
+        SearchItems searchItems = new SearchItems();
+        ArrayList<Items> allItems = searchItems.search(searchTerm);
+        allItems.removeAll(itemCartList.getItems());
+
+        ArrayList<Items> filteredItems = new ArrayList<>();
+        for (Items item : allItems) {
+            if (magazineFilterButton.isSelected() && item.getCategoryID() == 5) {
+                continue; // Om vi filtrerar på magasin och det inte är magasin → hoppa över
+            }
+            if (referensFilterButton.isSelected() && item.getCategoryID() == 4) {
+                continue; // Om vi filtrerar på referens och det inte är referens → hoppa över
+            }
+            filteredItems.add(item);
+        }
+
+        ItemList.getItems().setAll(filteredItems);
     }
 }
