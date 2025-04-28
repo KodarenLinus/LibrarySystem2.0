@@ -158,9 +158,7 @@ public class LoanItemController {
         
         // Söker efter objekt i realtid och visar matchningar
         ScearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
-            ArrayList<Items> searchResults = searchItems.search(newValue);
-            searchResults.removeAll(itemCartList.getItems());
-            ItemList.getItems().setAll(searchResults);
+            applyFilter();
         });
     }
     
