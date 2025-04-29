@@ -39,6 +39,17 @@ public class HandleItemsController {
     }
     
     
+    @FXML
+    void RemoveObject(ActionEvent event) {
+
+    }
+
+    @FXML
+    void UpdateObject(ActionEvent event) {
+
+    }
+    
+    
     
     @FXML
     public void initialize()  {
