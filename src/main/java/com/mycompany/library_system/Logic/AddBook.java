@@ -78,6 +78,14 @@ public class AddBook {
         stmt2.setInt(2, book.getIsbn());
         stmt2.setInt(3, 7); // TODO: Byt till dynamiskt PublisherID senare
         stmt2.executeUpdate();
+        
+        for (Integer authorId : book.getAuthorIDs()) {
+            PreparedStatement stmt3 = conn.prepareStatement("INSERT INTO BookAuthor (ItemID, AuthorID) VALUES (?, ?)");
+            stmt3.setInt(1, generatedItemID);
+            stmt3.setInt(2, authorId);
+            stmt3.executeUpdate();
+            stmt3.close();
+        }
 
         } catch (SQLException ex){
             ex.printStackTrace();

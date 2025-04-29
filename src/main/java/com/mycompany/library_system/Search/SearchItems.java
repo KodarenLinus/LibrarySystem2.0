@@ -29,7 +29,7 @@ public class SearchItems {
      */
     public ArrayList<Items> search(String searchText) {
 
-        ArrayList<Items> results = new ArrayList<>();
+        ArrayList<Items> results = new ArrayList<Items>();
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
         

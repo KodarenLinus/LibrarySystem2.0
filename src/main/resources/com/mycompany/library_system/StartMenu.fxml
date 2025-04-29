@@ -8,5 +8,6 @@
       <ToggleButton layoutX="229.0" layoutY="233.0" mnemonicParsing="false" onAction="#addItem" text="Lägg till item" />
       <ToggleButton layoutX="332.0" layoutY="233.0" mnemonicParsing="false" onAction="#manageCustomer" text="Hantera kund" />
       <ToggleButton layoutX="276.0" layoutY="289.0" mnemonicParsing="false" onAction="#backToMenu" text="Tillbaka" />
+      <ToggleButton layoutX="260.0" layoutY="122.0" mnemonicParsing="false" onAction="#GoToItemHandling" text="Hantera Item" />
    </children>
 </AnchorPane>

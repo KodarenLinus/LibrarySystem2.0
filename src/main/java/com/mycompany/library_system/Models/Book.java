@@ -39,6 +39,10 @@ public class Book implements Items{
         this.itemID = itemID;
     }
     
+    public void setAuthorIDs(ArrayList<Integer> authorsID) {
+        this.authorsID = authorsID;
+    }
+    
     @Override
     public int getItemID() {
         return itemID;
@@ -83,19 +87,13 @@ public class Book implements Items{
         return isbn;
     }
     
-    public Integer getAuthors () {
-        
-        // Loopar igenom lista med authors
-        for (int authorID : authorsID) {
-            return authorID; // Retunera varje author;
-        }
-        
-        return null; //
+    public ArrayList<Integer> getAuthorIDs () {
+            return authorsID; // Retunera varje author;
     }
     
     
      /**
-    * Overrides equals-metoden från Object för att jämföra två DVD-objekt.
+    * Overrides equals-metoden från Object för att jämföra två Book-objekt.
     * Två Book-objekt anses vara lika om de har samma itemID.
     *
     * @param obj Objektet som ska jämföras med det aktuella objektet.

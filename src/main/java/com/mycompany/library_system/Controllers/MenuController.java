@@ -20,6 +20,12 @@ import javafx.stage.Stage;
  */
 public class MenuController {
     
+    @FXML
+    void GoToItemHandling(ActionEvent event) {
+         String fxmlf = "AddAuthorToBook.fxml";
+        ChangeWindow changeWindow = new ChangeWindow();
+        changeWindow.windowChange(event, fxmlf);
+    }
     
     @FXML
     void addItem(ActionEvent event) throws IOException{
