@@ -4,25 +4,32 @@
  */
 package com.mycompany.library_system.Controllers;
 
+import com.mycompany.library_system.Logic.AddAuthorToBook;
 import com.mycompany.library_system.Models.Author;
+import com.mycompany.library_system.Models.Book;
 import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Search.SearchAuthor;
 import com.mycompany.library_system.Search.SearchItems;
+import com.mycompany.library_system.Utils.AlertHandler;
+import com.mycompany.library_system.Utils.ObjectSession;
 import com.mycompany.library_system.Utils.PopUpWindow;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 /**
  *
  * @author Linus
  */
 public class AddAuthorToBookController {
+    
     @FXML
     private ListView<Author> AuthorList;
 
@@ -30,7 +37,7 @@ public class AddAuthorToBookController {
     private ListView<Author> AuthorsToAddToBookList;
     
     @FXML
-    private TextField searchAuthor;
+    private TextField SearchAuthor;
 
     @FXML
     private Label LabelAddAuthorToBook;
@@ -44,6 +51,20 @@ public class AddAuthorToBookController {
     
     @FXML
     void AddAuthorsToBook(ActionEvent event) {
+        try {
+            Object item = ObjectSession.getCurrentItem();
+            AddAuthorToBook addAuthorToBook = new AddAuthorToBook();
+            ArrayList<Author> authors = new ArrayList<>(AuthorsToAddToBookList.getItems());
+            addAuthorToBook.insertToBookAuthor((Book)item, authors);
+        } catch (ClassCastException e) {
+            // Berättar om vi castar ett objekt som inte är en book!!
+            String title = "Du försökte lägga till en Författare på ett objekt som inte är en book";
+            String header ="Du kan enbart lägga till författare på böcker"; 
+            String content = "Vänligen gå tillbaka och testa välja ett nytt object.";
+            AlertHandler alertHandler = new AlertHandler();
+            alertHandler.createAlert(title, header, content);
+        }
+        
 
     }
     
@@ -68,13 +89,8 @@ public class AddAuthorToBookController {
         }
     }
 
-
-    @FXML
-    void SearchAuthor(ActionEvent event) {
-
-    }
     
-      @FXML
+    @FXML
     public void initialize()  {
         
         // Visar titel för varje objekt i listan
@@ -91,15 +107,22 @@ public class AddAuthorToBookController {
         });
         
         // Laddar in alla objekt vid start
-        SearchAuthor searchAuthor1 = new SearchAuthor();
-        ArrayList<Author> allAuthors = searchAuthor1.search("");
+        SearchAuthor searchAuthor = new SearchAuthor();
+        ArrayList<Author> allAuthors = searchAuthor.search("");
         //allAuthors.removeAll(AuthorsToAddToBookList.getItems());
         AuthorList.getItems().setAll(allAuthors);
         
         // Söker efter objekt i realtid och visar matchningar
-        searchAuthor.textProperty().addListener((observable, oldValue, newValue) -> {
+        SearchAuthor.textProperty().addListener((observable, oldValue, newValue) -> {
             applyFilter();
         });
+    }
+    
+    @FXML
+    public void handleClose() {
+        Stage stage = (Stage) SearchAuthor.getScene().getWindow();
+        ObjectSession.clear();
+        stage.close();
     }
     
     
@@ -109,14 +132,14 @@ public class AddAuthorToBookController {
     * 
     */
     private void applyFilter() {
-       String searchTerm = searchAuthor.getText();
-       SearchAuthor searchAuthor1 = new SearchAuthor();
+       String searchTerm = SearchAuthor.getText();
+       SearchAuthor searchAuthor = new SearchAuthor();
 
-       ArrayList<Author> allAuthors = searchAuthor1.search(searchTerm);
+       ArrayList<Author> allAuthors = searchAuthor.search(searchTerm);
 
        // Viktigt: Filtrera bort redan tillagda författare
        allAuthors.removeAll(AuthorsToAddToBookList.getItems());
 
        AuthorList.getItems().setAll(allAuthors);
-       }
+    }
 }

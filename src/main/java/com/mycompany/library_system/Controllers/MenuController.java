@@ -22,7 +22,7 @@ public class MenuController {
     
     @FXML
     void GoToItemHandling(ActionEvent event) {
-         String fxmlf = "AddAuthorToBook.fxml";
+         String fxmlf = "HandleItems.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }

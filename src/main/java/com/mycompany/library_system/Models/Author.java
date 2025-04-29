@@ -42,7 +42,7 @@ public class Author {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Author other = (Author) obj;
-        return this.authorID == other.authorID;  // jämför med ID
+        return this.authorID == other.authorID;  
     }
 
     @Override

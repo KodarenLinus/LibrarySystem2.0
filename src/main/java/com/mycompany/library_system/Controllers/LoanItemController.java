@@ -130,9 +130,9 @@ public class LoanItemController {
         loanItem.addToLoanRows(session.getUserId(), itemsToLoan, event);
     }
     
-     /**
-     * Initierar vyn när den laddas. Ställer in hur objekt listas, hämtar alla objekt och lägger till sökfunktionalitet.
-     */
+    /**
+    * Initierar vyn när den laddas. Ställer in hur objekt listas, hämtar alla objekt och lägger till sökfunktionalitet.
+    */
     @FXML
     public void initialize()  {
         
