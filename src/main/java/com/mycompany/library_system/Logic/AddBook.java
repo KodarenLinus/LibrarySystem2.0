@@ -8,20 +8,14 @@ import com.mycompany.library_system.Models.Book;
 import com.mycompany.library_system.Database.DatabaseConnector;
 import com.mycompany.library_system.Database.ConnDB;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Hanterar inmatning av bokobjekt till databasen.
  * Utför INSERT till både Item- och Book-tabellerna.
  * 
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class AddBook {
 

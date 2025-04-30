@@ -4,11 +4,10 @@
  */
 package com.mycompany.library_system.Models;
 
-import java.util.Objects;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class Author {
     

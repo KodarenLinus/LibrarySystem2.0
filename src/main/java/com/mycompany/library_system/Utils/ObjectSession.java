@@ -6,7 +6,7 @@ package com.mycompany.library_system.Utils;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class ObjectSession {
     

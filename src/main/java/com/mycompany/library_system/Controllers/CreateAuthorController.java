@@ -12,7 +12,7 @@ import javafx.scene.control.TextField;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class CreateAuthorController {
     

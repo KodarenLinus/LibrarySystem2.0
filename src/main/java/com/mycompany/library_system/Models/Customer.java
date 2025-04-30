@@ -4,11 +4,9 @@
  */
 package com.mycompany.library_system.Models;
 
-import java.util.ArrayList;
-
 /**
  *
- * @author emildahlback
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class Customer {
     private int customerID;

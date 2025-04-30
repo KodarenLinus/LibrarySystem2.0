@@ -6,16 +6,21 @@ package com.mycompany.library_system.Utils;
 
 import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver Viggo
  */
 public class PopUpWindow {
+    
+    /**
+     * 
+     * @param event
+     * @param fmxlf 
+     */
     public void popUp(Event event, String fmxlf) {
          try {
             // Ladda FXML-filen för popupen

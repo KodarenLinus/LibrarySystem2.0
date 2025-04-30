@@ -4,13 +4,12 @@
  */
 package com.mycompany.library_system.Models;
 
-import com.mycompany.library_system.Models.Items;
 import java.util.ArrayList;
 import java.util.Objects;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class Book implements Items{
     private int itemID;

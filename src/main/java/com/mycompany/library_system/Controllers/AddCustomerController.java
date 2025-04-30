@@ -9,22 +9,17 @@ import com.mycompany.library_system.Utils.ChangeWindow;
 import com.mycompany.library_system.Models.Customer;
 import com.mycompany.library_system.Search.SearchCustomer;
 import com.mycompany.library_system.Utils.PopUpWindow;
-import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
 
 /**
  *
- * @author emildahlback
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class AddCustomerController {
     

@@ -13,13 +13,22 @@ import java.sql.SQLException;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class AddAuthor {
     
+     /**
+     * Lägger till en författare i våran databasen
+     *
+     * @param Ett Author objekt som vi lägger till i databasen
+     */
     public void insertAuthor (Author author) {
+        
+        // Skapar en databaskoppling
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
+        
+        // SQL-fråga som lägger till first och lastname i Author tabelen
         String insertAuthor = "INSERT INTO Author (firstname, lastname) " +
                 "VALUES (?, ?)";
 
@@ -32,7 +41,7 @@ public class AddAuthor {
             stmt1.executeUpdate();
 
         } catch (SQLException ex){
-            ex.printStackTrace(); // Bra att skriva ut för felsökning
+            ex.printStackTrace(); 
         }
     }
     

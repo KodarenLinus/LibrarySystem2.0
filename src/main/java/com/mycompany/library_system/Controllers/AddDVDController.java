@@ -5,9 +5,7 @@
 package com.mycompany.library_system.Controllers;
 
 import com.mycompany.library_system.Logic.AddDVD;
-import com.mycompany.library_system.Logic.GetCategories;
 import com.mycompany.library_system.Logic.GetGenres;
-import com.mycompany.library_system.Models.Category;
 import com.mycompany.library_system.Models.CategoryType;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import com.mycompany.library_system.Models.DVD;
@@ -18,20 +16,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class AddDVDController {
 

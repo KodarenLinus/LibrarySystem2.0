@@ -20,7 +20,7 @@ import javafx.scene.input.MouseEvent;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class HandleItemsController {
     

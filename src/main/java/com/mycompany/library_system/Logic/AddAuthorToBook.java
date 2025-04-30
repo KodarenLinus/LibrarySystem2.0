@@ -15,10 +15,16 @@ import java.util.ArrayList;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class AddAuthorToBook {
     
+    /**
+     * Lägger till en författare och bok i tabelen bookAuthor i våran databasen
+     *
+     * @param Ett Book objekt som vi skickar till bookAuthor i databasen
+     * @param En lista med författare som som vi kopplar till book objektet
+     */
     public void insertToBookAuthor (Book book, ArrayList<Author> authors) {
         
         // Skapar en databasanslutning

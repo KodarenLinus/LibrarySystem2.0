@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class SearchItems {
     

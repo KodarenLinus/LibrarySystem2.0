@@ -13,10 +13,15 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author Linus
+ * @author Linus, EOliver, Viggo
  */
 public class ChangeWindow {
-    
+    /**
+     * En metod för att byta fönster.
+     * 
+     * @param event 
+     * @param fmxlf en string som innehåller adress för fmxlf fil.
+     */
     public void windowChange(Event event, String fmxlf) {
         
          try {

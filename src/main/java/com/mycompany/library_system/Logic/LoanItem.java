@@ -9,7 +9,6 @@ import com.mycompany.library_system.Database.ConnDB;
 import com.mycompany.library_system.Models.CategoryType;
 import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Utils.AlertHandler;
-import com.mycompany.library_system.Utils.PopUpWindow;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

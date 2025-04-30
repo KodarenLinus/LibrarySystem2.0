@@ -12,6 +12,7 @@ package com.mycompany.library_system.Models;
 * Metoden {@code fromId(int id)} används för att konvertera ett heltal från databasen
 * till motsvarande enum-typ.
 *
+* @author Linus, Emil, Oliver, Viggo
 */
 public enum CategoryType {
     BOOK(1, "Bok"),
