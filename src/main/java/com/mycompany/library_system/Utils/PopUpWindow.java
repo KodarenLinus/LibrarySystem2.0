@@ -11,34 +11,42 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- *
- * @author Linus, Emil, Oliver Viggo
+ * Verktygsklass som visar en popup-fönster i JavaFX baserat på en FXML-fil.
+ * Används för att öppna nya fönster som modala dialogrutor i gränssnittet.
+ * 
+ * Exempel: popup för att lägga till användare, visa information etc.
+ * 
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class PopUpWindow {
-    
+
     /**
+     * Visar ett popup-fönster baserat på en angiven FXML-fil.
+     * Fönstret är modal, vilket innebär att användaren måste stänga det
+     * innan hen kan återgå till huvudfönstret.
      * 
-     * @param event
-     * @param fmxlf 
+     * @param event Eventet som triggar popupen (ex. knapptryckning)
+     * @param fxmlFil Namnet på FXML-filen (inklusive .fxml), ex: "AddCustomer.fxml"
      */
-    public void popUp(Event event, String fmxlf) {
-         try {
-            // Ladda FXML-filen för popupen
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/library_system/" + fmxlf));
-            Parent root = loader.load();  // Här laddas rootkomponenten från FXML-filen
+    public void popUp(Event event, String fxmlFil) {
+        try {
+            // Laddar FXML-filen och skapar root-noden
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/library_system/" + fxmlFil));
+            Parent root = loader.load();
 
-            // Skapa en ny Stage (popup)
+            // Skapar ett nytt popup-fönster (Stage)
             Stage stage = new Stage();
-            stage.setTitle("Popup Title");
+            stage.setTitle("Popup-fönster");
 
-            // Sätt scenen för popupen
+            // Sätter innehållet (Scene) till popupen
             stage.setScene(new Scene(root));
 
-            // Visa popupen och vänta på att den stängs
+            // Visar popupen och blockerar tills användaren stänger det
             stage.showAndWait();
-            
+
         } catch (Exception e) {
-            
+            // Skriver ut felmeddelande vid laddningsfel
+            System.err.println("Fel vid öppning av popup: " + fxmlFil);
             e.printStackTrace();
         }
     }

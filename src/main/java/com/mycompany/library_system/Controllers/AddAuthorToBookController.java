@@ -31,7 +31,7 @@ public class AddAuthorToBookController {
     String header; 
     String content;
     AlertHandler alertHandler = new AlertHandler();
-    private Object item = ObjectSession.getCurrentItem();
+    private Object item = ObjectSession.getInstance().getCurrentItem();
     
     @FXML
     private ListView<Author> AuthorList;
@@ -117,12 +117,15 @@ public class AddAuthorToBookController {
             }
         });
         
-        // Laddar in alla objekt vid start
-        SearchAuthor searchAuthor = new SearchAuthor();
-        ArrayList<Author> allAuthors = searchAuthor.search("", (Book)item);
-        //allAuthors.removeAll(AuthorsToAddToBookList.getItems());
-        AuthorList.getItems().setAll(allAuthors);
+        try {
+            // Laddar in alla objekt vid start
+            SearchAuthor searchAuthor = new SearchAuthor();
+            ArrayList<Author> allAuthors = searchAuthor.search("", (Book)item);
+            //allAuthors.removeAll(AuthorsToAddToBookList.getItems());
+            AuthorList.getItems().setAll(allAuthors);
+        } catch (ClassCastException e){
         
+        }
         // Söker efter objekt i realtid och visar matchningar
         SearchAuthor.textProperty().addListener((observable, oldValue, newValue) -> {
             applyFilter();
@@ -132,7 +135,7 @@ public class AddAuthorToBookController {
     @FXML
     public void handleClose() {
         Stage stage = (Stage) SearchAuthor.getScene().getWindow();
-        ObjectSession.clear();
+        ObjectSession.getInstance().clear();
         stage.close();
     }
     

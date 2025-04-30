@@ -80,14 +80,15 @@ public class HandleItemsController {
     }
     
     private void handleAddCreator(Items item, MouseEvent event) {
-        ObjectSession.setCurrentItem(item);
-    
+        ObjectSession.getInstance().setCurrentItem(item);
+        
         PopUpWindow popUpWindow = new PopUpWindow();
-
-        if (item instanceof Book) {
+        
+        Object choicenItem = ObjectSession.getInstance().getCurrentItem();
+        if (choicenItem instanceof Book) {
             // Öppna fönster för att lägga till författare
             popUpWindow.popUp(event, "AddAuthorToBook.fxml");
-        } else if (item instanceof DVD) {
+        } else if (choicenItem instanceof DVD) {
             // Öppna fönster för att lägga till regissör
             popUpWindow.popUp(event, "AddDirectorToDVD.fxml");
         } else {

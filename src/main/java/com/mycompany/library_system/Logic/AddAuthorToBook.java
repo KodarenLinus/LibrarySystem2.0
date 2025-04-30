@@ -14,13 +14,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- *
+ * Klass som hanterar kopplingen mellan böcker och författare i databasen.
+ * Infogar relationer i tabellen BookAuthor.
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class AddAuthorToBook {
     
     /**
-     * Lägger till en författare och bok i tabelen bookAuthor i våran databasen
+     * Lägger till en eller flera författare till en bok i BookAuthor-tabellen.
      *
      * @param Ett Book objekt som vi skickar till bookAuthor i databasen
      * @param En lista med författare som som vi kopplar till book objektet
@@ -37,14 +39,13 @@ public class AddAuthorToBook {
         try (
             PreparedStatement stmt1 = conn.prepareStatement(insertToBookAuthor);
         ){
-            for (Author author : authors)
-            {
-                // Lägger in värden för item-tabelen
+            // Loopa igenom varje författare och lägg till kopplingen till boken
+            for (Author author : authors) {
                 stmt1.setInt(1, book.getItemID());
                 stmt1.setInt(2, author.getAuthorID());
                 stmt1.setString(3, author.getFirstname());
                 stmt1.setString(4, author.getLastname());
-                stmt1.addBatch();
+                stmt1.addBatch(); // Samlar alla INSERT-satser till ett batch-anrop
             }
 
             stmt1.executeBatch();
