@@ -4,6 +4,8 @@
  */
 package com.mycompany.library_system.Controllers;
 
+import com.mycompany.library_system.Logic.AddAuthor;
+import com.mycompany.library_system.Models.Author;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -14,7 +16,7 @@ import javafx.scene.control.TextField;
  */
 public class CreateAuthorController {
     
-      @FXML
+    @FXML
     private TextField AuthorFirstname;
 
     @FXML
@@ -22,7 +24,12 @@ public class CreateAuthorController {
 
     @FXML
     void CreateAuthor(ActionEvent event) {
-
+        String firstname = AuthorFirstname.getText();
+        String lastname = AuthorLastname.getText();
+        Author author = new Author(firstname, lastname);
+        AddAuthor addAuthor = new AddAuthor();
+        
+        addAuthor.insertAuthor(author);
     }
     
 }

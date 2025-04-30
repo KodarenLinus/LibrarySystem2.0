@@ -92,6 +92,8 @@ public class AddAuthorToBookController {
     
     @FXML
     public void initialize()  {
+        Object item = ObjectSession.getCurrentItem();
+        LabelAddAuthorToBook.setText("Lägg till författare till " + item.toString());
         
         // Visar titel för varje objekt i listan
         AuthorList.setCellFactory(list -> new ListCell<Author>() {

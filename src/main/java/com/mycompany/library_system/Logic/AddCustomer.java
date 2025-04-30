@@ -31,28 +31,28 @@ public class AddCustomer {
      */
     public void insertCustomer(Customer customer){
     
-    DatabaseConnector connDB = new ConnDB();
-    Connection conn = connDB.connect();
-    String insertCustomer = "INSERT INTO Customer (CustomerCategoryID, CategoryName, FirstName, LastName, Email, Adress, TelNumber, PasswordCustomer) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        DatabaseConnector connDB = new ConnDB();
+        Connection conn = connDB.connect();
+        String insertCustomer = "INSERT INTO Customer (CustomerCategoryID, CategoryName, FirstName, LastName, Email, Adress, TelNumber, PasswordCustomer) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-    try (
-         PreparedStatement stmt1 = conn.prepareStatement(insertCustomer);   
-    ){
-        // Lägger till värden i customer tabelen
-        stmt1.setInt(1, 3);  // Exempel: Staff
-        stmt1.setString(2, "Studenet");
-        stmt1.setString(3, customer.getFirstName());
-        stmt1.setString(4, customer.getLastName());
-        stmt1.setString(5, customer.getEmail());
-        stmt1.setString(6, "ltu"); // Du kan byta till riktig adress senare
-        stmt1.setInt(7, customer.getTelNr());
-        stmt1.setString(8, customer.getPassword());
+        try (
+             PreparedStatement stmt1 = conn.prepareStatement(insertCustomer);   
+        ){
+            // Lägger till värden i customer tabelen
+            stmt1.setInt(1, 3);  // Exempel: Staff
+            stmt1.setString(2, "Studenet");
+            stmt1.setString(3, customer.getFirstName());
+            stmt1.setString(4, customer.getLastName());
+            stmt1.setString(5, customer.getEmail());
+            stmt1.setString(6, "ltu"); // Du kan byta till riktig adress senare
+            stmt1.setInt(7, customer.getTelNr());
+            stmt1.setString(8, customer.getPassword());
 
-        stmt1.executeUpdate();
+            stmt1.executeUpdate();
 
-    } catch (SQLException ex){
-        ex.printStackTrace(); // Bra att skriva ut för felsökning
+        } catch (SQLException ex){
+            ex.printStackTrace(); // Bra att skriva ut för felsökning
+        }
     }
-}
 }
