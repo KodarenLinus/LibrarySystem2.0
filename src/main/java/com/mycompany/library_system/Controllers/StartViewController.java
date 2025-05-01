@@ -6,6 +6,7 @@ package com.mycompany.library_system.Controllers;
 
 import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Search.SearchItems;
+import com.mycompany.library_system.Utils.AlertHandler;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 
 /**
  *
@@ -35,6 +37,19 @@ public class StartViewController {
         changeWindow.windowChange(event, fxmlf);
     }
     
+    @FXML
+    void itemClicked(MouseEvent event) {
+    Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+        // Visa alert-varning
+                String title = "Inloggning krävs";
+                String header ="Du måste vara inloggad"; 
+                String content = ("Logga in för att kunna låna detta objekt.");
+                AlertHandler alertHandler = new AlertHandler();
+                alertHandler.createAlert(title, header, content);
+                return;
+    }
+}
     @FXML
     public void initialize()  {
         

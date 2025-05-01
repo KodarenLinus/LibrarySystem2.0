@@ -38,7 +38,7 @@ public class Library_System extends Application {
     public void start(Stage stage) {
         try {
             // Laddar inloggningsvyn från FXML
-            Parent root = FXMLLoader.load(getClass().getResource("LoginView.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("StartView.fxml"));
             
             // Skapar en scen med root-noden och lägger till i fönstret
             Scene scene = new Scene(root);
