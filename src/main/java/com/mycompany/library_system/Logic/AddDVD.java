@@ -66,7 +66,7 @@ public class AddDVD {
 
             // Lägger till värden i DVD-tabellen
             stmt2.setInt(1, generatedItemID);
-            stmt2.setInt(2, 1); // TODO: Hårdkodad DirectorID – byt till dynamisk hantering
+            stmt2.setInt(2, dvd.getDirectorID());
             stmt2.executeUpdate();
 
         } catch (SQLException ex){

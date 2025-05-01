@@ -34,7 +34,7 @@ public class AddAuthorToBook {
         Connection conn = connDB.connect();
         
         // SQL-fråga för att infoga i BookAuthor-tabellen
-        String insertToBookAuthor = "INSERT INTO BookAuthor (ItemID, AuthorID, AuthorFirstname, AuthorLastname) VALUES (?, ?, ?, ?)";
+        String insertToBookAuthor = "INSERT INTO BookAuthor (ItemID, AuthorID) VALUES (?, ?)";
         
         try (
             PreparedStatement stmt1 = conn.prepareStatement(insertToBookAuthor);
@@ -43,8 +43,6 @@ public class AddAuthorToBook {
             for (Author author : authors) {
                 stmt1.setInt(1, book.getItemID());
                 stmt1.setInt(2, author.getAuthorID());
-                stmt1.setString(3, author.getFirstname());
-                stmt1.setString(4, author.getLastname());
                 stmt1.addBatch(); // Samlar alla INSERT-satser till ett batch-anrop
             }
 

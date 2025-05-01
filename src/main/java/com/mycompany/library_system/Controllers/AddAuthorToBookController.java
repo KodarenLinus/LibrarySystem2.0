@@ -124,7 +124,10 @@ public class AddAuthorToBookController {
             //allAuthors.removeAll(AuthorsToAddToBookList.getItems());
             AuthorList.getItems().setAll(allAuthors);
         } catch (ClassCastException e){
-        
+            title = "ClassCastExeption";
+            header ="Du försökte casta ett objekt till book som inte är book"; 
+            content = "Vänligen se till att koden gör det den ska";
+            alertHandler.createAlert(title, header, content);
         }
         // Söker efter objekt i realtid och visar matchningar
         SearchAuthor.textProperty().addListener((observable, oldValue, newValue) -> {

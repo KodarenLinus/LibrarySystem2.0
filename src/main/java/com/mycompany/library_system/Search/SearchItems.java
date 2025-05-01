@@ -67,7 +67,8 @@ public class SearchItems {
                 } else {
                     ResultSet rsDVD = dvdStmt.executeQuery();
                     if (rsDVD.next()) {
-                        DVD dvd = new DVD(title, location, categoryID, categoryName, genreID, genreName);
+                        int directorID = rsDVD.getInt("DirectorID");
+                        DVD dvd = new DVD(title, location, categoryID, categoryName, genreID, genreName, directorID);
                         dvd.setItemID(id);
                         results.add(dvd);
                     }

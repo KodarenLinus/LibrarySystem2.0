@@ -15,22 +15,23 @@ public class DVD implements Items {
     
     private int itemID;
     private String title;
-    private ArrayList<Integer> directorsID;
     private int genreID;
     private int categoryID;
     private String genreName;
     private String categoryName;
     private String location;
     private boolean available;
+    private int directorID;
     
     // Konstruktor
-    public DVD (String title, String location, int categoryID, String categoryName, int genreID, String genreName) {
+    public DVD (String title, String location, int categoryID, String categoryName, int genreID, String genreName, int directorID) {
         this.title = title;
         this.location = location;
         this.categoryID = categoryID;
         this.categoryName = categoryName;
-         this.genreID = genreID;
+        this.genreID = genreID;
         this.genreName = genreName;
+        this.directorID = directorID;
     }
     
     public void setItemID(int itemID) {
@@ -77,15 +78,8 @@ public class DVD implements Items {
         return available;
     }
     
-    public Integer getDirector () {
-        
-        // loppar igenom list med directors
-        for (int directorID : directorsID)
-        {
-            return directorID; // Retunera varje author;
-        }
-        
-        return null; 
+    public int getDirectorID() {
+        return directorID;
     }
     
     

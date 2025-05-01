@@ -14,7 +14,6 @@ import java.util.Objects;
 public class Book implements Items{
     private int itemID;
     private String title;
-    private ArrayList<Integer> authorsID;
     private int genreID;
     private int categoryID;
     private String genreName;
@@ -36,10 +35,6 @@ public class Book implements Items{
     
     public void setItemID(int itemID) {
         this.itemID = itemID;
-    }
-    
-    public void setAuthorIDs(ArrayList<Integer> authorsID) {
-        this.authorsID = authorsID;
     }
     
     @Override
@@ -86,12 +81,7 @@ public class Book implements Items{
         return isbn;
     }
     
-    public ArrayList<Integer> getAuthorIDs () {
-            return authorsID; // Retunera varje author;
-    }
-    
-    
-     /**
+    /**
     * Overrides equals-metoden från Object för att jämföra två Book-objekt.
     * Två Book-objekt anses vara lika om de har samma itemID.
     *
