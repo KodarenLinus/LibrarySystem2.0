@@ -8,7 +8,6 @@ import com.mycompany.library_system.Models.DVD;
 import com.mycompany.library_system.Database.DatabaseConnector;
 import com.mycompany.library_system.Database.ConnDB;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -67,7 +66,7 @@ public class AddDVD {
 
             // Lägger till värden i DVD-tabellen
             stmt2.setInt(1, generatedItemID);
-            stmt2.setInt(2, 1); // TODO: Hårdkodad DirectorID – byt till dynamisk hantering
+            stmt2.setInt(2, dvd.getDirectorID());
             stmt2.executeUpdate();
 
         } catch (SQLException ex){

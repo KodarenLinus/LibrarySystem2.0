@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * Klass för att hämta kategorier från databasen.
  * Hämtar alla kategorier från Category-tabellen.
  * 
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class GetGenres {
     

@@ -4,17 +4,18 @@
  */
 package com.mycompany.library_system.Models;
 
-    /**
-    * En enum som representerar olika kategorier av objekt i biblioteket.
-    * Används för att identifiera hur länge olika typer av objekt får lånas.
-    *
-    * Varje kategori har ett kopplat ID som matchar värdet i databasen.
-    * Metoden {@code fromId(int id)} används för att konvertera ett heltal från databasen
-    * till motsvarande enum-typ.
-    *
-    */
-    public enum CategoryType {
-        BOOK(1, "Bok"),
+/**
+* En enum som representerar olika kategorier av objekt i biblioteket.
+* Används för att identifiera hur länge olika typer av objekt får lånas.
+*
+* Varje kategori har ett kopplat ID som matchar värdet i databasen.
+* Metoden {@code fromId(int id)} används för att konvertera ett heltal från databasen
+* till motsvarande enum-typ.
+*
+* @author Linus, Emil, Oliver, Viggo
+*/
+public enum CategoryType {
+    BOOK(1, "Bok"),
     COURSE_LITERATURE(2, "Kurslitteratur"),
     DVD(3, "DVD"),
     REFRENCE_COPY(4, "Referensexemplar"),

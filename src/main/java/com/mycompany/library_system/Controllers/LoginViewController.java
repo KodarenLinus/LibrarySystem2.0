@@ -9,17 +9,12 @@ import com.mycompany.library_system.Login.Login;
 import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
 /**
  *
- * @author emildahlback
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class LoginViewController{
     
@@ -35,7 +30,7 @@ public class LoginViewController{
      * @param event ActionEvent som triggas när användaren vill logga in
      */
     @FXML
-    void loginButton(ActionEvent event) throws IOException{
+    private void loginButton(ActionEvent event) throws IOException{
         
         Login login = new Login();
         boolean isLoggedIn = login.doLogin(userName.getText(), userPassword.getText());
@@ -60,7 +55,7 @@ public class LoginViewController{
     }
         
     @FXML
-    void loginButtonEmployee(ActionEvent event) throws IOException{
+    private void loginButtonEmployee(ActionEvent event) throws IOException{
         
         String fxmlf = "StartMenu.fxml";
         ChangeWindow changeWindow = new ChangeWindow();

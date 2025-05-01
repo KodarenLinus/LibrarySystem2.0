@@ -8,10 +8,17 @@ import javafx.scene.control.Alert;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class AlertHandler {
     
+    /**
+     * En metod för att skapa alerts
+     * 
+     * @param title
+     * @param header
+     * @param content 
+     */
     public void createAlert(String title, String header, String content) {
         // Visa alert-varning
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

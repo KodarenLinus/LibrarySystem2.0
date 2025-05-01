@@ -14,21 +14,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 
 /**
  *
- * @author emildahlback
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class LoanItemController {
     
@@ -50,13 +44,11 @@ public class LoanItemController {
     @FXML
     void FilterMagazine(ActionEvent event) {
          applyFilter();
-         //refreshItemList();
     }
 
     @FXML
     void FilterReferensBook(ActionEvent event) {
          applyFilter();
-         //refreshItemList();
     }
     
     /**
@@ -87,7 +79,7 @@ public class LoanItemController {
             
             if (!itemCartList.getItems().contains(selectedItem)) {
                 itemCartList.getItems().add(selectedItem);
-                refreshItemList();
+                applyFilter();
             }
         }
     }
@@ -103,7 +95,8 @@ public class LoanItemController {
 
         if (selectedItem != null) {
             itemCartList.getItems().remove(selectedItem);
-            refreshItemList();
+            //refreshItemList();
+            applyFilter();
         }
     }
     
@@ -131,9 +124,9 @@ public class LoanItemController {
         loanItem.addToLoanRows(session.getUserId(), itemsToLoan, event);
     }
     
-     /**
-     * Initierar vyn när den laddas. Ställer in hur objekt listas, hämtar alla objekt och lägger till sökfunktionalitet.
-     */
+    /**
+    * Initierar vyn när den laddas. Ställer in hur objekt listas, hämtar alla objekt och lägger till sökfunktionalitet.
+    */
     @FXML
     public void initialize()  {
         
@@ -164,20 +157,10 @@ public class LoanItemController {
         });
     }
     
-    /**
-    * Uppdaterar listan med tillgängliga objekt baserat på söktermen och tar bort de som redan finns i kundvagnen.
-    */
-    private void refreshItemList() {
-        String searchTerm = ScearchItem.getText();
-        SearchItems searchItems = new SearchItems();
-        ArrayList<Items> searchResults = new ArrayList<>(searchItems.search(searchTerm));
-        searchResults.removeAll(itemCartList.getItems());
-        ItemList.getItems().setAll(searchResults);
-    }
     
     /**
     * 
-    * Filtrerar bort categorier baserat på id.
+    * kollar om filter är applicerad och uppdaterar listan med items.
     * 
     */
     private void applyFilter() {

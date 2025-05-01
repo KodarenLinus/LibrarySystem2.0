@@ -6,7 +6,7 @@ package com.mycompany.library_system.Models;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class Category {
     private int categoryID;

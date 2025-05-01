@@ -4,18 +4,16 @@
  */
 package com.mycompany.library_system.Models;
 
-import com.mycompany.library_system.Models.Items;
 import java.util.ArrayList;
 import java.util.Objects;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class Book implements Items{
     private int itemID;
     private String title;
-    private ArrayList<Integer> authorsID;
     private int genreID;
     private int categoryID;
     private String genreName;
@@ -83,19 +81,8 @@ public class Book implements Items{
         return isbn;
     }
     
-    public Integer getAuthors () {
-        
-        // Loopar igenom lista med authors
-        for (int authorID : authorsID) {
-            return authorID; // Retunera varje author;
-        }
-        
-        return null; //
-    }
-    
-    
-     /**
-    * Overrides equals-metoden från Object för att jämföra två DVD-objekt.
+    /**
+    * Overrides equals-metoden från Object för att jämföra två Book-objekt.
     * Två Book-objekt anses vara lika om de har samma itemID.
     *
     * @param obj Objektet som ska jämföras med det aktuella objektet.

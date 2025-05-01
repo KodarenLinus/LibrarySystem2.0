@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class SearchItems {
     
@@ -29,7 +29,7 @@ public class SearchItems {
      */
     public ArrayList<Items> search(String searchText) {
 
-        ArrayList<Items> results = new ArrayList<>();
+        ArrayList<Items> results = new ArrayList<Items>();
         DatabaseConnector connDB = new ConnDB();
         Connection conn = connDB.connect();
         
@@ -67,7 +67,8 @@ public class SearchItems {
                 } else {
                     ResultSet rsDVD = dvdStmt.executeQuery();
                     if (rsDVD.next()) {
-                        DVD dvd = new DVD(title, location, categoryID, categoryName, genreID, genreName);
+                        int directorID = rsDVD.getInt("DirectorID");
+                        DVD dvd = new DVD(title, location, categoryID, categoryName, genreID, genreName, directorID);
                         dvd.setItemID(id);
                         results.add(dvd);
                     }

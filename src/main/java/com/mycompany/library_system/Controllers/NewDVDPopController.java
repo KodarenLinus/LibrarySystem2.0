@@ -11,11 +11,11 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author emildahlback
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class NewDVDPopController {
     
-     @FXML
+    @FXML
     void close(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
     stage.close();

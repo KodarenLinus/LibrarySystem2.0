@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class Login {
     

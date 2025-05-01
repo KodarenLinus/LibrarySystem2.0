@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author emildahlback
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class NewBookPopController {
     

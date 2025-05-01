@@ -5,12 +5,12 @@
 package com.mycompany.library_system.Controllers;
 
 import com.mycompany.library_system.Logic.AddDVD;
-import com.mycompany.library_system.Logic.GetCategories;
+import com.mycompany.library_system.Logic.GetDirectors;
 import com.mycompany.library_system.Logic.GetGenres;
-import com.mycompany.library_system.Models.Category;
 import com.mycompany.library_system.Models.CategoryType;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import com.mycompany.library_system.Models.DVD;
+import com.mycompany.library_system.Models.Director;
 import com.mycompany.library_system.Models.Genre;
 import com.mycompany.library_system.Utils.AlertHandler;
 import com.mycompany.library_system.Utils.PopUpWindow;
@@ -18,22 +18,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 
 /**
  *
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class AddDVDController {
+    
+      @FXML
+    private ComboBox<Director> Director;
 
     @FXML
     private ComboBox<Genre> Genre;
@@ -56,15 +54,11 @@ public class AddDVDController {
 
     }
 
-    @FXML
-    void SelectGenre(MouseEvent event) {
-
-    }
 
     @FXML
     void addDVD(ActionEvent event) {
         
-         String title;
+        String title;
         String header; 
         String content;
         
@@ -80,13 +74,14 @@ public class AddDVDController {
         }
         
         Genre selectedGenre = Genre.getValue();
+        Director selectedDirector = Director.getValue();
         PopUpWindow popUpWindow = new PopUpWindow();
         String fxmlf = "newDVDPop.fxml";
         popUpWindow.popUp(event, fxmlf);
         
         AddDVD addDVD = new AddDVD();
         CategoryType dvd_ = CategoryType.DVD;
-        DVD dvd = new DVD(Title.getText(), Location.getText(), dvd_.getId(), dvd_.getDisplayName(), selectedGenre.getGenreID(), selectedGenre.getGenreName());
+        DVD dvd = new DVD(Title.getText(), Location.getText(), dvd_.getId(), dvd_.getDisplayName(), selectedGenre.getGenreID(), selectedGenre.getGenreName(), selectedDirector.getDirectorID());
         addDVD.insertDVD(dvd);
     }
     
@@ -108,6 +103,22 @@ public class AddDVDController {
         GetGenres getGenres = new GetGenres();
         ArrayList<Genre> allGenres = getGenres.getAllGenres();
         Genre.getItems().setAll(allGenres);
+        
+        Director.setCellFactory(list -> new ListCell<Director>() {
+            @Override
+            protected void updateItem(Director director, boolean empty) {
+                super.updateItem(director, empty);
+                if (empty || director == null) {
+                    setText(null);
+                } else {
+                    setText(director.toString()); 
+                }
+            }
+        });
+        
+        GetDirectors getDirector = new GetDirectors();
+        ArrayList<Director> allDirector = getDirector.getAllDirectors();
+        Director.getItems().setAll(allDirector);
         
     }
     
