@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane layoutX="14.0" layoutY="6.0" prefHeight="381.0" prefWidth="312.0">
+         <children>
+            <ListView layoutX="163.0" layoutY="47.0" prefHeight="301.0" prefWidth="121.0" />
+            <ListView layoutX="16.0" layoutY="47.0" prefHeight="331.0" prefWidth="121.0" />
+            <Label layoutX="113.0" layoutY="5.0" text="Mina Lån" />
+            <Label layoutX="49.0" layoutY="31.0" text="Aktiva lån" />
+            <Label layoutX="176.0" layoutY="22.0" prefHeight="36.0" prefWidth="96.0" text="lämna tillbaka lån" />
+            <Button layoutX="163.0" layoutY="351.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="121.0" text="Lämna tillbaka" />
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="309.0" layoutY="30.0" prefHeight="359.0" prefWidth="276.0">
+         <children>
+            <ListView layoutX="158.0" layoutY="23.0" prefHeight="321.0" prefWidth="103.0" />
+            <ListView layoutX="14.0" layoutY="23.0" prefHeight="321.0" prefWidth="103.0" />
+            <Label layoutX="179.0" layoutY="5.0" text="Lån historik" />
+            <Label layoutX="54.0" layoutY="5.0" text="Mail" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

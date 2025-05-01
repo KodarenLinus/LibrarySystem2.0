@@ -25,7 +25,7 @@ import javafx.scene.input.MouseEvent;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class LoanItemController {
-    
+
     @FXML
     private ListView<Items> ItemList;
 
@@ -111,17 +111,17 @@ public class LoanItemController {
     
     @FXML
     void makeOrder(ActionEvent event) throws IOException{
-        
-        
-        /*String fxmlf = "CustomerView.fxml";
-        ChangeWindow changeWindow = new ChangeWindow();
-        changeWindow.windowChange(event, fxmlf);*/
-        
+
         // Skapar ett lån utifrån vad vi har i kundvagnen!!!
         LoanItem loanItem = new LoanItem();
         ArrayList<Items> itemsToLoan = new ArrayList<>(itemCartList.getItems());
         Session session = Session.getInstance();
-        loanItem.addToLoanRows(session.getUserId(), itemsToLoan, event);
+        
+        // Kör loan item och kollar att lånets genomförs, om de inte körs kommer våran kundvagn inte tömmas.
+        if (loanItem.addToLoanRows(session.getUserId(), itemsToLoan, event) == true)
+        {
+            itemCartList.getItems().clear();
+        }
     }
     
     /**

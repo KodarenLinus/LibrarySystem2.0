@@ -8,6 +8,7 @@ import com.mycompany.library_system.Models.Book;
 import com.mycompany.library_system.Models.DVD;
 import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Search.SearchItems;
+import com.mycompany.library_system.Utils.AlertHandler;
 import com.mycompany.library_system.Utils.ObjectSession;
 import com.mycompany.library_system.Utils.PopUpWindow;
 import java.util.ArrayList;
@@ -62,7 +63,11 @@ public class HandleItemsController {
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(item.toString()); 
+                    if (item instanceof Book) {
+                        setText(item.toString() + ": Bok"); 
+                    } else {
+                        setText(item.toString() + ": DVD");
+                    }
                 }
             }
         });
@@ -89,8 +94,11 @@ public class HandleItemsController {
             // Öppna fönster för att lägga till författare
             popUpWindow.popUp(event, "AddAuthorToBook.fxml");
         } else if (choicenItem instanceof DVD) {
-            // Öppna fönster för att lägga till regissör
-            popUpWindow.popUp(event, "AddDirectorToDVD.fxml");
+            String title = "Kan inte lägga till författare";
+            String header = "DVD kan inte lägga till författare";
+            String content = "Vänlingen välj en book";
+            AlertHandler alertHandler = new AlertHandler();
+            alertHandler.createAlert(title, header, content);
         } else {
             System.out.println("Okänd typ av item");
         }
