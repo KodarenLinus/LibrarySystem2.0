@@ -34,7 +34,12 @@ public class LoanItem {
     * @param itemsToLoan Lista med objekt som ska lånas
     * @param event Event som triggar popup-fönster vid fel
     */
-    public void addToLoanRows(int custID, ArrayList<Items> itemsToLoan, Event event) {
+    public boolean addToLoanRows(int custID, ArrayList<Items> itemsToLoan, Event event) {
+        AlertHandler alertHandler = new AlertHandler();
+        String title;
+        String header; 
+        String content;
+        
         DatabaseConnector connDB = new ConnDB();
         try (Connection conn = connDB.connect()) {
             int currentLoans = getActiveLoanCount(conn, custID);
@@ -44,17 +49,23 @@ public class LoanItem {
             if (exceedsLoanLimit(currentLoans, itemsToLoan.size(), allowedLoan)) {
                 boolean cartTooBig = currentLoans < allowedLoan;
                 handleLoanLimitExceeded(cartTooBig);
-                return;
+                return false;
             }
 
             int loanID = createLoanAndReturnID(conn, custID);
-            if (loanID == -1) return;
+            if (loanID == -1) return false;
 
             insertLoanRows(conn, loanID, itemsToLoan);
+            title = "Lån popUp";
+            header ="Lyckat lån"; 
+            content = "Du har lånat följande: ";
+            for(Items item: itemsToLoan){ content += (item.getTitle() + ", "); }
+            alertHandler.createAlert(title, header, content);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return true;
     }
     
     /**

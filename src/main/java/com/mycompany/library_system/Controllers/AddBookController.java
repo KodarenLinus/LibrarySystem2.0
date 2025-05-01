@@ -27,6 +27,11 @@ import javafx.scene.control.TextField;
  */
 public class AddBookController {
 
+    private AlertHandler alertHandler = new AlertHandler();
+    private String title;
+    private String header; 
+    private String content;
+    
     @FXML
     private ComboBox<Category> Category;
 
@@ -68,17 +73,14 @@ public class AddBookController {
     */
     @FXML
     void addBook(ActionEvent event) {
-        String title;
-        String header; 
-        String content;
-        
+
         // Kontrollera att alla fält är ifyllda
         if (!isFormValid()) {
             title = "Alla fält är inte ifyllda";
             header ="Du måste fylla i alla fälten"; 
             content = "Du har missat att fylla i ett eller flera fält, "
                     + "se till att alla fält är ifyllda innan du klickar dig vidare";
-            AlertHandler alertHandler = new AlertHandler();
+            
             alertHandler.createAlert(title, header, content);
             return;
         }
@@ -90,13 +92,14 @@ public class AddBookController {
             Genre selectedGenre = Genre.getValue();
             
             // Borde kanske vara en alert
-            PopUpWindow popUpWindow = new PopUpWindow();
-            String fxmlf = "newBookPop.fxml";
+            title = "lyckades";
+            header ="Du har har lagt till bok"; 
+            content = "Grattis du har lagt till en bok";
             
-            // Visa bekräftelse-popup            
-            popUpWindow.popUp(event, fxmlf);
+            alertHandler.createAlert(title, header, content);
             
-             // Skapa bok-objekt och spara i databasen
+            
+            // Skapa bok-objekt och spara i databasen
             Book book = new Book(
                     Title.getText(), 
                     Location.getText(), 

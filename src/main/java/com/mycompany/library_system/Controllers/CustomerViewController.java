@@ -15,6 +15,14 @@ import javafx.fxml.FXML;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class CustomerViewController {
+    
+      @FXML
+    void GoToMyLoans(ActionEvent event) {
+        String fxmlf = "MyLoans.fxml";
+        ChangeWindow changeWindow = new ChangeWindow();
+        changeWindow.windowChange(event, fxmlf);
+    }
+    
     @FXML
     void loanItem(ActionEvent event) throws IOException {
         
