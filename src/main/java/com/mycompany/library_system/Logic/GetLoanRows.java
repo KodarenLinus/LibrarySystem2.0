@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class GetLoanRows {
-    public ArrayList<LoanRow> getAllLoanRows () throws SQLException {
+    public ArrayList<LoanRow> getAllLoanRows (boolean activeLoans) throws SQLException {
         ArrayList<LoanRow> loanRowList = new ArrayList<>();
         
         // Skapar en databasanslutning
@@ -26,13 +26,14 @@ public class GetLoanRows {
         Connection conn = connDB.connect();
         
         // En SQL-fråga för att hämta alla loanRows för en kund
-        String selectAllLoanRows = "SELECT * FROM LoanRow WHERE (ActiveLoan = true) AND ( LoanID IN "
+        String selectAllLoanRows = "SELECT * FROM LoanRow WHERE (ActiveLoan = ?) AND ( LoanID IN "
                 + "(SELECT LoanID FROM Loan WHERE CustomerID = ?))";
         
         try (
             PreparedStatement loanRowStmt = conn.prepareStatement(selectAllLoanRows);
         ) {
-            loanRowStmt.setInt(1, Session.getInstance().getUserId());
+            loanRowStmt.setBoolean(1, activeLoans);
+            loanRowStmt.setInt(2, Session.getInstance().getUserId());
             ResultSet rsLoanRow = loanRowStmt.executeQuery();
             
             while (rsLoanRow.next()) {

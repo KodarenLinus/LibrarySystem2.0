@@ -9,7 +9,7 @@
    <children>
       <AnchorPane layoutX="14.0" layoutY="6.0" prefHeight="381.0" prefWidth="312.0">
          <children>
-            <ListView fx:id="ReturnLoanList" layoutX="163.0" layoutY="47.0" onMouseClicked="#RemoveFromReturnList" prefHeight="301.0" prefWidth="121.0" />
+            <ListView fx:id="ReturnLoanList" layoutX="163.0" layoutY="47.0" prefHeight="301.0" prefWidth="121.0" />
             <ListView fx:id="AktiveLoansList" layoutX="16.0" layoutY="47.0" onMouseClicked="#AddToReturnList" prefHeight="331.0" prefWidth="121.0" />
             <Label layoutX="113.0" layoutY="5.0" text="Mina Lån" />
             <Label layoutX="49.0" layoutY="31.0" text="Aktiva lån" />
@@ -25,5 +25,6 @@
             <Label layoutX="54.0" layoutY="5.0" text="Mail" />
          </children>
       </AnchorPane>
+      <Button layoutX="466.0" layoutY="3.0" mnemonicParsing="false" onAction="#ReturnToCustomerView" prefHeight="25.0" prefWidth="121.0" text="Gå tillbaka" />
    </children>
 </AnchorPane>

@@ -56,12 +56,12 @@ public class LoanRow {
         return activeLoan;
     }
     
-     public void loadItem() throws SQLException {
+    public void loadItem() throws SQLException {
         GetItemsByID itemFetcher = new GetItemsByID();
         this.item = itemFetcher.getItemById(this.itemID);
     }
      
-     @Override
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
