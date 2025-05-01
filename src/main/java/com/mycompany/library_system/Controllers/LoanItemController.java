@@ -41,13 +41,13 @@ public class LoanItemController {
     @FXML
     private ListView<Items> itemCartList;
     
-       @FXML
+    @FXML
     private RadioButton magazineFilterButton;
 
     @FXML
     private RadioButton referensFilterButton;
     
-       @FXML
+    @FXML
     void FilterMagazine(ActionEvent event) {
          applyFilter();
          //refreshItemList();
@@ -158,7 +158,9 @@ public class LoanItemController {
         
         // Söker efter objekt i realtid och visar matchningar
         ScearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
-            applyFilter();
+            ArrayList<Items> searchResults = searchItems.search(newValue);
+            searchResults.removeAll(itemCartList.getItems());
+            ItemList.getItems().setAll(searchResults);
         });
     }
     
@@ -188,7 +190,7 @@ public class LoanItemController {
         for (Items item : allItems) {
             if (magazineFilterButton.isSelected() && item.getCategoryID() == 5) {
                 continue; // Om vi filtrerar på magasin och det inte är magasin → hoppa över
-            }
+}
             if (referensFilterButton.isSelected() && item.getCategoryID() == 4) {
                 continue; // Om vi filtrerar på referens och det inte är referens → hoppa över
             }
