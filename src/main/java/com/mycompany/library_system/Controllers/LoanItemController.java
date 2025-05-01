@@ -95,7 +95,6 @@ public class LoanItemController {
 
         if (selectedItem != null) {
             itemCartList.getItems().remove(selectedItem);
-            //refreshItemList();
             applyFilter();
         }
     }
