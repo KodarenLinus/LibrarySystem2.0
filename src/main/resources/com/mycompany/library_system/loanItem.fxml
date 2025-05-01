@@ -34,8 +34,8 @@
       </MenuBar>
       <ListView fx:id="ItemList" layoutY="60.0" onMouseClicked="#addToCart" prefHeight="280.0" prefWidth="264.0" />
       <ListView fx:id="itemCartList" layoutX="393.0" layoutY="60.0" onMouseClicked="#removeFromCart" prefHeight="200.0" prefWidth="200.0" />
-      <RadioButton fx:id="magazineFilterButton" layoutX="188.0" layoutY="364.0" mnemonicParsing="false" onAction="#FilterMagazine" text="ta bort Tidskrift" />
-      <RadioButton fx:id="referensFilterButton" layoutX="320.0" layoutY="366.0" mnemonicParsing="false" onAction="#FilterReferensBook" text="ta bort Referensexemplar" />
+      <RadioButton fx:id="magazineFilterButton" layoutX="188.0" layoutY="364.0" mnemonicParsing="false" onAction="#FilterMagazine" text="Ta bort Tidskrift" />
+      <RadioButton fx:id="referensFilterButton" layoutX="320.0" layoutY="366.0" mnemonicParsing="false" onAction="#FilterReferensBook" text="Ta bort Referensexemplar" />
       <TextField fx:id="ScearchItem" layoutX="26.0" layoutY="360.0" promptText="Sök böcker" />
       <Text layoutX="110.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sök">
          <font>

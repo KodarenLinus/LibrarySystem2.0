@@ -9,8 +9,10 @@ import com.mycompany.library_system.Models.DVD;
 import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Search.SearchItems;
 import com.mycompany.library_system.Utils.AlertHandler;
+import com.mycompany.library_system.Utils.ChangeWindow;
 import com.mycompany.library_system.Utils.ObjectSession;
 import com.mycompany.library_system.Utils.PopUpWindow;
+import java.io.IOException;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -48,6 +50,14 @@ public class HandleItemsController {
     @FXML
     void UpdateObject(ActionEvent event) {
 
+    }
+    
+    @FXML
+    void back(ActionEvent event) throws IOException{
+        
+        String fxmlf = "StartMenu.fxml";
+        ChangeWindow changeWindow = new ChangeWindow();
+        changeWindow.windowChange(event, fxmlf);
     }
     
     
