@@ -15,7 +15,7 @@ import javafx.stage.Stage;
  */
 public class NewBookPopController {
     
-     @FXML
+    @FXML
     void close(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
