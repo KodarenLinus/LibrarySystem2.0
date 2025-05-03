@@ -19,5 +19,6 @@
       <Button layoutX="407.0" layoutY="160.0" mnemonicParsing="false" onAction="#AddDirectorOrAuthor" text="Lägg till Regissör/ Författare" />
       <Button layoutX="407.0" layoutY="200.0" mnemonicParsing="false" onAction="#RemoveObject" prefHeight="25.0" prefWidth="166.0" text="Ta bort objekt" />
       <Button layoutX="407.0" layoutY="242.0" mnemonicParsing="false" onAction="#UpdateObject" prefHeight="25.0" prefWidth="166.0" text="Updatera objekt" />
+      <Button layoutX="460.0" layoutY="296.0" mnemonicParsing="false" onAction="#back" text="Tillbaka" />
    </children>
 </AnchorPane>

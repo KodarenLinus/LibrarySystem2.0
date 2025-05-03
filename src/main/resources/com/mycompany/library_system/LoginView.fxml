@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -46,15 +44,14 @@
          <children>
             <Text layoutX="99.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lösenord:" wrappingWidth="64.0" />
             <Text layoutX="99.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Användarnamn:" wrappingWidth="91.0" />
-            <CheckBox layoutX="99.0" layoutY="135.0" mnemonicParsing="false" text="kom ihåg lösenord" />
-            <Button layoutX="155.0" layoutY="174.0" mnemonicParsing="false" onAction="#loginButton" text="Logga in kund" />
-            <Hyperlink layoutX="138.0" layoutY="262.0" text="Glömt Lösenord?" underline="true" />
-            <Button layoutX="142.0" layoutY="207.0" mnemonicParsing="false" onAction="#loginButtonEmployee" text="Logga in anställda" />
-            <TextField fx:id="userName" layoutX="101.0" layoutY="59.0" prefHeight="26.0" prefWidth="198.0" />
-            <PasswordField fx:id="userPassword" layoutX="101.0" layoutY="104.0" prefHeight="26.0" prefWidth="198.0" />
+            <Button layoutX="101.0" layoutY="144.0" mnemonicParsing="false" onAction="#loginButton" text="Logga in kund" />
+            <Button layoutX="202.0" layoutY="144.0" mnemonicParsing="false" onAction="#loginButtonEmployee" text="Logga in anställda" />
+            <TextField fx:id="userName" layoutX="101.0" layoutY="59.0" prefHeight="26.0" prefWidth="216.0" />
+            <PasswordField fx:id="userPassword" layoutX="101.0" layoutY="104.0" prefHeight="26.0" prefWidth="216.0" />
+            <Button layoutX="172.0" layoutY="191.0" mnemonicParsing="false" onAction="#back" text="Tillbaka" />
          </children>
       </Pane>
-      <Text layoutX="207.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Inloggning" textAlignment="CENTER" wrappingWidth="153.21630859375">
+      <Text layoutX="223.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Inloggning" textAlignment="CENTER" wrappingWidth="153.21630859375">
          <font>
             <Font size="24.0" />
          </font>

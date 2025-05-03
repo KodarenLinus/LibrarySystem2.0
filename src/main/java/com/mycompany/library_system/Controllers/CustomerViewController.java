@@ -24,6 +24,13 @@ public class CustomerViewController {
     }
     
     @FXML
+    void GoToReserveItem(ActionEvent event) {
+        String fxmlf = "ReserveItem.fxml";
+        ChangeWindow changeWindow = new ChangeWindow();
+        changeWindow.windowChange(event, fxmlf);
+    }
+    
+    @FXML
     void loanItem(ActionEvent event) throws IOException {
         
         String fxmlf = "LoanItem.fxml";

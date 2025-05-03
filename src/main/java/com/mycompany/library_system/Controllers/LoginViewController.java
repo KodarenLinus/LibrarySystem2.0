@@ -45,6 +45,14 @@ public class LoginViewController{
                 // Lägg till 
         }
     }
+    
+    @FXML
+    void back(ActionEvent event) throws IOException{
+        
+        String fxmlf = "StartView.fxml";
+        ChangeWindow changeWindow = new ChangeWindow();
+        changeWindow.windowChange(event, fxmlf);
+    }
         
     @FXML
     private void loginButtonEmployee(ActionEvent event) throws IOException{

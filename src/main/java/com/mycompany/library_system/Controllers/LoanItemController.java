@@ -4,6 +4,7 @@
  */
 package com.mycompany.library_system.Controllers;
 
+import com.mycompany.library_system.Logic.GetReservationDate;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Logic.LoanItem;
@@ -11,7 +12,11 @@ import com.mycompany.library_system.Search.SearchItems;
 import com.mycompany.library_system.Login.Session;
 import com.mycompany.library_system.Utils.AlertHandler;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
@@ -35,13 +40,13 @@ public class LoanItemController {
     @FXML
     private ListView<Items> itemCartList;
     
-       @FXML
+    @FXML
     private RadioButton magazineFilterButton;
 
     @FXML
     private RadioButton referensFilterButton;
     
-       @FXML
+    @FXML
     void FilterMagazine(ActionEvent event) {
          applyFilter();
     }
@@ -91,7 +96,7 @@ public class LoanItemController {
      */
     @FXML
     void removeFromCart(MouseEvent event) {
-         Items selectedItem = itemCartList.getSelectionModel().getSelectedItem();
+        Items selectedItem = itemCartList.getSelectionModel().getSelectedItem();
 
         if (selectedItem != null) {
             itemCartList.getItems().remove(selectedItem);
@@ -117,7 +122,7 @@ public class LoanItemController {
         Session session = Session.getInstance();
         
         // Kör loan item och kollar att lånets genomförs, om de inte körs kommer våran kundvagn inte tömmas.
-        if (loanItem.addToLoanRows(session.getUserId(), itemsToLoan, event) == true)
+        if (loanItem.addToLoanRows(session.getUserId(), itemsToLoan) == true)
         {
             itemCartList.getItems().clear();
         }
@@ -127,7 +132,9 @@ public class LoanItemController {
     * Initierar vyn när den laddas. Ställer in hur objekt listas, hämtar alla objekt och lägger till sökfunktionalitet.
     */
     @FXML
-    public void initialize()  {
+    public void initialize() throws SQLException  {
+        
+        GetReservationDate getReservationDate = new GetReservationDate();
         
         // Visar titel för varje objekt i listan
         ItemList.setCellFactory(list -> new ListCell<Items>() {
@@ -137,7 +144,15 @@ public class LoanItemController {
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(item.toString()); 
+                    LocalDate reservationDate = null;
+                    try {
+                        reservationDate = getReservationDate.getReservationDateForItem(item.getItemID());
+                    } catch (SQLException ex) {
+                        Logger.getLogger(ReserveItemController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    String dateInfo = (reservationDate != null && reservationDate.isAfter(LocalDate.now())) ? " (Reserverad: " + reservationDate + ")" : " (Ej reserverad)";
+                    setText(item.toString() + dateInfo);
                 }
             }
         });
@@ -150,7 +165,9 @@ public class LoanItemController {
         
         // Söker efter objekt i realtid och visar matchningar
         ScearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
-            applyFilter();
+            ArrayList<Items> searchResults = searchItems.search(newValue);
+            searchResults.removeAll(itemCartList.getItems());
+            ItemList.getItems().setAll(searchResults);
         });
     }
     
@@ -170,7 +187,7 @@ public class LoanItemController {
         for (Items item : allItems) {
             if (magazineFilterButton.isSelected() && item.getCategoryID() == 5) {
                 continue; // Om vi filtrerar på magasin och det inte är magasin → hoppa över
-            }
+}
             if (referensFilterButton.isSelected() && item.getCategoryID() == 4) {
                 continue; // Om vi filtrerar på referens och det inte är referens → hoppa över
             }

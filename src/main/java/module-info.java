@@ -1,4 +1,4 @@
-module com.mycompany.libary_system {
+module com.mycompany.library_system {
     requires java.sql;
     requires javafx.controls;
     requires javafx.fxml;

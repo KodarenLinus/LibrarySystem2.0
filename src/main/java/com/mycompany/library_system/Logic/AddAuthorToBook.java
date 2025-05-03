@@ -24,8 +24,8 @@ public class AddAuthorToBook {
     /**
      * Lägger till en eller flera författare till en bok i BookAuthor-tabellen.
      *
-     * @param Ett Book objekt som vi skickar till bookAuthor i databasen
-     * @param En lista med författare som som vi kopplar till book objektet
+     * @param book ett Book objekt som vi skickar till bookAuthor i databasen
+     * @param authors en lista med författare som som vi kopplar till book objektet
      */
     public void insertToBookAuthor (Book book, ArrayList<Author> authors) {
         

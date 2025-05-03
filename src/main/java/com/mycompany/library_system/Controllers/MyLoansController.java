@@ -104,12 +104,12 @@ public class MyLoansController {
         
         LoanHistory.setCellFactory(list -> new ListCell<LoanRow>() {
             @Override
-            protected void updateItem(LoanRow item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
+            protected void updateItem(LoanRow loanRow, boolean empty) {
+                super.updateItem(loanRow, empty);
+                if (empty || loanRow == null) {
                     setText(null);
                 } else {
-                    setText(item.toString()); 
+                    setText(loanRow.toString()); 
                 }
             }
         });
@@ -130,7 +130,7 @@ public class MyLoansController {
         LoanHistory.getItems().setAll(allLoanRowsHistory);
     }
     
-      private void applyFilter() throws SQLException {
+    private void applyFilter() throws SQLException {
         boolean activeLoan = true;
         GetLoanRows getLoanRows = new GetLoanRows();
         ArrayList<LoanRow> allLoanRows = getLoanRows.getAllLoanRows(activeLoan);

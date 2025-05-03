@@ -27,8 +27,8 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Button layoutX="131.0" layoutY="175.0" mnemonicParsing="false" onAction="#AddDvD" prefHeight="25.0" prefWidth="98.0" text="Add DvD" />
-      <Button layoutX="406.0" layoutY="175.0" mnemonicParsing="false" onAction="#AddBook" prefHeight="25.0" prefWidth="98.0" text="Add book" />
-      <Button layoutX="234.0" layoutY="290.0" mnemonicParsing="false" onAction="#BackToMenu" prefHeight="25.0" prefWidth="135.0" text="Back to menu" />
+      <Button layoutX="131.0" layoutY="175.0" mnemonicParsing="false" onAction="#AddDvD" prefHeight="25.0" prefWidth="98.0" text="Lägg till DVD" />
+      <Button layoutX="406.0" layoutY="175.0" mnemonicParsing="false" onAction="#AddBook" prefHeight="25.0" prefWidth="98.0" text="Lägg till bok" />
+      <Button layoutX="234.0" layoutY="290.0" mnemonicParsing="false" onAction="#BackToMenu" prefHeight="25.0" prefWidth="135.0" text="Tillbaka" />
    </children>
 </AnchorPane>

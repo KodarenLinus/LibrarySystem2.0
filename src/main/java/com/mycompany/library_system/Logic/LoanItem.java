@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import javafx.event.Event;
@@ -34,14 +35,16 @@ public class LoanItem {
     * @param itemsToLoan Lista med objekt som ska lånas
     * @param event Event som triggar popup-fönster vid fel
     */
-    public boolean addToLoanRows(int custID, ArrayList<Items> itemsToLoan, Event event) {
+    public boolean addToLoanRows(int custID, ArrayList<Items> itemsToLoan) {
         AlertHandler alertHandler = new AlertHandler();
         String title;
         String header; 
         String content;
         
         DatabaseConnector connDB = new ConnDB();
-        try (Connection conn = connDB.connect()) {
+        try (
+            Connection conn = connDB.connect()
+        ) {
             int currentLoans = getActiveLoanCount(conn, custID);
             int allowedLoan = getAllowedLoanLimit(conn, custID);
             
@@ -155,27 +158,21 @@ public class LoanItem {
     * @return Det nya lånets ID eller -1 om något går fel
     * @throws SQLException vid fel i SQL-frågan
     */
-    private int createLoanAndReturnID(Connection conn, int custID) throws SQLException {
+   private int createLoanAndReturnID(Connection conn, int custID) throws SQLException {
         String insertLoanSQL = "INSERT INTO loan (customerID) VALUES (?)";
-        String getLoanIDSQL = "SELECT MAX(loanid) FROM loan WHERE customerID = ?";
 
-        try (
-            PreparedStatement insertStmt = conn.prepareStatement(insertLoanSQL);
-            PreparedStatement getLoanIDStmt = conn.prepareStatement(getLoanIDSQL);
-        ) {
-            // Lägger in värden i loan tabelen
+        try (PreparedStatement insertStmt = conn.prepareStatement(insertLoanSQL, Statement.RETURN_GENERATED_KEYS)) {
             insertStmt.setInt(1, custID);
             insertStmt.executeUpdate();
 
-            getLoanIDStmt.setInt(1, custID);
-            ResultSet rs = getLoanIDStmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1);
+            try (ResultSet generatedKeys = insertStmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Misslyckades att hämta genererat loan-ID.");
+                }
             }
         }
-
-        return -1;
     }
     
     /**
