@@ -19,7 +19,7 @@ public class ConnDB implements DatabaseConnector {
     // URL, Användarnamen och lösenord för mySQL databasen!!
     private static final String DB_URL = "jdbc:mysql://localhost:3306/book_libary";
     private static final String DB_USERNAME = "root"; 
-    private static final String DB_PASSWORD = "Finnträsk69";
+    private static final String DB_PASSWORD = "LinusS";
     
     // En metod som skapar en databaskoppling.
     @Override
