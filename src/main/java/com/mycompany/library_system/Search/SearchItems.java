@@ -8,6 +8,7 @@ import com.mycompany.library_system.Models.Book;
 import com.mycompany.library_system.Database.ConnDB;
 import com.mycompany.library_system.Models.DVD;
 import com.mycompany.library_system.Database.DatabaseConnector;
+import com.mycompany.library_system.Logic.GetCategoryLoanTime;
 import com.mycompany.library_system.Models.Items;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -82,6 +83,7 @@ public class SearchItems {
         return results;
     }
     
+   
     public ArrayList<Items> searchAvailableItems(LocalDate date) {
         ArrayList<Items> availableItems = new ArrayList<>();
         DatabaseConnector connDB = new ConnDB();

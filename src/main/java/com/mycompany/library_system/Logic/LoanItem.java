@@ -185,17 +185,16 @@ public class LoanItem {
     * @throws SQLException vid fel i SQL-frågan
     */
     private void insertLoanRows(Connection conn, int loanID, ArrayList<Items> itemsToLoan) throws SQLException {
-        String getCategorySQL = "SELECT categoryID FROM item WHERE itemID = ?";
         String insertLoanRowSQL = "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate, ActiveLoan) VALUES (?, ?, ?, ?, ?)";
 
         LocalDate today = LocalDate.now();
 
         try (
-            PreparedStatement getCategoryStmt = conn.prepareStatement(getCategorySQL);
             PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRowSQL)
         )   {
             for (Items item : itemsToLoan) {
-                LocalDate endDate = calculatetLoanEndDate(getCategoryStmt, item.getItemID(), today);
+                GetCategoryLoanTime getCategoryLoanTime = new GetCategoryLoanTime();
+                LocalDate endDate = getCategoryLoanTime.calculatetLoanEndDate(conn, item.getItemID(), today);
                 
                 // Lägger in värden i loanRow tabelen
                 insertLoanRowStmt.setInt(1, loanID);
@@ -208,38 +207,5 @@ public class LoanItem {
 
             insertLoanRowStmt.executeBatch();
         }
-    }
-    
-    /**
-    * Beräknar lånets slutdatum beroende på objektets kategori.
-    * T.ex. böcker lånas i en månad, filmer i en vecka, etc.
-    *
-    * @param categoryStmt Förberedd SQL-fråga för att hämta kategoriID
-    * @param itemID ID för objektet
-    * @param date Startdatum för lånet
-    * @return Uträknat slutdatum för lånet
-    * @throws SQLException vid fel i SQL-frågan
-    */
-    private LocalDate calculatetLoanEndDate(PreparedStatement categoryStmt, int itemID, LocalDate date) throws SQLException {
-        categoryStmt.setInt(1, itemID);
-        ResultSet rs = categoryStmt.executeQuery();
-
-        if (rs.next()) {
-            int categoryID = rs.getInt("categoryID");
-            CategoryType categoryType = CategoryType.fromId(categoryID);
-
-            switch (categoryType) {
-                case BOOK: 
-                    return date.plusMonths(1);                    
-                case COURSE_LITERATURE: 
-                    return date.plusWeeks(1);
-                case DVD: 
-                    return date.plusWeeks(2);
-                default: 
-                    return date;
-            }
-        }
-        return date;
-    }
-     
+    } 
 }
