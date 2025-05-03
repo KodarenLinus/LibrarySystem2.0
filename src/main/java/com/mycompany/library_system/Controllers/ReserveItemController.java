@@ -9,9 +9,11 @@ import com.mycompany.library_system.Login.Session;
 import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Search.SearchItems;
 import com.mycompany.library_system.Utils.ChangeWindow;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -27,6 +29,9 @@ public class ReserveItemController {
 
     @FXML
     private TextField ScearchItem;
+    
+    @FXML
+    private DatePicker dateToReserve;
 
     @FXML
     private ListView<Items> itemReservationList;
@@ -53,9 +58,10 @@ public class ReserveItemController {
         ReserveItem reserveItem = new ReserveItem();
         ArrayList<Items> itemsToReserve = new ArrayList<>(itemReservationList.getItems());
         Session session = Session.getInstance();
+        LocalDate selectedDate = dateToReserve.getValue();
         
          // Kör loan item och kollar att lånets genomförs, om de inte körs kommer våran kundvagn inte tömmas.
-        if (reserveItem.addToReservationRows(session.getUserId(), itemsToReserve) == true)
+        if (reserveItem.addToReservationRows(session.getUserId(), itemsToReserve, selectedDate) == true)
         {
             itemReservationList.getItems().clear();
         }
@@ -85,23 +91,35 @@ public class ReserveItemController {
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(item.toString()); 
+                    setText(item.toString());
                 }
             }
         });
-        
-        // Laddar in alla objekt vid start
+
         SearchItems searchItems = new SearchItems();
         ArrayList<Items> allItems = searchItems.search("");
+
+        // Lägg till null-kontroll
+        LocalDate selectedDate = dateToReserve.getValue();
+        if (selectedDate != null) {
+            ArrayList<Items> availableItems = searchItems.searchAvailableItems(selectedDate);
+            allItems.retainAll(availableItems);
+        }
+
         allItems.removeAll(itemReservationList.getItems());
         allItems.removeIf(item -> item.getCategoryID() == 4 || item.getCategoryID() == 5);
         ItemList.getItems().setAll(allItems);
-        
-        // Söker efter objekt i realtid och visar matchningar
+
+        // Lyssna på sökfältet
         ScearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
             ArrayList<Items> searchResults = searchItems.search(newValue);
             searchResults.removeAll(itemReservationList.getItems());
             ItemList.getItems().setAll(searchResults);
+        });
+
+        // Lägg till en lyssnare som uppdaterar listan när datumet ändras
+        dateToReserve.valueProperty().addListener((obs, oldDate, newDate) -> {
+            applyFilter();
         });
     }
     
@@ -109,8 +127,16 @@ public class ReserveItemController {
         String searchTerm = ScearchItem.getText();
         SearchItems searchItems = new SearchItems();
         ArrayList<Items> allItems = searchItems.search(searchTerm);
+        LocalDate selectedDate = dateToReserve.getValue();
+
+        if (selectedDate != null) {
+            ArrayList<Items> availableItems = searchItems.searchAvailableItems(selectedDate);
+            allItems.retainAll(availableItems);
+        }
+
         allItems.removeAll(itemReservationList.getItems());
         allItems.removeIf(item -> item.getCategoryID() == 4 || item.getCategoryID() == 5);
         ItemList.getItems().setAll(allItems);
     }
+    
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -14,7 +15,7 @@
    <children>
       <ListView fx:id="ItemList" layoutY="60.0" onMouseClicked="#addToReservation" prefHeight="280.0" prefWidth="264.0" />
       <ListView fx:id="itemReservationList" layoutX="393.0" layoutY="60.0" onMouseClicked="#removeFromReservation" prefHeight="200.0" prefWidth="200.0" />
-      <TextField fx:id="ScearchItem" layoutX="26.0" layoutY="360.0" promptText="Sök" />
+      <TextField fx:id="ScearchItem" layoutX="14.0" layoutY="360.0" promptText="Sök" />
       <Text layoutX="110.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sök">
          <font>
             <Font size="18.0" />
@@ -46,5 +47,6 @@
             </Menu>
          </menus>
       </MenuBar>
+      <DatePicker fx:id="dateToReserve" layoutX="169.0" layoutY="360.0" promptText="välj datum att resevera" />
    </children>
 </AnchorPane>

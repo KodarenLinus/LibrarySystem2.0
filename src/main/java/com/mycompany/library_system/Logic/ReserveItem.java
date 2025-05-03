@@ -27,12 +27,12 @@ public class ReserveItem {
      * @param itemsToReserve Lista med objekt som ska reserveras
      * @return true om lyckad reservation
      */
-    public boolean addToReservationRows(int custID, ArrayList<Items> itemsToReserve) {
+    public boolean addToReservationRows(int custID, ArrayList<Items> itemsToReserve, LocalDate reserveDate) {
         AlertHandler alertHandler = new AlertHandler();
 
         DatabaseConnector connDB = new ConnDB();
         try (Connection conn = connDB.connect()) {
-            int reservationID = createReservationAndReturnID(conn, custID);
+            int reservationID = createReservationAndReturnID(conn, custID, reserveDate);
             if (reservationID == -1) return false;
 
             insertReservationRows(conn, reservationID, itemsToReserve);
@@ -57,12 +57,12 @@ public class ReserveItem {
     /**
      * Skapar en ny reservation och returnerar ID:t.
      */
-    private int createReservationAndReturnID(Connection conn, int custID) throws SQLException {
+    private int createReservationAndReturnID(Connection conn, int custID, LocalDate reserveDate) throws SQLException {
         String insertReservationSQL = "INSERT INTO reservation (CustomerID, ReservationDate) VALUES (?, ?)";
 
         try (PreparedStatement insertStmt = conn.prepareStatement(insertReservationSQL, Statement.RETURN_GENERATED_KEYS)) {
             insertStmt.setInt(1, custID);
-            insertStmt.setDate(2, Date.valueOf(LocalDate.now()));
+            insertStmt.setDate(2, Date.valueOf(reserveDate));
             insertStmt.executeUpdate();
 
             try (ResultSet generatedKeys = insertStmt.getGeneratedKeys()) {
