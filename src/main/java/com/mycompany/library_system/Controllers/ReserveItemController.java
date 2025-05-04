@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.library_system.Controllers;
 
 import com.mycompany.library_system.Logic.ReserveItem;
@@ -20,16 +16,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
 /**
- *
- * @author Linus, Emil, Oliver, Viggo
+ * Controller för att reservera items.
+ * För teständamål visar vi bara tillgängliga items från searchAvailableItems().
  */
 public class ReserveItemController {
-        @FXML
+
+    @FXML
     private ListView<Items> ItemList;
 
     @FXML
     private TextField ScearchItem;
-    
+
     @FXML
     private DatePicker dateToReserve;
 
@@ -37,9 +34,8 @@ public class ReserveItemController {
     private ListView<Items> itemReservationList;
 
     @FXML
-    void addToReservation (MouseEvent event) {
+    void addToReservation(MouseEvent event) {
         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
-
         if (selectedItem != null) {
             itemReservationList.getItems().add(selectedItem);
             applyFilter();
@@ -59,10 +55,8 @@ public class ReserveItemController {
         ArrayList<Items> itemsToReserve = new ArrayList<>(itemReservationList.getItems());
         Session session = Session.getInstance();
         LocalDate selectedDate = dateToReserve.getValue();
-        
-         // Kör loan item och kollar att lånets genomförs, om de inte körs kommer våran kundvagn inte tömmas.
-        if (reserveItem.addToReservationRows(session.getUserId(), itemsToReserve, selectedDate) == true)
-        {
+
+        if (reserveItem.addToReservationRows(session.getUserId(), itemsToReserve, selectedDate)) {
             itemReservationList.getItems().clear();
         }
     }
@@ -70,73 +64,51 @@ public class ReserveItemController {
     @FXML
     void removeFromReservation(MouseEvent event) {
         Items selectedItem = itemReservationList.getSelectionModel().getSelectedItem();
-
         if (selectedItem != null) {
             itemReservationList.getItems().remove(selectedItem);
             applyFilter();
         }
     }
-    
-     /**
-    * Initierar vyn när den laddas. Ställer in hur objekt listas, hämtar alla objekt och lägger till sökfunktionalitet.
-    */
+
+    /**
+     * Initierar vyn – för test visar vi bara resultat från searchAvailableItems().
+     */
     @FXML
-    public void initialize()  {
-        
-        // Visar titel för varje objekt i listan
+    public void initialize() {
         ItemList.setCellFactory(list -> new ListCell<Items>() {
             @Override
             protected void updateItem(Items item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item.toString());
-                }
+                setText((empty || item == null) ? null : item.toString());
             }
         });
 
-        SearchItems searchItems = new SearchItems();
-        ArrayList<Items> allItems = searchItems.search("");
+        dateToReserve.valueProperty().addListener((obs, oldDate, newDate) -> applyFilter());
 
-        // Lägg till null-kontroll
         LocalDate selectedDate = dateToReserve.getValue();
         if (selectedDate != null) {
+            SearchItems searchItems = new SearchItems();
             ArrayList<Items> availableItems = searchItems.searchAvailableItems(selectedDate);
-            allItems.retainAll(availableItems);
+
+            availableItems.removeAll(itemReservationList.getItems());
+            availableItems.removeIf(item -> item.getCategoryID() == 4 || item.getCategoryID() == 5);
+
+            ItemList.getItems().setAll(availableItems);
         }
-
-        allItems.removeAll(itemReservationList.getItems());
-        allItems.removeIf(item -> item.getCategoryID() == 4 || item.getCategoryID() == 5);
-        ItemList.getItems().setAll(allItems);
-
-        // Lyssna på sökfältet
-        ScearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
-            ArrayList<Items> searchResults = searchItems.search(newValue);
-            searchResults.removeAll(itemReservationList.getItems());
-            ItemList.getItems().setAll(searchResults);
-        });
-
-        // Lägg till en lyssnare som uppdaterar listan när datumet ändras
-        dateToReserve.valueProperty().addListener((obs, oldDate, newDate) -> {
-            applyFilter();
-        });
     }
-    
+
+
     private void applyFilter() {
-        String searchTerm = ScearchItem.getText();
-        SearchItems searchItems = new SearchItems();
-        ArrayList<Items> allItems = searchItems.search(searchTerm);
         LocalDate selectedDate = dateToReserve.getValue();
+        if (selectedDate == null) return;
 
-        if (selectedDate != null) {
-            ArrayList<Items> availableItems = searchItems.searchAvailableItems(selectedDate);
-            allItems.retainAll(availableItems);
-        }
+        System.out.println("Filtrerar för datum: " + selectedDate); // ✅ Testlogg
 
-        allItems.removeAll(itemReservationList.getItems());
-        allItems.removeIf(item -> item.getCategoryID() == 4 || item.getCategoryID() == 5);
-        ItemList.getItems().setAll(allItems);
+        SearchItems searchItems = new SearchItems();
+        ArrayList<Items> availableItems = searchItems.searchAvailableItems(selectedDate);
+
+        availableItems.removeAll(itemReservationList.getItems());
+        availableItems.removeIf(item -> item.getCategoryID() == 4 || item.getCategoryID() == 5);
+        ItemList.getItems().setAll(availableItems);
     }
-    
 }
