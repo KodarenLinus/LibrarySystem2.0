@@ -88,13 +88,6 @@ public class SearchItems {
         return results;
     }
     
-   /*SELECT *
-"FROM Item i " +
-"LEFT JOIN reservationRow rr ON i.itemID = rr.itemID " +
-"LEFT JOIN reservation r ON rr.reservationID = r.reservationID " +
-"WHERE i.itemID = 4 " +
-"AND (r.reservationID IS NULL " +
-"OR NOT ('2025-05-06' BETWEEN '2025-05-06' AND '2025-05-20'))"*/
 
     public ArrayList<Items> searchAvailableItems(LocalDate date) {
         ArrayList<Items> availableItems = new ArrayList<>();
@@ -112,8 +105,16 @@ public class SearchItems {
                  "AND (" +
                  "    r.reservationDate BETWEEN ? AND ? " +
                  "    OR ? BETWEEN r.reservationDate AND DATE_ADD(r.reservationDate, INTERVAL ? DAY)" +
-                 ")"
-        )) {
+                 ")");
+            PreparedStatement checkLoanStmt = conn.prepareStatement(
+                    "SELECT 1 "
+                    + "FROM loanRow "
+                    + "WHERE itemID = ? "
+                    + "AND (ActiveLoan = true) "
+                    + "AND (? BETWEEN RowLoanStartDate AND RowLoanEndDate) "
+                    + "OR (RowLoanStartDate BETWEEN ? AND ?)"
+            );
+        ) {
 
             ResultSet rs = allItemsStmt.executeQuery();
 
@@ -150,23 +151,33 @@ public class SearchItems {
                 }
             }
 
-            // Now filter out reserved items
             for (Items wrapper : tempItems) {
                 int itemID = wrapper.getItemID();
 
                 LocalDate loanEndDate = getCategoryLoanTime.calculatetLoanEndDate(conn, itemID, date);
                 long loanDays = ChronoUnit.DAYS.between(date, loanEndDate);
 
+                // Kontrollera reservation
                 checkReservationStmt.setInt(1, itemID);
                 checkReservationStmt.setDate(2, java.sql.Date.valueOf(date));
                 checkReservationStmt.setDate(3, java.sql.Date.valueOf(loanEndDate));
                 checkReservationStmt.setDate(4, java.sql.Date.valueOf(date));
                 checkReservationStmt.setLong(5, loanDays);
 
-                ResultSet rsCheck = checkReservationStmt.executeQuery();
-                if (!rsCheck.next()) {
-                    availableItems.add(wrapper); // only add if no conflict found
-                }
+                ResultSet rsCheckReservation = checkReservationStmt.executeQuery();
+                if (rsCheckReservation.next()) continue; // hoppa över om reserverad
+
+                // Kontrollera aktivt lån
+                checkLoanStmt.setInt(1, itemID);
+                checkLoanStmt.setDate(2, java.sql.Date.valueOf(date));
+                checkLoanStmt.setDate(3, java.sql.Date.valueOf(date));
+                checkLoanStmt.setDate(4, java.sql.Date.valueOf(loanEndDate));
+
+                ResultSet rsCheckLoan = checkLoanStmt.executeQuery();
+                if (rsCheckLoan.next()) continue; // hoppa över om lånad
+
+                // Lägg till om varken reserverad eller lånad
+                availableItems.add(wrapper);
             }
 
             } catch (SQLException e) {
