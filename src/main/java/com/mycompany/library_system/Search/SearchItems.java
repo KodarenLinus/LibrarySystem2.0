@@ -102,10 +102,8 @@ public class SearchItems {
                  "FROM reservationRow rr " +
                  "JOIN reservation r ON rr.reservationID = r.reservationID " +
                  "WHERE rr.itemID = ? " +
-                 "AND (" +
-                 "    r.reservationDate BETWEEN ? AND ? " +
-                 "    OR ? BETWEEN r.reservationDate AND DATE_ADD(r.reservationDate, INTERVAL ? DAY)" +
-                 ")");
+                 "AND (r.reservationDate BETWEEN ? AND ?) " +
+                 "OR (? BETWEEN r.reservationDate AND DATE_ADD(r.reservationDate, INTERVAL ? DAY))");
             PreparedStatement checkLoanStmt = conn.prepareStatement(
                     "SELECT 1 "
                     + "FROM loanRow "

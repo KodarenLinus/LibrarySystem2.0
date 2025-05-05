@@ -16,10 +16,11 @@ import java.sql.SQLException;
 
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 public class ReserveItem {
-
+    AlertHandler alertHandler = new AlertHandler();
     /**
      * Lägger till en reservation för en kund och returnerar true om det lyckas.
      * 
@@ -28,23 +29,14 @@ public class ReserveItem {
      * @return true om lyckad reservation
      */
     public boolean addToReservationRows(int custID, ArrayList<Items> itemsToReserve, LocalDate reserveDate) {
-        AlertHandler alertHandler = new AlertHandler();
+        
 
         DatabaseConnector connDB = new ConnDB();
         try (Connection conn = connDB.connect()) {
             int reservationID = createReservationAndReturnID(conn, custID, reserveDate);
             if (reservationID == -1) return false;
 
-            insertReservationRows(conn, reservationID, itemsToReserve);
-
-            String title = "Reservation";
-            String header = "Lyckad reservation";
-            StringBuilder content = new StringBuilder("Du har reserverat följande: ");
-            for (Items item : itemsToReserve) {
-                content.append(item.getTitle()).append(", ");
-            }
-
-            alertHandler.createAlert(title, header, content.toString());
+            insertReservationRows(conn, reservationID, itemsToReserve, reserveDate);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -78,17 +70,85 @@ public class ReserveItem {
     /**
      * Lägger till rader i reservationrow-tabellen.
      */
-    private void insertReservationRows(Connection conn, int reservationID, ArrayList<Items> itemsToReserve) throws SQLException {
+   private void insertReservationRows(Connection conn, int reservationID, ArrayList<Items> itemsToReserve, LocalDate reserveDate) throws SQLException {
         String insertRowSQL = "INSERT INTO reservationrow (ReservationID, ItemID, IsFullfilled) VALUES (?, ?, ?)";
+        GetCategoryLoanTime getCategoryLoanTime = new GetCategoryLoanTime();
+        ArrayList<Items> toRemove = new ArrayList<>();
 
-        try (PreparedStatement stmt = conn.prepareStatement(insertRowSQL)) {
+        try (
+            PreparedStatement stmt = conn.prepareStatement(insertRowSQL);
+            PreparedStatement checkReservationStmt = conn.prepareStatement(
+                 "SELECT 1 " +
+                 "FROM reservationRow rr " +
+                 "JOIN reservation r ON rr.reservationID = r.reservationID " +
+                 "WHERE rr.itemID = ? " +
+                 "AND (r.reservationDate BETWEEN ? AND ?) " +
+                 "OR (? BETWEEN r.reservationDate AND DATE_ADD(r.reservationDate, INTERVAL ? DAY))");
+            PreparedStatement checkLoanStmt = conn.prepareStatement(
+                    "SELECT 1 "
+                    + "FROM loanRow "
+                    + "WHERE itemID = ? "
+                    + "AND (ActiveLoan = true) "
+                    + "AND (? BETWEEN RowLoanStartDate AND RowLoanEndDate) "
+                    + "OR (RowLoanStartDate BETWEEN ? AND ?)"
+            );
+        ) {
             for (Items item : itemsToReserve) {
+                int itemID = item.getItemID();
+
+                LocalDate loanEndDate = getCategoryLoanTime.calculatetLoanEndDate(conn, itemID, reserveDate);
+                long loanDays = ChronoUnit.DAYS.between(reserveDate, loanEndDate);
+
+                // Kontrollera reservation
+                checkReservationStmt.setInt(1, itemID);
+                checkReservationStmt.setDate(2, java.sql.Date.valueOf(reserveDate));
+                checkReservationStmt.setDate(3, java.sql.Date.valueOf(loanEndDate));
+                checkReservationStmt.setDate(4, java.sql.Date.valueOf(reserveDate));
+                checkReservationStmt.setLong(5, loanDays);
+
+                ResultSet rsCheckReservation = checkReservationStmt.executeQuery();
+                if (rsCheckReservation.next()) {
+                    alertHandler.createAlert("Reservation", "Kan inte genomföra reservation", "Är inte tillgänglig: " + item.getTitle());
+                    toRemove.add(item);
+                    continue;
+                }
+
+                // Kontrollera aktivt lån
+                checkLoanStmt.setInt(1, itemID);
+                checkLoanStmt.setDate(2, java.sql.Date.valueOf(reserveDate));
+                checkLoanStmt.setDate(3, java.sql.Date.valueOf(reserveDate));
+                checkLoanStmt.setDate(4, java.sql.Date.valueOf(loanEndDate));
+
+                ResultSet rsCheckLoan = checkLoanStmt.executeQuery();
+                if (rsCheckLoan.next()) {
+                    alertHandler.createAlert("Reservation", "Kan inte genomföra reservation", "Är inte tillgänglig: " + item.getTitle());
+                    toRemove.add(item);
+                    continue;
+                }
+
                 stmt.setInt(1, reservationID);
                 stmt.setInt(2, item.getItemID());
                 stmt.setBoolean(3, false); // Inte uppfylld än
                 stmt.addBatch();
             }
-            stmt.executeBatch();
+
+            // Ta bort ogiltiga objekt efter loopen
+            itemsToReserve.removeAll(toRemove);
+
+            String title = "Reservation";
+            String header = itemsToReserve.size() > 0 ? "Lyckad reservation" : "Ingen reservation genomfördes";
+            StringBuilder content = new StringBuilder();
+
+            for (Items item : itemsToReserve) {
+                content.append(item.getTitle()).append(", ");
+            }
+
+            if (itemsToReserve.size() > 0) {
+                stmt.executeBatch();
+            }
+
+            alertHandler.createAlert(title, header, content.toString());
+
         }
     }
 }
