@@ -5,11 +5,11 @@
 package com.mycompany.library_system.Controllers;
 
 import com.mycompany.library_system.Logic.GetLoanRows;
+import com.mycompany.library_system.Logic.GetReservationRow;
+import com.mycompany.library_system.Logic.RemoveReservationRow;
 import com.mycompany.library_system.Logic.ReturnLoanItem;
-import com.mycompany.library_system.Models.Author;
-import com.mycompany.library_system.Models.Book;
 import com.mycompany.library_system.Models.LoanRow;
-import com.mycompany.library_system.Search.SearchAuthor;
+import com.mycompany.library_system.Models.ReservationRow;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,7 +27,10 @@ public class MyLoansController {
     
     @FXML
     private ListView<LoanRow> AktiveLoansList;
-
+    
+    @FXML
+    private ListView<ReservationRow> ReservationList;
+    
     @FXML
     private ListView<LoanRow> LoanHistory;
 
@@ -62,6 +65,23 @@ public class MyLoansController {
         ReturnLoanList.getItems().clear();
     }
     
+   @FXML
+    void RemoveReservation(ActionEvent event) {
+        ReservationRow selectedRow = ReservationList.getSelectionModel().getSelectedItem();
+
+        if (selectedRow != null) {
+            // Ta bort från UI-listan
+            ReservationList.getItems().remove(selectedRow);
+
+            // (Valfritt) Ta bort från databasen
+            RemoveReservationRow remover = new RemoveReservationRow(); // eller visa felmeddelande i UI:t
+            remover.deleteReservationRow(selectedRow.getReservationRowID());
+        } else {
+            // Inget valt objekt
+            System.out.println("Inget objekt valt att ta bort.");
+        }
+    }
+    
      @FXML
     void ReturnToCustomerView(ActionEvent event) {
         String fxmlf = "CustomerView.fxml";
@@ -72,6 +92,7 @@ public class MyLoansController {
     @FXML
     public void initialize() throws SQLException  {
         GetLoanRows getLoanRows = new GetLoanRows();
+        GetReservationRow getReservationRow = new GetReservationRow();
         boolean activeLoan;
         
         AktiveLoansList.setCellFactory(list -> new ListCell<LoanRow>() {
@@ -128,6 +149,32 @@ public class MyLoansController {
         }
         
         LoanHistory.getItems().setAll(allLoanRowsHistory);
+        
+         LoanHistory.setCellFactory(list -> new ListCell<LoanRow>() {
+            @Override
+            protected void updateItem(LoanRow loanRow, boolean empty) {
+                super.updateItem(loanRow, empty);
+                if (empty || loanRow == null) {
+                    setText(null);
+                } else {
+                    setText(loanRow.toString()); 
+                }
+            }
+        });
+    
+        // Laddar in alla objekt vid start
+        ArrayList<ReservationRow> reservationRows = getReservationRow.getReservationRowById();
+        
+        // Load the item for each LoanRow before display
+        for (ReservationRow row : reservationRows) {
+            try {
+                row.loadItem();
+            } catch (SQLException e) {
+                e.printStackTrace(); // or handle more gracefully
+            }
+        }
+        
+        ReservationList.getItems().setAll(reservationRows);
     }
     
     private void applyFilter() throws SQLException {

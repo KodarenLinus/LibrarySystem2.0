@@ -20,13 +20,12 @@ import javafx.scene.input.MouseEvent;
  * För teständamål visar vi bara tillgängliga items från searchAvailableItems().
  */
 public class ReserveItemController {
-
     @FXML
     private ListView<Items> ItemList;
 
     @FXML
     private TextField ScearchItem;
-
+    
     @FXML
     private DatePicker dateToReserve;
 
@@ -88,24 +87,27 @@ public class ReserveItemController {
         LocalDate selectedDate = dateToReserve.getValue();
         if (selectedDate != null) {
             SearchItems searchItems = new SearchItems();
-            ArrayList<Items> availableItems = searchItems.searchAvailableItems(selectedDate);
+            ArrayList<Items> availableItems = searchItems.searchAvailableItems(selectedDate, "");
 
             availableItems.removeAll(itemReservationList.getItems());
             availableItems.removeIf(item -> item.getCategoryID() == 4 || item.getCategoryID() == 5);
 
             ItemList.getItems().setAll(availableItems);
         }
+        
+        ScearchItem.textProperty().addListener((obs, oldText, newText) -> applyFilter());
     }
 
 
     private void applyFilter() {
         LocalDate selectedDate = dateToReserve.getValue();
+        String search = ScearchItem.getText();
         if (selectedDate == null) return;
 
         System.out.println("Filtrerar för datum: " + selectedDate); // ✅ Testlogg
 
         SearchItems searchItems = new SearchItems();
-        ArrayList<Items> availableItems = searchItems.searchAvailableItems(selectedDate);
+        ArrayList<Items> availableItems = searchItems.searchAvailableItems(selectedDate, search);
 
         availableItems.removeAll(itemReservationList.getItems());
         availableItems.removeIf(item -> item.getCategoryID() == 4 || item.getCategoryID() == 5);

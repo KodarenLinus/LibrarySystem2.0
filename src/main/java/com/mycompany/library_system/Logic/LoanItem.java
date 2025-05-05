@@ -186,21 +186,40 @@ public class LoanItem {
     */
     private void insertLoanRows(Connection conn, int loanID, ArrayList<Items> itemsToLoan) throws SQLException {
         String insertLoanRowSQL = "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate, ActiveLoan) VALUES (?, ?, ?, ?, ?)";
-
+        String reservationSQL = "SELECT r.reservationDate " +
+                            "FROM reservationrow rr " +
+                            "JOIN reservation r ON rr.reservationID = r.reservationID " +
+                            "WHERE rr.itemID = ? AND r.reservationDate >= ?";
+        
         LocalDate today = LocalDate.now();
 
         try (
-            PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRowSQL)
+            PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRowSQL);
+            PreparedStatement checkReservationStmt = conn.prepareStatement(reservationSQL);
+
         )   {
             for (Items item : itemsToLoan) {
                 GetCategoryLoanTime getCategoryLoanTime = new GetCategoryLoanTime();
                 LocalDate endDate = getCategoryLoanTime.calculatetLoanEndDate(conn, item.getItemID(), today);
+                LocalDate finalEndDate = endDate;
                 
+                checkReservationStmt.setInt(1, item.getItemID());
+                checkReservationStmt.setDate(2, java.sql.Date.valueOf(today));
+                ResultSet rs = checkReservationStmt.executeQuery();
+
+                if (rs.next() && rs.getDate("reservationDate") != null) {
+                    LocalDate reservedDate = rs.getDate("reservationDate").toLocalDate();
+
+                    // Om reservationens datum är före det vanliga återlämningsdatumet
+                    if (reservedDate.isBefore(endDate)) {
+                        finalEndDate = reservedDate.minusDays(1); // sätt till dagen innan
+                    }
+                }
                 // Lägger in värden i loanRow tabelen
                 insertLoanRowStmt.setInt(1, loanID);
                 insertLoanRowStmt.setInt(2, item.getItemID());
                 insertLoanRowStmt.setString(3, today.toString());
-                insertLoanRowStmt.setString(4, endDate.toString());
+                insertLoanRowStmt.setString(4, finalEndDate.toString());
                 insertLoanRowStmt.setBoolean(5, true);
                 insertLoanRowStmt.addBatch();
             }

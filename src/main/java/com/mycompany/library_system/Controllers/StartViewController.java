@@ -68,13 +68,13 @@ public class StartViewController {
         
         // Laddar in alla objekt vid start
         SearchItems searchItems = new SearchItems();
-        ArrayList<Items> allItems = searchItems.search("");
+        ArrayList<Items> allItems = searchItems.search("", false);
         ItemList.getItems().setAll(allItems);
         
         
         // Söker efter objekt i realtid och visar matchningar
         SearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
-            ArrayList<Items> searchResults = searchItems.search(newValue);
+            ArrayList<Items> searchResults = searchItems.search(newValue, false);
             ItemList.getItems().setAll(searchResults); 
         });
     }

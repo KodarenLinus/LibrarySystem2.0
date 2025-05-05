@@ -146,9 +146,7 @@ public class ReserveItem {
             if (itemsToReserve.size() > 0) {
                 stmt.executeBatch();
             }
-
             alertHandler.createAlert(title, header, content.toString());
-
         }
     }
 }

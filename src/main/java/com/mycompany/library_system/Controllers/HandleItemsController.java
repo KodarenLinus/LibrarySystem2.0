@@ -84,7 +84,7 @@ public class HandleItemsController {
         
         // Laddar in alla objekt vid start
         SearchItems searchItems = new SearchItems();
-        ArrayList<Items> allItems = searchItems.search("");
+        ArrayList<Items> allItems = searchItems.search("", false);
         ItemList.getItems().setAll(allItems);
         
         // Söker efter objekt i realtid och visar matchningar
@@ -123,7 +123,7 @@ public class HandleItemsController {
     private void applyFilter() {
        String searchTerm = SearchItem.getText();
        SearchItems searchItems = new SearchItems();
-       ArrayList<Items> allItems = searchItems.search(searchTerm);
+       ArrayList<Items> allItems = searchItems.search(searchTerm, false);
        ItemList.getItems().setAll(allItems);
     }
 }

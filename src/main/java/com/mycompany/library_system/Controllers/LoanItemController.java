@@ -159,13 +159,13 @@ public class LoanItemController {
         
         // Laddar in alla objekt vid start
         SearchItems searchItems = new SearchItems();
-        ArrayList<Items> allItems = searchItems.search("");
+        ArrayList<Items> allItems = searchItems.search("", true);
         allItems.removeAll(itemCartList.getItems());
         ItemList.getItems().setAll(allItems);
         
         // Söker efter objekt i realtid och visar matchningar
         ScearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
-            ArrayList<Items> searchResults = searchItems.search(newValue);
+            ArrayList<Items> searchResults = searchItems.search(newValue, true);
             searchResults.removeAll(itemCartList.getItems());
             ItemList.getItems().setAll(searchResults);
         });
@@ -180,7 +180,7 @@ public class LoanItemController {
     private void applyFilter() {
         String searchTerm = ScearchItem.getText();
         SearchItems searchItems = new SearchItems();
-        ArrayList<Items> allItems = searchItems.search(searchTerm);
+        ArrayList<Items> allItems = searchItems.search(searchTerm, true);
         allItems.removeAll(itemCartList.getItems());
 
         ArrayList<Items> filteredItems = new ArrayList<>();

@@ -20,9 +20,10 @@
       <AnchorPane layoutX="309.0" layoutY="30.0" prefHeight="359.0" prefWidth="276.0">
          <children>
             <ListView fx:id="LoanHistory" layoutX="158.0" layoutY="23.0" prefHeight="321.0" prefWidth="103.0" />
-            <ListView layoutX="14.0" layoutY="23.0" prefHeight="321.0" prefWidth="103.0" />
+            <ListView fx:id="ReservationList" layoutX="14.0" layoutY="23.0" prefHeight="301.0" prefWidth="103.0" />
             <Label layoutX="179.0" layoutY="5.0" text="Lån historik" />
-            <Label layoutX="54.0" layoutY="5.0" text="Mail" />
+            <Label layoutX="29.0" layoutY="5.0" text="Reservationer" />
+            <Button layoutX="14.0" layoutY="332.0" mnemonicParsing="false" onAction="#RemoveReservation" prefHeight="25.0" prefWidth="103.0" text="Ta bort" />
          </children>
       </AnchorPane>
       <Button layoutX="466.0" layoutY="3.0" mnemonicParsing="false" onAction="#ReturnToCustomerView" prefHeight="25.0" prefWidth="121.0" text="Gå tillbaka" />
