@@ -72,13 +72,16 @@ public class SearchItems {
 
             while (rs.next()) {
                 Items item = createItemFromResultSet(rs, conn);
+                // Om item skulle vara null så skippar vi resten av koden i loppen
                 if (item == null) continue;
 
                 int itemID = item.getItemID();
                 LocalDate endDate = getLoanTime.calculatetLoanEndDate(conn, itemID, date);
                 long loanDays = ChronoUnit.DAYS.between(date, endDate);
-
+                
+                // Om item är reserverat hoppar resten av koden
                 if (isReserved(conn, itemID, date, endDate, loanDays)) continue;
+                // Om item är ut lånat hoppar resten av koden
                 if (isOnLoan(conn, itemID, date, endDate)) continue;
 
                 availableItems.add(item);

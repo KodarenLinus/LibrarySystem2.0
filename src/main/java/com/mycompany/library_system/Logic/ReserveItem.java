@@ -18,135 +18,205 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class ReserveItem {
-    AlertHandler alertHandler = new AlertHandler();
+   
+    private final AlertHandler alertHandler = new AlertHandler();
+    private final GetCategoryLoanTime loanTimeHelper = new GetCategoryLoanTime();
+    private final DatabaseConnector dbConnector = new ConnDB();
+
     /**
-     * Lägger till en reservation för en kund och returnerar true om det lyckas.
-     * 
-     * @param custID ID för kunden som reserverar
-     * @param itemsToReserve Lista med objekt som ska reserveras
-     * @return true om lyckad reservation
+     * Försöker reservera en lista av objekt för en kund vid ett angivet datum.
+     * Skapar en ny reservation, filtrerar bort otillgängliga objekt, och lägger till de tillgängliga i databasen.
+     *
+     * @param custID          ID för kunden som gör reservationen
+     * @param itemsToReserve  Lista med objekt som kunden vill reservera
+     * @param reserveDate     Datum då reservationen ska börja gälla
+     * @return true om minst ett objekt reserverades, annars false
      */
     public boolean addToReservationRows(int custID, ArrayList<Items> itemsToReserve, LocalDate reserveDate) {
-        
+        try (Connection conn = dbConnector.connect()) {
 
-        DatabaseConnector connDB = new ConnDB();
-        try (Connection conn = connDB.connect()) {
-            int reservationID = createReservationAndReturnID(conn, custID, reserveDate);
+            int reservationID = createReservation(conn, custID, reserveDate);
             if (reservationID == -1) return false;
 
-            insertReservationRows(conn, reservationID, itemsToReserve, reserveDate);
+            ArrayList<Items> validItems = filterAvailableItems(conn, itemsToReserve, reserveDate);
+            if (validItems.isEmpty()) {
+                alertHandler.createAlert("Reservation", "Ingen reservation kunde genomföras", "Inga objekt tillgängliga.");
+                return false;
+            }
+
+            insertReservationRows(conn, reservationID, validItems);
+            showSuccessAlert(validItems);
+            return true;
 
         } catch (SQLException e) {
             e.printStackTrace();
+            alertHandler.createAlert("Fel", "Databasfel", e.getMessage());
             return false;
         }
-
-        return true;
     }
 
-    /**
-     * Skapar en ny reservation och returnerar ID:t.
+     /**
+     * Skapar en ny reservation i databasen.
+     *
+     * @param conn        Databasanslutning
+     * @param custID      ID för kunden
+     * @param reserveDate Datum för reservationen
+     * @return ID för den nyskapade reservationen, eller kastar SQLException vid fel
+     * @throws SQLException om det uppstår ett databasfel
      */
-    private int createReservationAndReturnID(Connection conn, int custID, LocalDate reserveDate) throws SQLException {
-        String insertReservationSQL = "INSERT INTO reservation (CustomerID, ReservationDate) VALUES (?, ?)";
+    private int createReservation(Connection conn, int custID, LocalDate reserveDate) throws SQLException {
+        String sql = "INSERT INTO reservation (CustomerID, ReservationDate) VALUES (?, ?)";
 
-        try (PreparedStatement insertStmt = conn.prepareStatement(insertReservationSQL, Statement.RETURN_GENERATED_KEYS)) {
-            insertStmt.setInt(1, custID);
-            insertStmt.setDate(2, Date.valueOf(reserveDate));
-            insertStmt.executeUpdate();
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setInt(1, custID);
+            stmt.setDate(2, Date.valueOf(reserveDate));
+            stmt.executeUpdate();
 
-            try (ResultSet generatedKeys = insertStmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
-                } else {
-                    throw new SQLException("Misslyckades att hämta genererat reservation-ID.");
-                }
+            ResultSet keys = stmt.getGeneratedKeys();
+            if (keys.next()) {
+                return keys.getInt(1);
             }
+            throw new SQLException("Kunde inte hämta reservationens ID.");
         }
     }
 
     /**
-     * Lägger till rader i reservationrow-tabellen.
+     * Filtrerar ut de objekt som är tillgängliga att reservera vid angivet datum.
+     * Visar varningar för objekt som inte är tillgängliga.
+     *
+     * @param conn Databasanslutning
+     * @param items Lista med objekt som önskas reserveras
+     * @param reserveDate Datum då reservationen önskas
+     * @return En lista med tillgängliga objekt
+     * @throws SQLException om det uppstår ett databasfel
      */
-   private void insertReservationRows(Connection conn, int reservationID, ArrayList<Items> itemsToReserve, LocalDate reserveDate) throws SQLException {
-        String insertRowSQL = "INSERT INTO reservationrow (ReservationID, ItemID, IsFullfilled) VALUES (?, ?, ?)";
-        GetCategoryLoanTime getCategoryLoanTime = new GetCategoryLoanTime();
-        ArrayList<Items> toRemove = new ArrayList<>();
+    private ArrayList<Items> filterAvailableItems(Connection conn, ArrayList<Items> items, LocalDate reserveDate) throws SQLException {
+        ArrayList<Items> validItems = new ArrayList<>();
 
-        try (
-            PreparedStatement stmt = conn.prepareStatement(insertRowSQL);
-            PreparedStatement checkReservationStmt = conn.prepareStatement(
-                 "SELECT 1 " +
-                 "FROM reservationRow rr " +
-                 "JOIN reservation r ON rr.reservationID = r.reservationID " +
-                 "WHERE rr.itemID = ? " +
-                 "AND (r.reservationDate BETWEEN ? AND ?) " +
-                 "OR (? BETWEEN r.reservationDate AND DATE_ADD(r.reservationDate, INTERVAL ? DAY))");
-            PreparedStatement checkLoanStmt = conn.prepareStatement(
-                    "SELECT 1 "
-                    + "FROM loanRow "
-                    + "WHERE itemID = ? "
-                    + "AND (ActiveLoan = true) "
-                    + "AND (? BETWEEN RowLoanStartDate AND RowLoanEndDate) "
-                    + "OR (RowLoanStartDate BETWEEN ? AND ?)"
-            );
-        ) {
-            for (Items item : itemsToReserve) {
-                int itemID = item.getItemID();
+        for (Items item : items) {
+            LocalDate endDate = loanTimeHelper.calculatetLoanEndDate(conn, item.getItemID(), reserveDate);
 
-                LocalDate loanEndDate = getCategoryLoanTime.calculatetLoanEndDate(conn, itemID, reserveDate);
-                long loanDays = ChronoUnit.DAYS.between(reserveDate, loanEndDate);
+            if (isAvailable(conn, item.getItemID(), reserveDate, endDate)) {
+                validItems.add(item);
+            } else {
+                alertHandler.createAlert("Reservation", "Kan inte reservera", "Ej tillgänglig: " + item.getTitle());
+            }
+        }
 
-                // Kontrollera reservation
-                checkReservationStmt.setInt(1, itemID);
-                checkReservationStmt.setDate(2, java.sql.Date.valueOf(reserveDate));
-                checkReservationStmt.setDate(3, java.sql.Date.valueOf(loanEndDate));
-                checkReservationStmt.setDate(4, java.sql.Date.valueOf(reserveDate));
-                checkReservationStmt.setLong(5, loanDays);
+        return validItems;
+    }
 
-                ResultSet rsCheckReservation = checkReservationStmt.executeQuery();
-                if (rsCheckReservation.next()) {
-                    alertHandler.createAlert("Reservation", "Kan inte genomföra reservation", "Är inte tillgänglig: " + item.getTitle());
-                    toRemove.add(item);
-                    continue;
-                }
+    /**
+     * Kontrollerar om ett objekt är tillgängligt att reservera under en viss period.
+     * Ett objekt anses tillgängligt om det inte redan är reserverat eller utlånat under perioden.
+     *
+     * @param conn Databasanslutning
+     * @param itemID ID för objektet
+     * @param startDate Startdatum för reservationen
+     * @param endDate Slutdatum för reservationen (beräknad utifrån kategori)
+     * @return true om objektet är tillgängligt, annars false
+     * @throws SQLException om det uppstår ett databasfel
+     */
+    private boolean isAvailable(Connection conn, int itemID, LocalDate startDate, LocalDate endDate) throws SQLException {
+        // Om vi inte har en loan konflikt och reservation konflikt så retunerar vi True annars false
+        return !hasReservationConflict(conn, itemID, startDate, endDate) &&
+               !hasLoanConflict(conn, itemID, startDate, endDate);
+    }
 
-                // Kontrollera aktivt lån
-                checkLoanStmt.setInt(1, itemID);
-                checkLoanStmt.setDate(2, java.sql.Date.valueOf(reserveDate));
-                checkLoanStmt.setDate(3, java.sql.Date.valueOf(reserveDate));
-                checkLoanStmt.setDate(4, java.sql.Date.valueOf(loanEndDate));
+    /**
+     * Kontrollerar om det finns en krock med en befintlig reservation för objektet.
+     *
+     * @param conn Databasanslutning
+     * @param itemID ID för objektet
+     * @param start Startdatum för reservationen
+     * @param end Slutdatum för reservationen
+     * @return true om det finns en krock, annars false
+     * @throws SQLException om det uppstår ett databasfel
+     */
+    private boolean hasReservationConflict(Connection conn, int itemID, LocalDate start, LocalDate end) throws SQLException {
+        // SQL-sträng som hämtar reservationRow för ett item under en viss period
+        String sql = "SELECT 1 FROM reservationRow rr " +
+            "JOIN reservation r ON rr.reservationID = r.reservationID " +
+            "WHERE rr.itemID = ? " +
+            "AND (r.reservationDate BETWEEN ? AND ? " +
+            "OR ? BETWEEN r.reservationDate AND DATE_ADD(r.reservationDate, INTERVAL ? DAY))";
 
-                ResultSet rsCheckLoan = checkLoanStmt.executeQuery();
-                if (rsCheckLoan.next()) {
-                    alertHandler.createAlert("Reservation", "Kan inte genomföra reservation", "Är inte tillgänglig: " + item.getTitle());
-                    toRemove.add(item);
-                    continue;
-                }
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            long loanDays = ChronoUnit.DAYS.between(start, end);
+            stmt.setInt(1, itemID);
+            stmt.setDate(2, Date.valueOf(start));
+            stmt.setDate(3, Date.valueOf(end));
+            stmt.setDate(4, Date.valueOf(start));
+            stmt.setLong(5, loanDays);
 
+            return stmt.executeQuery().next();
+        }
+    }
+
+    /**
+     * Kontrollerar om objektet är utlånat under den angivna perioden.
+     *
+     * @param conn Databasanslutning
+     * @param itemID ID för objektet
+     * @param start Startdatum för reservationen
+     * @param end Slutdatum för reservationen
+     * @return true om objektet är utlånat under perioden, annars false
+     * @throws SQLException om det uppstår ett databasfel
+     */
+    private boolean hasLoanConflict(Connection conn, int itemID, LocalDate start, LocalDate end) throws SQLException {
+        // SQL-sträng som hämtar loanRow som är aktiva för ett item under en viss period
+        String sql = "SELECT 1 FROM loanRow " +
+            "WHERE itemID = ? " +
+            "AND ActiveLoan = true " +
+            "AND (? BETWEEN RowLoanStartDate AND RowLoanEndDate " +
+            "OR RowLoanStartDate BETWEEN ? AND ?)";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, itemID);
+            stmt.setDate(2, Date.valueOf(start));
+            stmt.setDate(3, Date.valueOf(start));
+            stmt.setDate(4, Date.valueOf(end));
+
+            return stmt.executeQuery().next();
+        }
+    }
+
+    /**
+     * Lägger till rader i tabellen för reserverade objekt (reservationRow).
+     * Varje rad representerar ett objekt som kopplas till en reservation.
+     *
+     * @param conn Databasanslutning
+     * @param reservationID ID för den nyss skapade reservationen
+     * @param items Lista med objekt att lägga till i reservationen
+     * @throws SQLException om det uppstår ett databasfel
+     */
+    private void insertReservationRows(Connection conn, int reservationID, ArrayList<Items> items) throws SQLException {
+        String sql = "INSERT INTO reservationrow (ReservationID, ItemID, IsFullfilled) VALUES (?, ?, ?)";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            for (Items item : items) {
                 stmt.setInt(1, reservationID);
                 stmt.setInt(2, item.getItemID());
-                stmt.setBoolean(3, false); // Inte uppfylld än
+                stmt.setBoolean(3, false); // ej uppfylld än
                 stmt.addBatch();
             }
-
-            // Ta bort ogiltiga objekt efter loopen
-            itemsToReserve.removeAll(toRemove);
-
-            String title = "Reservation";
-            String header = itemsToReserve.size() > 0 ? "Lyckad reservation" : "Ingen reservation genomfördes";
-            StringBuilder content = new StringBuilder();
-
-            for (Items item : itemsToReserve) {
-                content.append(item.getTitle()).append(", ");
-            }
-
-            if (itemsToReserve.size() > 0) {
-                stmt.executeBatch();
-            }
-            alertHandler.createAlert(title, header, content.toString());
+            stmt.executeBatch();
         }
+    }
+
+    /**
+     * Visar en bekräftelsealert med titlarna på alla lyckade reservationer.
+     *
+     * @param items Lista med reserverade objekt
+     */
+    private void showSuccessAlert(ArrayList<Items> items) {
+        // Skapar en alert med alla items som vi reserverat.
+        String titles = items.stream()
+                             .map(Items::getTitle)
+                             .collect(Collectors.joining(", "));
+        alertHandler.createAlert("Reservation", "Lyckad reservation", titles);
     }
 }
