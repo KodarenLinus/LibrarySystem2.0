@@ -19,12 +19,18 @@ import java.util.ArrayList;
 public class SearchItems {
 
     /**
-     * Söker efter tillgängliga objekt vars titel matchar den angivna söktexten.
+     * Söker efter objekt vars titel matchar söktexten.
+     * Om onlyAvailable är true returneras endast tillgängliga objekt.
+     * 
      * @param searchText Användarens söktext
+     * @param onlyAvailable avgör om man tar med alla tillgängliga objekt eller alla.
      * @return En lista med matchande tillgängliga Items
      */
     public ArrayList<Items> search(String searchText, boolean onlyAvailable) {
         ArrayList<Items> results = new ArrayList<>();
+        
+        // SQL-sträng för att hämta ett item baserat på searchText 
+        // (Vi kan också plusa på andra delen av frågan som hämtar bara tillgängliga items)
         String query = "SELECT * FROM item WHERE title LIKE ?" + (onlyAvailable ? " AND available = true" : "");
 
         try (Connection conn = new ConnDB().connect();
@@ -55,7 +61,8 @@ public class SearchItems {
     public ArrayList<Items> searchAvailableItems(LocalDate date, String searchText) {
         ArrayList<Items> availableItems = new ArrayList<>();
         GetCategoryLoanTime getLoanTime = new GetCategoryLoanTime();
-
+        
+        // SQL-sträng för att hämta ett item baserat på searchText
         String baseQuery = "SELECT * FROM Item WHERE title LIKE ?";
 
         try (Connection conn = new ConnDB().connect();
@@ -85,9 +92,12 @@ public class SearchItems {
     }
 
     /**
-     * Skapar ett Items-objekt (Book eller DVD) från databasen beroende på typ.
+     * Skapar ett Items-objekt (Book eller DVD) baserat på resultatraden.
+     * Identifierar objektets typ genom att kontrollera förekomsten i respektive tabell.
+     * 
      * @param rs ResultSet från item-tabellen
      * @param conn En aktiv databasanslutning
+     * @throws SQLException
      * @return Ett Items-objekt eller null om inget hittas
      */
     private Items createItemFromResultSet(ResultSet rs, Connection conn) throws SQLException {
@@ -117,8 +127,17 @@ public class SearchItems {
 
         return null;
     }
-
+    
+     /**
+     * Kontrollerar om ett objekt är en bok.
+     * 
+     * @param conn En aktiv databasanslutning
+     * @param itemID ett itemsID.
+     * @throws SQLException
+     * @return true eller false baserat på om itemID hittas i book tabellen
+     */
     private boolean isBook(Connection conn, int itemID) throws SQLException {
+        // SQL-sträng för att kontrollera att det är en bok.
         String query = "SELECT 1 FROM Book WHERE itemID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, itemID);
@@ -126,7 +145,16 @@ public class SearchItems {
         }
     }
 
+    /**
+     * Hämtar ISBN-numret för en bok.
+     * 
+     * @param conn En aktiv databasanslutning
+     * @param itemID ett itemsID.
+     * @throws SQLException
+     * @return Bookens ISBN nummer
+     */
     private int getBookISBN(Connection conn, int itemID) throws SQLException {
+        // SQL-sträng för att hämta ens Bok ISBN-nummer
         String query = "SELECT ISBN FROM Book WHERE itemID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, itemID);
@@ -134,16 +162,34 @@ public class SearchItems {
             return rs.next() ? rs.getInt("ISBN") : 0;
         }
     }
-
+    
+    /**
+     * Kontrollerar om ett objekt är en DVD.
+     * 
+     * @param conn En aktiv databasanslutning
+     * @param itemID ett itemsID.
+     * @throws SQLException
+     * @return true eller false baserat på om itemID hittas i DVD tabellen
+     */
     private boolean isDVD(Connection conn, int itemID) throws SQLException {
+        // SQL-sträng för att kontrollera att itemet är en DVD
         String query = "SELECT 1 FROM DVD WHERE itemID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, itemID);
             return stmt.executeQuery().next();
         }
     }
-
+    
+    /**
+     * Hämtar DirectorID för en DVD.
+     * 
+     * @param conn En aktiv databasanslutning
+     * @param itemID ett itemsID.
+     * @throws SQLException
+     * @return DirectorID för DVD
+     */
     private int getDVDDirectorID(Connection conn, int itemID) throws SQLException {
+        // SQL-sträng för att hämta ens DVD directorID
         String query = "SELECT DirectorID FROM DVD WHERE itemID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, itemID);
@@ -151,8 +197,21 @@ public class SearchItems {
             return rs.next() ? rs.getInt("DirectorID") : 0;
         }
     }
-
+    
+    /**
+     * Kontrollerar om ett objekt är reserverat under en viss period.
+     * Tar hänsyn till reservationens startdatum och låneperiodens längd.
+     * 
+     * @param conn En aktiv databasanslutning
+     * @param itemID ett itemsID.
+     * @param fromDate datum som man kollar ifrån
+     * @param toDate datum man kollar till
+     * @param perioden i dagar.
+     * @throws SQLException
+     * @return true eller false baserat på om itemet är reserverat eller inte
+     */
     private boolean isReserved(Connection conn, int itemID, LocalDate fromDate, LocalDate toDate, long loanDays) throws SQLException {
+        // SQL-sträng för att kolla om det finns en reservation under en agiven period
         String query = "SELECT 1 FROM reservationRow rr " +
             "JOIN reservation r ON rr.reservationID = r.reservationID " +
             "WHERE rr.itemID = ? " +
@@ -169,8 +228,19 @@ public class SearchItems {
             return stmt.executeQuery().next();
         }
     }
-
+    
+    /**
+     * Kontrollerar om ett objekt är utlånat under en angiven period.
+     * 
+     * @param conn En aktiv databasanslutning
+     * @param itemID ett itemsID.
+     * @param fromDate datum som man kollar ifrån
+     * @param toDate datum man kollar till
+     * @throws SQLException
+     * @return true eller false baserat på om itemet är ut lånat eller inte
+     */
     private boolean isOnLoan(Connection conn, int itemID, LocalDate fromDate, LocalDate toDate) throws SQLException {
+        // SQL-sträng för att kolla om det finns ett aktivt lån under en agiven period
         String query = "SELECT 1 FROM loanRow " +
             "WHERE itemID = ? " +
             "AND ActiveLoan = true " +
