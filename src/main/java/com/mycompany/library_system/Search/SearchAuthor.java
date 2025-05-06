@@ -18,27 +18,41 @@ import java.util.ArrayList;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class SearchAuthor {
-    
-    public ArrayList<Author> search (String searchText, Book book) {
-        
-        ArrayList<Author> results = new ArrayList<Author>();
-        DatabaseConnector connDB = new ConnDB();
-        Connection conn = connDB.connect();
-               
-        String authorSearch = "SELECT * FROM Author " +
-                      "WHERE (FirstName LIKE ? OR LastName LIKE ?) " +
-                      "AND AuthorID NOT IN (SELECT AuthorID FROM BookAuthor WHERE itemID = ?)";
+
+    private final DatabaseConnector dbConnector;
+
+    public SearchAuthor() {
+        this.dbConnector = new ConnDB();
+    }
+
+    /**
+     * Söker efter författare som matchar söktexten (förnamn eller efternamn)
+     * och som inte redan är kopplade till den angivna boken.
+     *
+     * @param searchText Text att söka på (förnamn eller efternamn).
+     * @param book Den bok som författarna inte ska vara kopplade till.
+     * @return En lista med matchande Author-objekt.
+     */
+    public ArrayList<Author> search(String searchText, Book book) {
+        ArrayList<Author> results = new ArrayList<>();
+
+        // SQL-fråga för att hitta författare som inte redan är kopplade till boken
+        String query = "SELECT * FROM Author " +
+                       "WHERE (FirstName LIKE ? OR LastName LIKE ?) " +
+                       "AND AuthorID NOT IN (SELECT AuthorID FROM BookAuthor WHERE itemID = ?)";
 
         try (
-            PreparedStatement authorSearchStmt = conn.prepareStatement(authorSearch)
+            Connection conn = dbConnector.connect(); // Öppna databasanslutning
+            PreparedStatement stmt = conn.prepareStatement(query) // Förbered SQL-satsen
         ) {
+            // Parametrar till sökningen
+            stmt.setString(1, "%" + searchText + "%");
+            stmt.setString(2, "%" + searchText + "%");
+            stmt.setInt(3, book.getItemID());
 
-            authorSearchStmt.setString(1, "%" + searchText + "%");
-            authorSearchStmt.setString(2, "%" + searchText + "%");
-            authorSearchStmt.setInt(3, book.getItemID());
+            ResultSet rs = stmt.executeQuery();
 
-            ResultSet rs = authorSearchStmt.executeQuery();
-
+            // Gå igenom resultatet och skapa Author-objekt
             while (rs.next()) {
                 int id = rs.getInt("AuthorID");
                 String firstname = rs.getString("FirstName");
@@ -51,10 +65,10 @@ public class SearchAuthor {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Vid fel, skriv ut stacktrace
         }
-        
+
         return results;
     }
-    
 }
+

@@ -19,7 +19,11 @@ import java.util.ArrayList;
  */
 public class SearchItems {
 
-    private final DatabaseConnector dbConnector = new ConnDB();
+    private final DatabaseConnector dbConnector;
+
+    public SearchItems() {
+        this.dbConnector = new ConnDB();
+    }
 
     /**
      * Söker efter objekt vars titel matchar söktexten.
