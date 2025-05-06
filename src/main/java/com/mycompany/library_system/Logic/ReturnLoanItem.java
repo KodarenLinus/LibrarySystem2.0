@@ -34,9 +34,11 @@ public class ReturnLoanItem {
         String updateLoanRow = "UPDATE LoanRow SET ActiveLoan = false WHERE LoanRowID = ?";
         String updateItem = "UPDATE Item SET Available = true WHERE ItemID = ?";
 
-        try (Connection conn = dbConnector.connect();
-             PreparedStatement loanRowStmt = conn.prepareStatement(updateLoanRow);
-             PreparedStatement itemStmt = conn.prepareStatement(updateItem)) {
+        try (
+            Connection conn = dbConnector.connect();
+            PreparedStatement loanRowStmt = conn.prepareStatement(updateLoanRow);
+            PreparedStatement itemStmt = conn.prepareStatement(updateItem);
+        ) {
 
             for (LoanRow loanRow : loanRows) {
                 loanRowStmt.setInt(1, loanRow.getLoanRowID());

@@ -19,6 +19,12 @@ import java.sql.SQLException;
  */
 public class AddCustomer {
     
+    private final DatabaseConnector dbConnector;
+
+    public AddCustomer () {
+        this.dbConnector = new ConnDB();
+    }
+    
     /**
      * Lägger till en customer i databasen
      *
@@ -27,8 +33,7 @@ public class AddCustomer {
     public void insertCustomer(Customer customer){
         
         // Skapar en databasanslutning
-        DatabaseConnector connDB = new ConnDB();
-        Connection conn = connDB.connect();
+        Connection conn = dbConnector.connect();
         
         // SQL-fråga för att infoga en ny kund
         String insertCustomer = "INSERT INTO Customer (CustomerCategoryID, CategoryName, FirstName, LastName, Email, Adress, TelNumber, PasswordCustomer) " +

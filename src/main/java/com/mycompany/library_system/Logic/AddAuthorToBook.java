@@ -21,6 +21,12 @@ import java.util.ArrayList;
  */
 public class AddAuthorToBook {
     
+    private final DatabaseConnector dbConnector;
+
+    public AddAuthorToBook () {
+        this.dbConnector = new ConnDB();
+    }
+    
     /**
      * Lägger till en eller flera författare till en bok i BookAuthor-tabellen.
      *
@@ -30,8 +36,7 @@ public class AddAuthorToBook {
     public void insertToBookAuthor (Book book, ArrayList<Author> authors) {
         
         // Skapar en databasanslutning
-        DatabaseConnector connDB = new ConnDB();
-        Connection conn = connDB.connect();
+        Connection conn = dbConnector.connect();
         
         // SQL-fråga för att infoga i BookAuthor-tabellen
         String insertToBookAuthor = "INSERT INTO BookAuthor (ItemID, AuthorID) VALUES (?, ?)";

@@ -15,6 +15,11 @@ import java.sql.ResultSet;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class Login {
+    private final DatabaseConnector dbConnector;
+
+    public Login () {
+        this.dbConnector = new ConnDB();
+    }
     
     /**
      * Lägger till valt objekt i kundvagnen om det inte redan finns där.
@@ -25,8 +30,7 @@ public class Login {
      */
     public boolean doLogin (String username, String password) {
         
-        DatabaseConnector connDB = new ConnDB();
-        Connection conn = connDB.connect();
+        Connection conn = dbConnector.connect();
         
         String getCustomerLogin = "SELECT customerID, passwordCustomer From Customer where Email = ?";
         

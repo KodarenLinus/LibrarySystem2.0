@@ -43,7 +43,9 @@ public class ReserveItem {
      * @return true om minst ett objekt reserverades, annars false
      */
     public boolean addToReservationRows(int custID, ArrayList<Items> itemsToReserve, LocalDate reserveDate) {
-        try (Connection conn = dbConnector.connect()) {
+        try (
+            Connection conn = dbConnector.connect();
+        ) {
             conn.setAutoCommit(false); // Startar transaktion
 
             int reservationID = createReservation(conn, custID, reserveDate);
@@ -72,6 +74,9 @@ public class ReserveItem {
     /**
      * Skapar en ny reservation i databasen.
      *
+     * @param conn en databas koppling
+     * @param custID ett customerID
+     * @param reserveDate ett reserverings datum
      * @return ID för den skapade reservationen
      */
     private int createReservation(Connection conn, int custID, LocalDate reserveDate) throws SQLException {
@@ -92,12 +97,17 @@ public class ReserveItem {
 
     /**
      * Filtrerar ut tillgängliga objekt genom att kontrollera reservationer och lån.
+     * 
+     * @param conn en databas koppling
+     * @param items en lista med items
+     * @reserveDate ett reserverings datum
+     * @return en lista med tillgängliga items
      */
     private ArrayList<Items> filterAvailableItems(Connection conn, ArrayList<Items> items, LocalDate reserveDate) throws SQLException {
         ArrayList<Items> validItems = new ArrayList<>();
 
         for (Items item : items) {
-            LocalDate endDate = loanTimeHelper.calculatetLoanEndDate(conn, item.getItemID(), reserveDate);
+            LocalDate endDate = loanTimeHelper.calculateLoanEndDate(item.getItemID(), reserveDate);
 
             if (isAvailable(conn, item.getItemID(), reserveDate, endDate)) {
                 validItems.add(item);
@@ -111,6 +121,13 @@ public class ReserveItem {
 
     /**
      * Kollar om ett objekt är tillgängligt under en viss period.
+     * 
+     * @param conn en databas koppling
+     * @param itemID items id som ska reserveras
+     * @param start startdatum för reservation
+     * @param end slutdatum för reservation
+     * @throws SQLException
+     * @return true om de inte finns någon konflikt i lån eller reservation. Om de finns en kolfikt retunerar den false
      */
     private boolean isAvailable(Connection conn, int itemID, LocalDate startDate, LocalDate endDate) throws SQLException {
         return !hasReservationConflict(conn, itemID, startDate, endDate)
@@ -119,6 +136,13 @@ public class ReserveItem {
 
     /**
      * Kollar om det redan finns en reservation som krockar.
+     * 
+     * @param conn en databas koppling
+     * @param itemID items id som ska reserveras
+     * @param start startdatum för reservation
+     * @param end slutdatum för reservation
+     * @throws SQLException
+     * @return true om de finns en reservations konflikt, annars false
      */
     private boolean hasReservationConflict(Connection conn, int itemID, LocalDate start, LocalDate end) throws SQLException {
         String sql = "SELECT 1 FROM reservationRow rr " +
@@ -141,6 +165,13 @@ public class ReserveItem {
 
     /**
      * Kollar om objektet är utlånat under perioden.
+     * 
+     * @param conn en databas koppling
+     * @param itemID items id som ska reserveras
+     * @param start startdatum för reservation
+     * @param end slutdatum för reservation
+     * @throws SQLException
+     * @return true om de finns en lån konflikt, annars false
      */
     private boolean hasLoanConflict(Connection conn, int itemID, LocalDate start, LocalDate end) throws SQLException {
         String sql = "SELECT 1 FROM loanRow " +
@@ -161,6 +192,11 @@ public class ReserveItem {
 
     /**
      * Lägger till de tillgängliga objekten i reservationRow-tabellen.
+     * 
+     * @param conn en databas koppling
+     * @param reservationID det reservationID som våran reservationRow ska ha.
+     * @param items en lista med items som skall reserveras
+     * @throws SQLException
      */
     private void insertReservationRows(Connection conn, int reservationID, ArrayList<Items> items) throws SQLException {
         String sql = "INSERT INTO reservationrow (ReservationID, ItemID, IsFullfilled) VALUES (?, ?, ?)";
@@ -178,6 +214,8 @@ public class ReserveItem {
 
     /**
      * Visar bekräftelsemeddelande för alla reserverade objekt.
+     * 
+     * @param items lista med items som ska reserveras
      */
     private void showSuccessAlert(ArrayList<Items> items) {
         String titles = items.stream()

@@ -6,7 +6,6 @@ package com.mycompany.library_system.Logic;
 
 import com.mycompany.library_system.Database.DatabaseConnector;
 import com.mycompany.library_system.Database.ConnDB;
-import com.mycompany.library_system.Models.CategoryType;
 import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Utils.AlertHandler;
 import java.sql.Connection;
@@ -16,7 +15,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import javafx.event.Event;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 /**
  *
@@ -25,6 +23,12 @@ import javafx.event.Event;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class LoanItem {    
+    
+    private final DatabaseConnector dbConnector;
+
+    public LoanItem () {
+        this.dbConnector = new ConnDB();
+    }
     
     /**
     * Lägger till objekt i lån (LoanRow) för en viss kund.
@@ -41,9 +45,8 @@ public class LoanItem {
         String header; 
         String content;
         
-        DatabaseConnector connDB = new ConnDB();
         try (
-            Connection conn = connDB.connect()
+            Connection conn = dbConnector.connect()
         ) {
             int currentLoans = getActiveLoanCount(conn, custID);
             int allowedLoan = getAllowedLoanLimit(conn, custID);
@@ -161,7 +164,9 @@ public class LoanItem {
    private int createLoanAndReturnID(Connection conn, int custID) throws SQLException {
         String insertLoanSQL = "INSERT INTO loan (customerID) VALUES (?)";
 
-        try (PreparedStatement insertStmt = conn.prepareStatement(insertLoanSQL, Statement.RETURN_GENERATED_KEYS)) {
+        try (
+            PreparedStatement insertStmt = conn.prepareStatement(insertLoanSQL, Statement.RETURN_GENERATED_KEYS)
+        ) {
             insertStmt.setInt(1, custID);
             insertStmt.executeUpdate();
 
@@ -196,11 +201,10 @@ public class LoanItem {
         try (
             PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRowSQL);
             PreparedStatement checkReservationStmt = conn.prepareStatement(reservationSQL);
-
         )   {
             for (Items item : itemsToLoan) {
                 GetCategoryLoanTime getCategoryLoanTime = new GetCategoryLoanTime();
-                LocalDate endDate = getCategoryLoanTime.calculatetLoanEndDate(conn, item.getItemID(), today);
+                LocalDate endDate = getCategoryLoanTime.calculateLoanEndDate(item.getItemID(), today);
                 LocalDate finalEndDate = endDate;
                 
                 checkReservationStmt.setInt(1, item.getItemID());

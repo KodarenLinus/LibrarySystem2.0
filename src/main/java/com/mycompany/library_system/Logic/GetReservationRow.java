@@ -1,51 +1,84 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.library_system.Logic;
+
 import com.mycompany.library_system.Database.ConnDB;
 import com.mycompany.library_system.Database.DatabaseConnector;
 import com.mycompany.library_system.Login.Session;
 import com.mycompany.library_system.Models.ReservationRow;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klass som hanterar hämtning av reservationsrader från databasen.
+ * 
+ * Följer SRP (Single Responsibility Principle) – endast ansvarig för att hämta data relaterad till ReservationRow.
+ */
 public class GetReservationRow {
 
+    private final DatabaseConnector dbConnector;
+
+    public GetReservationRow() {
+        this.dbConnector = new ConnDB();
+    }
+
+    /**
+     * Konstruktor med beroendeinjektion – möjliggör enklare testning.
+     * 
+     * @param dbConnector En implementation av DatabaseConnector.
+     */
+    public GetReservationRow(DatabaseConnector dbConnector) {
+        this.dbConnector = dbConnector;
+    }
+
+    /**
+     * Hämtar alla reservationsrader som tillhör den aktuella inloggade användaren (via session).
+     * 
+     * @return Lista av ReservationRow för aktuell användare
+     * @throws SQLException om databasfel uppstår
+     */
     public ArrayList<ReservationRow> getReservationRowById() throws SQLException {
         Session session = Session.getInstance();
-        int id = session.getUserId();
-        String query =  "SELECT rr.*, r.reservationDate " +
-                   "FROM reservationRow rr " +
-                   "JOIN Reservation r ON rr.reservationID = r.ReservationID " +
-                   "WHERE r.CustomerID = ?";
+        int userId = session.getUserId();
 
-        DatabaseConnector connDB = new ConnDB();
+        String query = "SELECT rr.*, r.reservationDate " +
+            "FROM reservationRow rr " +
+            "JOIN reservation r ON rr.reservationID = r.reservationID " +
+            "WHERE r.CustomerID = ?";
+        
         ArrayList<ReservationRow> reservationRows = new ArrayList<>();
 
-        try (Connection conn = connDB.connect();
+        try (Connection conn = dbConnector.connect();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, id);
+            stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
                 reservationRows.add(mapResultSetToReservationRow(rs));
             }
         }
+
         return reservationRows;
     }
 
-
+    /**
+     * Hämtar reservationsrader för en specifik reservation.
+     * 
+     * @param reservationId Reservationens ID
+     * @return Lista av ReservationRow
+     * @throws SQLException om databasfel uppstår
+     */
     public List<ReservationRow> getReservationRowsByReservationId(int reservationId) throws SQLException {
+        String query = "SELECT rr.*, r.reservationDate " +
+                       "FROM reservationRow rr " +
+                       "JOIN reservation r ON rr.reservationID = r.reservationID " +
+                       "WHERE rr.reservationID = ?";
+
         List<ReservationRow> rows = new ArrayList<>();
-        String query = "SELECT * FROM reservationRow WHERE reservationID = ?";
 
-        DatabaseConnector connDB = new ConnDB();
-
-        try (Connection conn = connDB.connect();
+        try (Connection conn = dbConnector.connect();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, reservationId);
@@ -55,17 +88,27 @@ public class GetReservationRow {
                 rows.add(mapResultSetToReservationRow(rs));
             }
         }
+
         return rows;
     }
 
+    /**
+     * Hjälpmetod för att konvertera en ResultSet-rad till ett ReservationRow-objekt.
+     * 
+     * @param rs ResultSet från databasfrågan
+     * @return Ett färdigkonstruerat ReservationRow-objekt
+     * @throws SQLException om något går fel vid läsning
+     */
     private ReservationRow mapResultSetToReservationRow(ResultSet rs) throws SQLException {
         int resRowID = rs.getInt("reservationRowID");
         int resID = rs.getInt("reservationID");
         int itemID = rs.getInt("itemID");
-        boolean isFufilled = rs.getBoolean("isFullfilled");
+        boolean isFulfilled = rs.getBoolean("isFullfilled");
         LocalDate reservationDate = rs.getDate("reservationDate").toLocalDate();
-        ReservationRow reservationRow = new ReservationRow(resID, itemID, isFufilled, reservationDate);
+
+        ReservationRow reservationRow = new ReservationRow(resID, itemID, isFulfilled, reservationDate);
         reservationRow.setReservationRowID(resRowID);
+
         return reservationRow;
     }
 }

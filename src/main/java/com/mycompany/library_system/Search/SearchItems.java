@@ -2,9 +2,8 @@ package com.mycompany.library_system.Search;
 
 import com.mycompany.library_system.Database.ConnDB;
 import com.mycompany.library_system.Database.DatabaseConnector;
+import com.mycompany.library_system.Logic.ItemFactory;
 import com.mycompany.library_system.Logic.GetCategoryLoanTime;
-import com.mycompany.library_system.Models.Book;
-import com.mycompany.library_system.Models.DVD;
 import com.mycompany.library_system.Models.Items;
 
 import java.sql.*;
@@ -13,7 +12,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 /**
- * SearchItems ansvarar för att hämta och filtrera mediaobjekt (Books, DVDs) baserat på söktext eller tillgänglighet.
+ * Klassen SearchItems ansvarar för att söka och filtrera mediaobjekt (Books, DVDs)
+ * baserat på söktext, tillgänglighet eller utlåningsstatus.
+ * Den hämtar information från databasen och returnerar motsvarande Items-objekt.
+ * 
+ * Använder ItemFactory för att skapa objekt av rätt typ (Book eller DVD).
  * 
  * @author Linus, Emil, Oliver, Viggo
  */
@@ -26,18 +29,15 @@ public class SearchItems {
     }
 
     /**
-     * Söker efter objekt vars titel matchar söktexten.
-     * Om onlyAvailable är true returneras endast tillgängliga objekt.
-     * 
-     * @param searchText Användarens söktext
-     * @param onlyAvailable avgör om man tar med alla tillgängliga objekt eller alla.
-     * @return En lista med matchande tillgängliga Items
+     * Söker efter objekt vars titel matchar angiven söktext.
+     * Om onlyAvailable är true returneras endast objekt som är markerade som tillgängliga.
+     *
+     * @param searchText -> Söktext för titel (delmatchning används)
+     * @param onlyAvailable -> True om endast tillgängliga objekt ska inkluderas
+     * @return En lista med matchande Items-objekt
      */
     public ArrayList<Items> search(String searchText, boolean onlyAvailable) {
         ArrayList<Items> results = new ArrayList<>();
-        
-        // SQL-sträng för att hämta ett item baserat på searchText 
-        // (Vi kan också plusa på andra delen av frågan som hämtar bara tillgängliga items)
         String query = "SELECT * FROM item WHERE title LIKE ?" + (onlyAvailable ? " AND available = true" : "");
 
         try (Connection conn = dbConnector.connect();
@@ -47,10 +47,8 @@ public class SearchItems {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                Items item = createItemFromResultSet(rs, conn);
-                if (item != null) {
-                    results.add(item);
-                }
+                Items item = ItemFactory.createItemFromResultSet(rs, conn);
+                if (item != null) results.add(item);
             }
 
         } catch (SQLException e) {
@@ -61,30 +59,30 @@ public class SearchItems {
     }
 
     /**
-     * Söker efter tillgängliga objekt vid ett givet datum. Tar hänsyn till reservationer och lån.
-     * 
-     * @param date Datumet för tillgänglighetskontroll
-     * @param searchText Söktext för att filtrera titlar
-     * @return En lista med tillgängliga objekt
+     * Söker efter objekt som är tillgängliga vid ett visst datum.
+     * Kontrollerar reservationer och aktiva lån inom perioden.
+     *
+     * @param date -> Datum då objektet ska vara tillgängligt
+     * @param searchText -> Söktext för titel (delmatchning används)
+     * @return En lista med tillgängliga Items-objekt
      */
     public ArrayList<Items> searchAvailableItems(LocalDate date, String searchText) {
         ArrayList<Items> availableItems = new ArrayList<>();
         GetCategoryLoanTime getLoanTime = new GetCategoryLoanTime();
-        
-        // SQL-sträng för att hämta ett item baserat på searchText
         String baseQuery = "SELECT * FROM Item WHERE title LIKE ?";
 
         try (Connection conn = dbConnector.connect();
              PreparedStatement stmt = conn.prepareStatement(baseQuery)) {
+
             stmt.setString(1, "%" + searchText + "%");
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                Items item = createItemFromResultSet(rs, conn);
+                Items item = ItemFactory.createItemFromResultSet(rs, conn);
                 if (item == null) continue;
 
                 int itemID = item.getItemID();
-                LocalDate endDate = getLoanTime.calculatetLoanEndDate(conn, itemID, date);
+                LocalDate endDate = getLoanTime.calculateLoanEndDate(itemID, date);
                 long loanDays = ChronoUnit.DAYS.between(date, endDate);
 
                 if (isReserved(conn, itemID, date, endDate, loanDays)) continue;
@@ -101,88 +99,16 @@ public class SearchItems {
     }
 
     /**
-     * Skapar ett Items-objekt (Book eller DVD) baserat på resultatraden.
-     * Identifierar objektets typ genom att kontrollera förekomsten i respektive tabell.
-     * 
-     * @param rs ResultSet från item-tabellen
-     * @param conn En aktiv databasanslutning
-     * @throws SQLException
-     * @return Ett Items-objekt eller null om inget hittas
-     */
-    private Items createItemFromResultSet(ResultSet rs, Connection conn) throws SQLException {
-        int id = rs.getInt("itemID");
-        String title = rs.getString("title");
-        String location = rs.getString("location");
-        int categoryID = rs.getInt("CategoryID");
-        String categoryName = rs.getString("CategoryName");
-        int genreID = rs.getInt("genreID");
-        String genreName = rs.getString("genreName");
-
-        if (isBook(conn, id)) {
-            int isbn = getBookISBN(conn, id);
-            Book book = new Book(title, location, isbn, categoryID, categoryName, genreID, genreName);
-            book.setItemID(id);
-            return book;
-        }
-
-        if (isDVD(conn, id)) {
-            int directorID = getDVDDirectorID(conn, id);
-            DVD dvd = new DVD(title, location, categoryID, categoryName, genreID, genreName, directorID);
-            dvd.setItemID(id);
-            return dvd;
-        }
-
-        return null;
-    }
-
-    /**
-     * Kontrollerar om ett objekt är en bok.
-     */
-    private boolean isBook(Connection conn, int itemID) throws SQLException {
-        String query = "SELECT 1 FROM Book WHERE itemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, itemID);
-            return stmt.executeQuery().next();
-        }
-    }
-
-    /**
-     * Hämtar ISBN-numret för en bok.
-     */
-    private int getBookISBN(Connection conn, int itemID) throws SQLException {
-        String query = "SELECT ISBN FROM Book WHERE itemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, itemID);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next() ? rs.getInt("ISBN") : 0;
-        }
-    }
-
-    /**
-     * Kontrollerar om ett objekt är en DVD.
-     */
-    private boolean isDVD(Connection conn, int itemID) throws SQLException {
-        String query = "SELECT 1 FROM DVD WHERE itemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, itemID);
-            return stmt.executeQuery().next();
-        }
-    }
-
-    /**
-     * Hämtar DirectorID för en DVD.
-     */
-    private int getDVDDirectorID(Connection conn, int itemID) throws SQLException {
-        String query = "SELECT DirectorID FROM DVD WHERE itemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, itemID);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next() ? rs.getInt("DirectorID") : 0;
-        }
-    }
-
-    /**
      * Kontrollerar om ett objekt är reserverat under en viss period.
+     * Tar hänsyn till reservationer som ännu inte fullföljts.
+     *
+     * @param conn -> Databasanslutning
+     * @param itemID -> ID för objektet som kontrolleras
+     * @param fromDate -> Startdatum för kontroll
+     * @param toDate -> Slutdatum för kontroll
+     * @param loanDays -> Antal dagar som objektet skulle vara utlånat
+     * @return True om objektet är reserverat under perioden, annars false
+     * @throws SQLException Om databasfel uppstår
      */
     private boolean isReserved(Connection conn, int itemID, LocalDate fromDate, LocalDate toDate, long loanDays) throws SQLException {
         String query = "SELECT 1 FROM reservationRow rr " +
@@ -203,7 +129,14 @@ public class SearchItems {
     }
 
     /**
-     * Kontrollerar om ett objekt är utlånat under en angiven period.
+     * Kontrollerar om ett objekt är utlånat under en viss period.
+     *
+     * @param conn -> Databasanslutning
+     * @param itemID -> ID för objektet som kontrolleras
+     * @param fromDate -> Startdatum för kontroll
+     * @param toDate -> Slutdatum för kontroll
+     * @return True om objektet är utlånat under perioden, annars false
+     * @throws SQLException Om databasfel uppstår
      */
     private boolean isOnLoan(Connection conn, int itemID, LocalDate fromDate, LocalDate toDate) throws SQLException {
         String query = "SELECT 1 FROM loanRow " +

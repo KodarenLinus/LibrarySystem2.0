@@ -11,10 +11,18 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- *
+ * En klass som hanterar bortagning av reservations rader.
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class RemoveReservationRow {
+    
+    private final DatabaseConnector dbConnector;
+
+    public RemoveReservationRow () {
+        this.dbConnector = new ConnDB();
+    }
+    
     /**
      * Tar bort en reservationsrad från databasen.
      *
@@ -24,11 +32,10 @@ public class RemoveReservationRow {
     public boolean deleteReservationRow(int reservationRowID) {
         String sql = "DELETE FROM ReservationRow WHERE reservationRowID = ?";
 
-        DatabaseConnector connDB = new ConnDB();
-
-        try (Connection conn = connDB.connect();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+        try (
+            Connection conn = dbConnector.connect();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
             stmt.setInt(1, reservationRowID);
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;

@@ -19,6 +19,12 @@ import java.sql.SQLException;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class AddDVD {
+    
+    private final DatabaseConnector dbConnector;
+
+    public AddDVD () {
+        this.dbConnector = new ConnDB();
+    }
 
     /**
      * Lägger till en DVD i databasen.
@@ -29,8 +35,7 @@ public class AddDVD {
     public void insertDVD (DVD dvd) {
         
          // Skapar en databasanslutning
-        DatabaseConnector connDB = new ConnDB();
-        Connection conn = connDB.connect();
+        Connection conn = dbConnector.connect();
         
         // SQL-fråga för att infoga i Item-tabellen
         String insertToItem = "INSERT INTO Item (GenreID, CategoryID, GenreName, CategoryName, Title, Location, Available) "

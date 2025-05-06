@@ -5,6 +5,7 @@
 package com.mycompany.library_system.Logic;
 
 import com.mycompany.library_system.Database.ConnDB;
+import com.mycompany.library_system.Database.DatabaseConnector;
 import com.mycompany.library_system.Models.Category;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,6 +20,12 @@ import java.util.ArrayList;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class GetCategories {
+    
+    private final DatabaseConnector dbConnector;
+
+    public GetCategories () {
+        this.dbConnector = new ConnDB();
+    }
    
     /**
      * Hämtar alla kategorier från databasen.
@@ -30,8 +37,7 @@ public class GetCategories {
         ArrayList<Category> categoryList = new ArrayList<>();
         
         // Skapar en databasanslutning
-        ConnDB connDB = new ConnDB();
-        Connection conn = connDB.connect();
+        Connection conn = dbConnector.connect();
         
         // En SQL-fråga för att hämta alla categorier
         String selectAllCategories = "SELECT * FROM Category";

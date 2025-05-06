@@ -1,11 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.library_system.Logic;
 
 import com.mycompany.library_system.Database.ConnDB;
 import com.mycompany.library_system.Database.DatabaseConnector;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,30 +10,45 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 /**
- *
+ * Klass som ansvarar för att hämta reservationsdatum kopplat till ett visst item.
+ * 
+ * Följer SRP (Single Responsibility Principle): denna klass ansvarar endast för att läsa ut ett datum.
+ * 
  * @author Linus
  */
 public class GetReservationDate {
-     /**
-     * Hämtar reservationsdatum för ett visst item.
-     * Returnerar null om itemet inte är reserverat.
+
+    private final DatabaseConnector dbConnector;
+
+    public GetReservationDate() {
+        this.dbConnector = new ConnDB();
+    }
+
+    /**
+     * Hämtar reservationsdatum för det item med angivet ID.
+     * Returnerar det första matchande datumet eller null om ingen reservation finns.
+     *
+     * @param itemId ID på itemet
+     * @return LocalDate för reservationen eller null om ingen hittas
+     * @throws SQLException vid databasfel
      */
     public LocalDate getReservationDateForItem(int itemId) throws SQLException {
-        DatabaseConnector connDB = new ConnDB();
-        Connection conn = connDB.connect();
-        
         String sql = "SELECT reservationDate FROM reservation WHERE "
                 + "ReservationID IN (SELECT ReservationID FROM ReservationRow WHERE itemID = ?)";
-        
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, itemId);
 
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getDate("ReservationDate").toLocalDate();
+        try (Connection conn = dbConnector.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+
+            stmt.setInt(1, itemId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDate("reservationDate").toLocalDate();
+                }
             }
         }
 
-        return null; // Inget datum hittades
+        // Ingen reservation hittad
+        return null;
     }
 }

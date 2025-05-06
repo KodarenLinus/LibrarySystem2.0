@@ -5,6 +5,7 @@
 package com.mycompany.library_system.Logic;
 
 import com.mycompany.library_system.Database.ConnDB;
+import com.mycompany.library_system.Database.DatabaseConnector;
 import com.mycompany.library_system.Models.Director;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,6 +18,12 @@ import java.util.ArrayList;
  * @author Linus
  */
 public class GetDirectors {
+    
+    private final DatabaseConnector dbConnector;
+
+    public GetDirectors () {
+        this.dbConnector = new ConnDB();
+    }
     /**
      * Hämtar alla director från databasen.
      *
@@ -26,9 +33,7 @@ public class GetDirectors {
     public ArrayList<Director> getAllDirectors () throws SQLException {
         ArrayList<Director> directorList = new ArrayList<>();
         
-        // Skapar en databasanslutning
-        ConnDB connDB = new ConnDB();
-        Connection conn = connDB.connect();
+        Connection conn = dbConnector.connect();
         
         // En SQL-fråga för att hämta alla directors
         String selectAllDirectors = "SELECT * FROM Director";
