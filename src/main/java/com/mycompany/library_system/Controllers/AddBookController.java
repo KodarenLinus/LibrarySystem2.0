@@ -1,8 +1,8 @@
 package com.mycompany.library_system.Controllers;
 
-import com.mycompany.library_system.Logic.AddBook;
-import com.mycompany.library_system.Logic.GetCategories;
-import com.mycompany.library_system.Logic.GetGenres;
+import com.mycompany.library_system.Logic.ItemManagement.AddBook;
+import com.mycompany.library_system.Logic.ItemManagement.GetCategories;
+import com.mycompany.library_system.Logic.ItemManagement.GetGenres;
 import com.mycompany.library_system.Models.Book;
 import com.mycompany.library_system.Models.Category;
 import com.mycompany.library_system.Models.Genre;

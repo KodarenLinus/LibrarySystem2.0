@@ -1,4 +1,4 @@
-package com.mycompany.library_system.Logic;
+package com.mycompany.library_system.Logic.ItemManagement;
 
 import com.mycompany.library_system.Database.ConnDB;
 import com.mycompany.library_system.Database.DatabaseConnector;

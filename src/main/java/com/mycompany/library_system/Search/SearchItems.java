@@ -2,8 +2,8 @@ package com.mycompany.library_system.Search;
 
 import com.mycompany.library_system.Database.ConnDB;
 import com.mycompany.library_system.Database.DatabaseConnector;
-import com.mycompany.library_system.Logic.ItemFactory;
-import com.mycompany.library_system.Logic.GetCategoryLoanTime;
+import com.mycompany.library_system.Logic.ItemManagement.ItemFactory;
+import com.mycompany.library_system.Logic.ItemManagement.GetCategoryLoanTime;
 import com.mycompany.library_system.Models.Items;
 
 import java.sql.*;
@@ -145,7 +145,9 @@ public class SearchItems {
                 "AND (? BETWEEN RowLoanStartDate AND RowLoanEndDate " +
                 "OR RowLoanStartDate BETWEEN ? AND ?)";
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (
+            PreparedStatement stmt = conn.prepareStatement(query)
+        ) {
             stmt.setInt(1, itemID);
             stmt.setDate(2, Date.valueOf(fromDate));
             stmt.setDate(3, Date.valueOf(fromDate));

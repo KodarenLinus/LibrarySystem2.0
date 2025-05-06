@@ -1,6 +1,6 @@
 package com.mycompany.library_system.Controllers;
 
-import com.mycompany.library_system.Logic.ReserveItem;
+import com.mycompany.library_system.Logic.ReservationMangement.ReserveItem;
 import com.mycompany.library_system.Login.Session;
 import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Search.SearchItems;

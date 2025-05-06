@@ -1,4 +1,4 @@
-package com.mycompany.library_system.Logic;
+package com.mycompany.library_system.Logic.ItemManagement;
 
 import com.mycompany.library_system.Models.Book;
 import com.mycompany.library_system.Models.DVD;

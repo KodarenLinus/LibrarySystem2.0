@@ -26,7 +26,7 @@ public class SearchCustomer {
     /**
      * Söker efter kunder vars för- eller efternamn matchar den angivna söktexten.
      *
-     * @param searchText Söksträng som användaren skriver in
+     * @param searchText -> Söksträng som användaren skriver in
      * @return En lista med kunder som matchar sökningen
      */
     public ArrayList<Customer> searchCustomer(String searchText) {

@@ -4,10 +4,10 @@
  */
 package com.mycompany.library_system.Controllers;
 
-import com.mycompany.library_system.Logic.GetLoanRows;
-import com.mycompany.library_system.Logic.GetReservationRow;
-import com.mycompany.library_system.Logic.RemoveReservationRow;
-import com.mycompany.library_system.Logic.ReturnLoanItem;
+import com.mycompany.library_system.Logic.LoanMangement.GetLoanRows;
+import com.mycompany.library_system.Logic.ReservationMangement.GetReservationRow;
+import com.mycompany.library_system.Logic.ReservationMangement.RemoveReservationRow;
+import com.mycompany.library_system.Logic.LoanMangement.ReturnLoanItem;
 import com.mycompany.library_system.Models.LoanRow;
 import com.mycompany.library_system.Models.ReservationRow;
 import com.mycompany.library_system.Utils.ChangeWindow;

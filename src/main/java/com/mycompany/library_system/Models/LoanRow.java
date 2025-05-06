@@ -4,7 +4,7 @@
  */
 package com.mycompany.library_system.Models;
 
-import com.mycompany.library_system.Logic.GetItemsByID;
+import com.mycompany.library_system.Logic.ItemManagement.GetItemsByID;
 import java.sql.SQLException;
 
 /**

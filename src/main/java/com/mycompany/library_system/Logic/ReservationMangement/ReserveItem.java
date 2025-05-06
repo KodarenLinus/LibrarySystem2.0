@@ -1,5 +1,6 @@
-package com.mycompany.library_system.Logic;
+package com.mycompany.library_system.Logic.ReservationMangement;
 
+import com.mycompany.library_system.Logic.ItemManagement.GetCategoryLoanTime;
 import com.mycompany.library_system.Database.ConnDB;
 import com.mycompany.library_system.Database.DatabaseConnector;
 import com.mycompany.library_system.Models.Items;

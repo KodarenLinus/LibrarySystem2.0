@@ -4,9 +4,9 @@
  */
 package com.mycompany.library_system.Controllers;
 
-import com.mycompany.library_system.Logic.AddDVD;
-import com.mycompany.library_system.Logic.GetDirectors;
-import com.mycompany.library_system.Logic.GetGenres;
+import com.mycompany.library_system.Logic.ItemManagement.AddDVD;
+import com.mycompany.library_system.Logic.ItemManagement.GetDirectors;
+import com.mycompany.library_system.Logic.ItemManagement.GetGenres;
 import com.mycompany.library_system.Models.CategoryType;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import com.mycompany.library_system.Models.DVD;

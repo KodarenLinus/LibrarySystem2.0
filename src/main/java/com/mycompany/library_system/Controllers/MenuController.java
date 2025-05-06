@@ -4,6 +4,7 @@
  */
 package com.mycompany.library_system.Controllers;
 
+import com.mycompany.library_system.Login.Session;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import java.io.IOException;
 import javafx.event.ActionEvent;
@@ -44,5 +45,6 @@ public class MenuController {
         String fxmlf = "LoginView.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
+        Session.getInstance().clear();
     }
 }

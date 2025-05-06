@@ -4,7 +4,7 @@
  */
 package com.mycompany.library_system.Controllers;
 
-import com.mycompany.library_system.Logic.AddAuthorToBook;
+import com.mycompany.library_system.Logic.AuthorMangement.AddAuthorToBook;
 import com.mycompany.library_system.Models.Author;
 import com.mycompany.library_system.Models.Book;
 import com.mycompany.library_system.Search.SearchAuthor;

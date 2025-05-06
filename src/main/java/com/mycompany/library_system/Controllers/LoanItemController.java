@@ -4,10 +4,10 @@
  */
 package com.mycompany.library_system.Controllers;
 
-import com.mycompany.library_system.Logic.GetReservationDate;
+import com.mycompany.library_system.Logic.ReservationMangement.GetReservationDate;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import com.mycompany.library_system.Models.Items;
-import com.mycompany.library_system.Logic.LoanItem;
+import com.mycompany.library_system.Logic.LoanMangement.LoanItem;
 import com.mycompany.library_system.Search.SearchItems;
 import com.mycompany.library_system.Login.Session;
 import com.mycompany.library_system.Utils.AlertHandler;

@@ -4,7 +4,7 @@
  */
 package com.mycompany.library_system.Controllers;
 
-import com.mycompany.library_system.Logic.AddAuthor;
+import com.mycompany.library_system.Logic.AuthorMangement.AddAuthor;
 import com.mycompany.library_system.Models.Author;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

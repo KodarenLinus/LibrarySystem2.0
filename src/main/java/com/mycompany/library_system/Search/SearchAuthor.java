@@ -29,8 +29,8 @@ public class SearchAuthor {
      * Söker efter författare som matchar söktexten (förnamn eller efternamn)
      * och som inte redan är kopplade till den angivna boken.
      *
-     * @param searchText Text att söka på (förnamn eller efternamn).
-     * @param book Den bok som författarna inte ska vara kopplade till.
+     * @param searchText -> Text att söka på (förnamn eller efternamn).
+     * @param book -> Den bok som författarna inte ska vara kopplade till.
      * @return En lista med matchande Author-objekt.
      */
     public ArrayList<Author> search(String searchText, Book book) {
