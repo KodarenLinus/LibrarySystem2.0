@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.library_system.Logic.ItemManagement;
+package com.mycompany.library_system.Logic.CustomerMangement;
 
 import com.mycompany.library_system.Models.Customer;
 import com.mycompany.library_system.Database.DatabaseConnector;

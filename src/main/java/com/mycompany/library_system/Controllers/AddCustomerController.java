@@ -1,6 +1,6 @@
 package com.mycompany.library_system.Controllers;
 
-import com.mycompany.library_system.Logic.ItemManagement.AddCustomer;
+import com.mycompany.library_system.Logic.CustomerMangement.AddCustomer;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import com.mycompany.library_system.Models.Customer;
 import com.mycompany.library_system.Search.SearchCustomer;
