@@ -4,6 +4,7 @@
  */
 package com.mycompany.library_system.Controllers;
 
+import com.mycompany.library_system.Logic.ItemManagement.RemoveItem;
 import com.mycompany.library_system.Models.Book;
 import com.mycompany.library_system.Models.DVD;
 import com.mycompany.library_system.Models.Items;
@@ -41,10 +42,24 @@ public class HandleItemsController {
         }
     }
     
-    
     @FXML
     void RemoveObject(ActionEvent event) {
+        Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            RemoveItem removeItem = new RemoveItem();
+            boolean success = removeItem.deleteItem(selectedItem);
 
+            if (success) {
+                ItemList.getItems().remove(selectedItem);
+            } else {
+                // Visa felmeddelande
+                AlertHandler alert = new AlertHandler();
+                alert.createAlert("Fel vid borttagning", "Objektet kunde inte tas bort", "Kontrollera databasen och försök igen.");
+            }
+        } else {
+            AlertHandler alert = new AlertHandler();
+            alert.createAlert("Inget objekt valt", "Du måste välja ett objekt", "Vänligen välj ett objekt i listan att ta bort.");
+        }
     }
 
     @FXML

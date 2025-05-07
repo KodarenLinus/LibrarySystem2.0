@@ -8,7 +8,6 @@ import com.mycompany.library_system.Models.ReservationRow;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Klass som hanterar hämtning av reservationsrader från databasen.
@@ -38,7 +37,7 @@ public class GetReservationRow {
      * @return Lista av ReservationRow för aktuell användare
      * @throws SQLException om databasfel uppstår
      */
-    public ArrayList<ReservationRow> getReservationRowById() throws SQLException {
+    public ArrayList<ReservationRow> getReservationRow() throws SQLException {
         Session session = Session.getInstance();
         int userId = session.getUserId();
 
@@ -70,13 +69,13 @@ public class GetReservationRow {
      * @return Lista av ReservationRow
      * @throws SQLException om databasfel uppstår
      */
-    public List<ReservationRow> getReservationRowsByReservationId(int reservationId) throws SQLException {
+    public ArrayList<ReservationRow> getReservationRowsByReservationId(int reservationId) throws SQLException {
         String query = "SELECT rr.*, r.reservationDate " +
                        "FROM reservationRow rr " +
                        "JOIN reservation r ON rr.reservationID = r.reservationID " +
                        "WHERE rr.reservationID = ?";
 
-        List<ReservationRow> rows = new ArrayList<>();
+        ArrayList<ReservationRow> rows = new ArrayList<>();
 
         try (Connection conn = dbConnector.connect();
              PreparedStatement stmt = conn.prepareStatement(query)) {

@@ -211,7 +211,7 @@ public class MyLoansController {
         });
     
         // Laddar in alla objekt vid start
-        ArrayList<ReservationRow> reservationRows = getReservationRow.getReservationRowById();
+        ArrayList<ReservationRow> reservationRows = getReservationRow.getReservationRow();
         
         // Load the item for each LoanRow before display
         for (ReservationRow row : reservationRows) {
