@@ -13,10 +13,10 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.library_system.Controllers.ReserveItemController">
    <children>
-      <ListView fx:id="ItemList" layoutY="60.0" onMouseClicked="#addToReservation" prefHeight="280.0" prefWidth="264.0" />
+      <ListView fx:id="ItemList" layoutY="60.0" onMouseClicked="#addToReservation" prefHeight="280.0" prefWidth="347.0" />
       <ListView fx:id="itemReservationList" layoutX="393.0" layoutY="60.0" onMouseClicked="#removeFromReservation" prefHeight="200.0" prefWidth="200.0" />
       <TextField fx:id="ScearchItem" layoutX="14.0" layoutY="360.0" promptText="Sök" />
-      <Text layoutX="110.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sök">
+      <Text layoutX="154.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sök">
          <font>
             <Font size="18.0" />
          </font>

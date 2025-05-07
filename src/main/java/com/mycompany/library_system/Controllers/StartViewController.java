@@ -19,7 +19,7 @@ import javafx.scene.input.MouseEvent;
 
 /**
  *
- * @author emildahlback
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class StartViewController {
     

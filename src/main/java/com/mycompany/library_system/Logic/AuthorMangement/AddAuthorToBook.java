@@ -32,29 +32,27 @@ public class AddAuthorToBook {
      *
      * @param book ett Book objekt som vi skickar till bookAuthor i databasen
      * @param authors en lista med författare som som vi kopplar till book objektet
+     * @return true om man lyckas lägga till författare, false om ingen författare läggs till.
      */
-    public void insertToBookAuthor (Book book, ArrayList<Author> authors) {
-        
-        // Skapar en databasanslutning
-        Connection conn = dbConnector.connect();
-        
-        // SQL-fråga för att infoga i BookAuthor-tabellen
-        String insertToBookAuthor = "INSERT INTO BookAuthor (ItemID, AuthorID) VALUES (?, ?)";
-        
-        try (
-            PreparedStatement stmt1 = conn.prepareStatement(insertToBookAuthor);
-        ){
-            // Loopa igenom varje författare och lägg till kopplingen till boken
+    public boolean insertToBookAuthor(Book book, ArrayList<Author> authors) {
+        String sql = "INSERT INTO BookAuthor (ItemID, AuthorID) VALUES (?, ?)";
+
+        try (Connection conn = dbConnector.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             for (Author author : authors) {
-                stmt1.setInt(1, book.getItemID());
-                stmt1.setInt(2, author.getAuthorID());
-                stmt1.addBatch(); // Samlar alla INSERT-satser till ett batch-anrop
+                stmt.setInt(1, book.getItemID());
+                stmt.setInt(2, author.getAuthorID());
+                stmt.addBatch();
             }
 
-            stmt1.executeBatch();
+            stmt.executeBatch();
+            return true;
 
-        } catch (SQLException ex){
-            ex.printStackTrace();
+        } catch (SQLException ex) {
+            System.err.println("Fel vid insättning i BookAuthor: " + ex.getMessage());
+            return false;
         }
     }
+
 }

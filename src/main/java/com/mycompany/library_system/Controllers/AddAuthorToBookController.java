@@ -57,22 +57,31 @@ public class AddAuthorToBookController {
         try {
             AddAuthorToBook addAuthorToBook = new AddAuthorToBook();
             ArrayList<Author> authors = new ArrayList<>(AuthorsToAddToBookList.getItems());
-            addAuthorToBook.insertToBookAuthor((Book)item, authors);
-            
-            //Skapar en alert
-            title = "Du la till författare till " + item.toString();
-            for(Author author: authors){ header += (author.getFirstname() + " " + author.getLastname() + " "); }
-            content = "Succes du lyckades lägga till författare till boken";
+
+            boolean success = addAuthorToBook.insertToBookAuthor((Book)item, authors);
+
+            if (success) {
+                title = "Författare tillagda till " + item.toString();
+                header = "Följande författare har lagts till:";
+                content = authors.stream()
+                        .map(a -> a.getFirstname() + " " + a.getLastname())
+                        .reduce("", (s1, s2) -> s1 + "\n" + s2).trim();
+
+                // Töm listan och uppdatera
+                AuthorsToAddToBookList.getItems().clear();
+                applyFilter();
+            } else {
+                title = "Misslyckades lägga till författare";
+                header = "Databasfel uppstod";
+                content = "Ingen författare kunde kopplas till boken.";
+            }
+
             alertHandler.createAlert(title, header, content);
-            
-            //Tar bort authors så man inte ska kunna lägga till dem på samma book igen.
-            AuthorsToAddToBookList.getItems().clear();
-            applyFilter();
+
         } catch (ClassCastException e) {
-            // Berättar om vi castar ett objekt som inte är en book!!
-            title = "Du försökte lägga till en Författare på ett objekt som inte är en book";
-            header ="Du kan enbart lägga till författare på böcker"; 
-            content = "Vänligen gå tillbaka och testa välja ett nytt object.";
+            title = "Fel objekt valt";
+            header = "Du försökte lägga till författare till något som inte är en bok.";
+            content = "Vänligen välj en bok innan du lägger till författare.";
             alertHandler.createAlert(title, header, content);
         }
     }
