@@ -17,7 +17,7 @@ import javafx.scene.control.TextField;
  */
 public class CreateAuthorController {
     
-     // Instans av AlertHandler för att visa meddelanden
+    // Instans av AlertHandler för att visa meddelanden
     private AlertHandler alertHandler = new AlertHandler();
     
     // Texter till popup-meddelanden

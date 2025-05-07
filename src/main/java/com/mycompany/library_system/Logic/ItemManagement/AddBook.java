@@ -46,7 +46,7 @@ public class AddBook {
                 + "VALUES (?, ?, ?)";
         
         try (
-            PreparedStatement stmt1 = conn.prepareStatement(insertToItem);
+            PreparedStatement stmt1 = conn.prepareStatement(insertToItem, PreparedStatement.RETURN_GENERATED_KEYS);
             PreparedStatement stmt2 = conn.prepareStatement(insertToBook);
         ){
             // Lägger in värden för item-tabelen
@@ -75,7 +75,7 @@ public class AddBook {
         // Sätt parametrar för andra INSERT (Book)
         stmt2.setInt(1, generatedItemID);
         stmt2.setInt(2, book.getIsbn());
-        stmt2.setInt(3, 7); // TODO: Byt till dynamiskt PublisherID senare
+        stmt2.setInt(3, book.getPublisherID());
         stmt2.executeUpdate();
 
         } catch (SQLException ex){

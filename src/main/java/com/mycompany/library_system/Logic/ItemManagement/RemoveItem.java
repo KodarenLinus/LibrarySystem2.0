@@ -26,7 +26,9 @@ public class RemoveItem {
     public boolean deleteItem(Items item) {
         int itemID = item.getItemID();
 
-        try (Connection conn = dbConnector.connect()) {
+        try (
+            Connection conn = dbConnector.connect()
+        ) {
             conn.setAutoCommit(false); // Start transaktion
 
             // Ta bort från rätt tabell först

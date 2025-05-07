@@ -46,7 +46,7 @@ public class AddDVD {
                 + "VALUES (?, ?)";
                 
         try (
-            PreparedStatement stmt1 = conn.prepareStatement(insertToItem);
+            PreparedStatement stmt1 = conn.prepareStatement(insertToItem, PreparedStatement.RETURN_GENERATED_KEYS);
             PreparedStatement stmt2 = conn.prepareStatement(insertToDVD);
         ){
             // lägger till värden i item-tabelen

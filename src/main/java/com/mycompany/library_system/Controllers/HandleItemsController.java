@@ -64,12 +64,21 @@ public class HandleItemsController {
 
     @FXML
     void UpdateObject(ActionEvent event) {
-
+        Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            ObjectSession.getInstance().setCurrentItem(selectedItem);
+            String fxmlFile = "UpdateTitleItem.fxml";
+            PopUpWindow popUpWindow = new PopUpWindow();
+            popUpWindow.popUp(event, fxmlFile);
+        } else {
+            AlertHandler alert = new AlertHandler();
+            alert.createAlert("Inget objekt valt", "Du måste välja ett objekt", "Välj ett objekt i listan att uppdatera.");
+        }
     }
+    
     
     @FXML
     void back(ActionEvent event) throws IOException{
-        
         String fxmlf = "StartMenu.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);

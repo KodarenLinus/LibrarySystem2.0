@@ -32,11 +32,13 @@ public class ItemFactory {
         String categoryName = rs.getString("CategoryName");
         int genreID = rs.getInt("genreID");
         String genreName = rs.getString("genreName");
+        
 
         // Om objektet är en bok, hämta ISBN och skapa Book-objekt
         if (isBook(conn, id)) {
             int isbn = getBookISBN(conn, id);
-            Book book = new Book(title, location, isbn, categoryID, categoryName, genreID, genreName);
+            int publisherID = getBookPublisherID(conn, id);
+            Book book = new Book(title, location, isbn, categoryID, categoryName, genreID, genreName, publisherID);
             book.setItemID(id);
             return book;
         }
@@ -92,6 +94,29 @@ public class ItemFactory {
         }
         throw new SQLException("ISBN kunde inte hittas för Book med itemID = " + itemId);
     }
+    
+     /**
+     * Hämtar ISBN för en bok baserat på dess itemID.
+     * Kastar ett undantag om ingen matchande bok hittas.
+     * 
+     * @param conn en databas koppling
+     * @param itemId bok itemID
+     * @return ISBN för en bok
+     * @throws SQLException
+     */
+    private static int getBookPublisherID(Connection conn, int itemId) throws SQLException {
+        String query = "SELECT PublisherID FROM Book WHERE itemID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, itemId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("PublisherID");
+                }
+            }
+        }
+        throw new SQLException("ISBN kunde inte hittas för Book med itemID = " + itemId);
+    }
+
 
     /**
      * Kontrollerar om ett objekt är en DVD genom att söka i DVD-tabellen.

@@ -3,9 +3,11 @@ package com.mycompany.library_system.Controllers;
 import com.mycompany.library_system.Logic.ItemManagement.AddBook;
 import com.mycompany.library_system.Logic.ItemManagement.GetCategories;
 import com.mycompany.library_system.Logic.ItemManagement.GetGenres;
+import com.mycompany.library_system.Logic.ItemManagement.GetPublisher;
 import com.mycompany.library_system.Models.Book;
 import com.mycompany.library_system.Models.Category;
 import com.mycompany.library_system.Models.Genre;
+import com.mycompany.library_system.Models.Publisher;
 import com.mycompany.library_system.Utils.AlertHandler;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import java.sql.SQLException;
@@ -41,6 +43,9 @@ public class AddBookController {
 
     @FXML
     private ComboBox<Genre> Genre;
+    
+    @FXML
+    private ComboBox<Publisher> Publisher;
     
     @FXML
     private TextField ISBN;
@@ -86,6 +91,7 @@ public class AddBookController {
             int isbn = Integer.parseInt(ISBN.getText());
             Category selectedCategory = Category.getValue();
             Genre selectedGenre = Genre.getValue();
+            Publisher selectedPublisher = Publisher.getValue();
 
             Book book = new Book(
                 Title.getText(), 
@@ -94,7 +100,8 @@ public class AddBookController {
                 selectedCategory.getCategoryID(), 
                 selectedCategory.getCategoryName(), 
                 selectedGenre.getGenreID(), 
-                selectedGenre.getGenreName()
+                selectedGenre.getGenreName(),
+                selectedPublisher.getPublisherID()
             );
             
             AddBook addBook = new AddBook();
@@ -149,6 +156,20 @@ public class AddBookController {
         GetGenres getGenres = new GetGenres();
         ArrayList<Genre> allGenres = getGenres.getAllGenres();
         Genre.getItems().setAll(allGenres);
+        
+         // Anpassad cellrendering för genrer
+        Publisher.setCellFactory(list -> new ListCell<Publisher>() {
+            @Override
+            protected void updateItem(Publisher publisher, boolean empty) {
+                super.updateItem(publisher, empty);
+                setText((empty || publisher == null) ? null : publisher.toString());
+            }
+        });
+
+        // Hämta och sätt genrer
+        GetPublisher getPublisher = new GetPublisher();
+        ArrayList<Publisher> allPublisher = getPublisher.getAllPublishers();
+        Publisher.getItems().setAll(allPublisher);
     }
 
     /**
@@ -161,6 +182,7 @@ public class AddBookController {
               || Location.getText().isEmpty() 
               || ISBN.getText().isEmpty()
               || Category.getValue() == null 
-              || Genre.getValue() == null);
+              || Genre.getValue() == null
+              || Publisher.getValue() == null);
     }
 }
