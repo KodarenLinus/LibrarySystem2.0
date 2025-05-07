@@ -11,37 +11,68 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 /**
+ * Controller-klass för huvudmenyn i bibliotekssystemet för administratörer eller personal.
+ * Hanterar navigation till olika delar av systemet såsom kundhantering, artikelhantering,
+ * samt möjlighet att logga ut.
  *
+ * Fungerar tillsammans med Menu.fxml.
+ * 
+ * Funktioner:
+ * - Gå till hantering av artiklar
+ * - Gå till vy för att lägga till ny artikel
+ * - Gå till kundhantering
+ * - Logga ut
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class MenuController {
-    
+
+    /**
+     * Navigerar till vyn för hantering av artiklar (t.ex. redigering, borttagning).
+     *
+     * @param event Klick på "Hantera Artiklar"-knappen
+     */
     @FXML
     void GoToItemHandling(ActionEvent event) {
-         String fxmlf = "HandleItems.fxml";
+        String fxmlf = "HandleItems.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }
-    
+
+    /**
+     * Navigerar till vyn för att välja vilken typ av artikel som ska läggas till (bok, DVD etc.).
+     *
+     * @param event Klick på "Lägg till Artikel"-knappen
+     * @throws IOException Om FXML-filen inte kan laddas
+     */
     @FXML
-    void addItem(ActionEvent event) throws IOException{
-        
+    void addItem(ActionEvent event) throws IOException {
         String fxmlf = "AddItemsChoice.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }
-    
+
+    /**
+     * Navigerar till vyn för att hantera kunder (t.ex. registrering av ny kund).
+     *
+     * @param event Klick på "Hantera Kund"-knappen
+     * @throws IOException Om FXML-filen inte kan laddas
+     */
     @FXML
-    void manageCustomer(ActionEvent event) throws IOException{
-        
+    void manageCustomer(ActionEvent event) throws IOException {
         String fxmlf = "addCustomer.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }
- 
+
+    /**
+     * Loggar ut användaren genom att rensa sessionen och återgå till inloggningsvyn.
+     *
+     * @param event Klick på "Logga ut"-knappen
+     * @throws IOException Om FXML-filen inte kan laddas
+     */
     @FXML
-    void backToMenu(ActionEvent event) throws IOException{
-        
+    void backToMenu(ActionEvent event) throws IOException {
         String fxmlf = "LoginView.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);

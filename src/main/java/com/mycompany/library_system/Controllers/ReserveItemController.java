@@ -16,8 +16,25 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
 /**
- * Controller för att reservera items.
- * För teständamål visar vi bara tillgängliga items från searchAvailableItems().
+ * Controller-klass för hantering av reservationer i bibliotekssystemet.
+ * Användare kan söka efter tillgängliga items (böcker, DVD:er etc.), välja ett datum och reservera dem.
+ * Klassen använder en kombination av FXML-element och logikklasser för att hantera interaktionen.
+ *
+ * Funktioner:
+ * - Visa lista över tillgängliga items utifrån valt datum och söktext
+ * - Lägga till och ta bort items från en tillfällig "reservationslista"
+ * - Genomföra reservationer
+ * - Navigera tillbaka till kundmenyn
+ * 
+ * Fält från FXML:
+ * - ItemList: Visar tillgängliga items att reservera
+ * - itemReservationList: Visar tillfälligt valda items att reservera
+ * - ScearchItem: Textfält för filtrering
+ * - dateToReserve: DatePicker för att välja reservationsdatum
+ *
+ * Denna vy filtrerar bort kategorier med ID 4 och 5.
+ * 
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class ReserveItemController {
     @FXML
@@ -31,7 +48,13 @@ public class ReserveItemController {
 
     @FXML
     private ListView<Items> itemReservationList;
-
+    
+    /**
+     * Lägger till valt item från ItemList till reservationslistan.
+     * Filtrerar om tillgängliga items efteråt.
+     * 
+     * @param event klickhändelse på item i ItemList
+     */
     @FXML
     void addToReservation(MouseEvent event) {
         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
@@ -40,14 +63,25 @@ public class ReserveItemController {
             applyFilter();
         }
     }
-
+    
+    /**
+     * Navigerar tillbaka till kundvyn.
+     * 
+     * @param event klickhändelse på "Tillbaka"-knappen
+     */
     @FXML
     void backToMenu(ActionEvent event) {
         String fxmlf = "CustomerView.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }
-
+    
+     /**
+     * Skapar reservationer för valda items i reservationslistan för inloggad användare.
+     * Tömmer listan efter lyckad reservation.
+     * 
+     * @param event klickhändelse på "Reservera"-knappen
+     */
     @FXML
     void makeReservation(ActionEvent event) {
         ReserveItem reserveItem = new ReserveItem();
@@ -59,7 +93,12 @@ public class ReserveItemController {
             itemReservationList.getItems().clear();
         }
     }
-
+    
+    /**
+     * Tar bort ett item från reservationslistan.
+     * Filtrerar om tillgängliga items efteråt.
+     * @param event klickhändelse på item i itemReservationList
+     */
     @FXML
     void removeFromReservation(MouseEvent event) {
         Items selectedItem = itemReservationList.getSelectionModel().getSelectedItem();
@@ -70,7 +109,10 @@ public class ReserveItemController {
     }
 
     /**
-     * Initierar vyn – för test visar vi bara resultat från searchAvailableItems().
+     * Initierar kontrollerna när vyn laddas:
+     * - Sätter cellrenderers
+     * - Lyssnar på datum- och textförändringar
+     * - Visar tillgängliga items vid start (om datum är valt)
      */
     @FXML
     public void initialize() {

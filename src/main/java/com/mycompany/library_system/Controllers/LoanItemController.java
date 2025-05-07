@@ -26,73 +26,97 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
 /**
- *
+ * Controller-klass för att hantera utlåning av objekt i bibliotekssystemet.
+ * Användare kan söka efter objekt, filtrera, lägga till i kundvagn och genomföra utlåning.
+ * Samverkar med LoanItem.fxml.
+ * 
+ * Funktioner:
+ * - Söka efter objekt
+ * - Filtrera referenslitteratur och magasin
+ * - Visa reservationsstatus
+ * - Lägga till och ta bort från kundvagn
+ * - Skapa lån
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class LoanItemController {
 
-    @FXML
-    private ListView<Items> ItemList;
+    // AlertHandler-instans för att visa varningsmeddelanden
+    private AlertHandler alertHandler = new AlertHandler();
+
+    // Texter för varningspopup
+    private String title;
+    private String header; 
+    private String content;
 
     @FXML
-    private TextField ScearchItem;
+    private ListView<Items> ItemList; // Lista med tillgängliga objekt
 
     @FXML
-    private ListView<Items> itemCartList;
-    
-    @FXML
-    private RadioButton magazineFilterButton;
+    private TextField ScearchItem; // Textfält för att söka objekt
 
     @FXML
-    private RadioButton referensFilterButton;
-    
+    private ListView<Items> itemCartList; // Lista med valda objekt att låna
+
+    @FXML
+    private RadioButton magazineFilterButton; // Filter för magasin
+
+    @FXML
+    private RadioButton referensFilterButton; // Filter för referenslitteratur
+
+    /**
+     * Filtrerar listan när magasin-filter aktiveras.
+     * 
+     * @param event -> en radiobutton som när den är aktiv filtrerar bort tidskrifter
+     */
     @FXML
     void FilterMagazine(ActionEvent event) {
-         applyFilter();
+        applyFilter();
     }
 
+    /**
+     * Filtrerar listan när referenslitteratur-filter aktiveras.
+     * 
+     * @param event -> en radiobutton som när den är aktiv filrerar bort referenslitteratur
+     */
     @FXML
     void FilterReferensBook(ActionEvent event) {
-         applyFilter();
+        applyFilter();
     }
-    
+
     /**
-     * Lägger till valt objekt i kundvagnen om det inte redan finns där.
+     * Lägger till valt objekt i kundvagnen om det är giltigt och inte redan tillagt.
+     * Visar varning om det är referenslitteratur eller magasin.
      *
-     * @param event MouseEvent som triggar när man klickar på ett objekt i listan
+     * @param event Klick på ett objekt i objektlistan
      */
     @FXML
     void addToCart(MouseEvent event) {
         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
-        
-        // Kategorier som inte får läggas till i varukorgen
         final int REFERENSLITTERATUR = 4;
         final int MAGAZINES = 5;
-        
+
         if (selectedItem != null) {
-            
             int categoryId = selectedItem.getCategoryID();
             if (categoryId == REFERENSLITTERATUR || categoryId == MAGAZINES) {
-                // Visa alert-varning
-                String title = "Ej tillåtet";
-                String header ="Kan inte läggas till"; 
-                String content = (selectedItem.getCategoryName() + " är inte tillåten i kundvagnen.");
-                AlertHandler alertHandler = new AlertHandler();
+                title = "Ej tillåtet";
+                header ="Kan inte läggas till"; 
+                content = (selectedItem.getCategoryName() + " är inte tillåten i kundvagnen.");
                 alertHandler.createAlert(title, header, content);
                 return;
             }
-            
+
             if (!itemCartList.getItems().contains(selectedItem)) {
                 itemCartList.getItems().add(selectedItem);
                 applyFilter();
             }
         }
     }
-    
+
     /**
-     * Tar bort valt objekt från kundvagnen.
+     * Tar bort ett objekt från kundvagnen när det klickas.
      *
-     * @param event MouseEvent som triggar när man klickar på ett objekt i kundvagnen
+     * @param event Klick på ett objekt i kundvagnen
      */
     @FXML
     void removeFromCart(MouseEvent event) {
@@ -103,40 +127,46 @@ public class LoanItemController {
             applyFilter();
         }
     }
-    
+
+    /**
+     * Går tillbaka till huvudmenyn för kunden.
+     *
+     * @param event Klick på "Tillbaka"-knappen
+     * @throws IOException Om något går fel vid laddning av FXML
+     */
     @FXML
-    void backToMenu(ActionEvent event) throws IOException{
-        
+    void backToMenu(ActionEvent event) {
         String fxmlf = "CustomerView.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }
-    
-    
-    @FXML
-    void makeOrder(ActionEvent event) throws IOException{
 
-        // Skapar ett lån utifrån vad vi har i kundvagnen!!!
+    /**
+     * Skapar ett lån baserat på objekt i kundvagnen och tömmer vagnen om lyckat.
+     *
+     * @param event Klick på "Låna"-knappen
+     * @throws IOException Om något går fel vid hantering av vyn
+     */
+    @FXML
+    void makeOrder(ActionEvent event) {
         LoanItem loanItem = new LoanItem();
         ArrayList<Items> itemsToLoan = new ArrayList<>(itemCartList.getItems());
         Session session = Session.getInstance();
-        
-        // Kör loan item och kollar att lånets genomförs, om de inte körs kommer våran kundvagn inte tömmas.
-        if (loanItem.addToLoanRows(session.getUserId(), itemsToLoan) == true)
-        {
+
+        if (loanItem.addToLoanRows(session.getUserId(), itemsToLoan)) {
             itemCartList.getItems().clear();
         }
     }
-    
+
     /**
-    * Initierar vyn när den laddas. Ställer in hur objekt listas, hämtar alla objekt och lägger till sökfunktionalitet.
-    */
+     * Initierar listan med objekt, sätter upp cellrendering för reservationsstatus
+     * och implementerar sökfunktionalitet med filtrering.
+     */
     @FXML
-    public void initialize() throws SQLException  {
-        
+    public void initialize() {
         GetReservationDate getReservationDate = new GetReservationDate();
-        
-        // Visar titel för varje objekt i listan
+
+        // Anpassar celler i objektlistan
         ItemList.setCellFactory(list -> new ListCell<Items>() {
             @Override
             protected void updateItem(Items item, boolean empty) {
@@ -151,32 +181,30 @@ public class LoanItemController {
                         Logger.getLogger(ReserveItemController.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-                    String dateInfo = (reservationDate != null && reservationDate.isAfter(LocalDate.now())) ? " (Reserverad: " + reservationDate + ")" : " (Ej reserverad)";
+                    String dateInfo = (reservationDate != null && reservationDate.isAfter(LocalDate.now())) ?
+                            " (Reserverad: " + reservationDate + ")" : " (Ej reserverad)";
                     setText(item.toString() + dateInfo);
                 }
             }
         });
-        
-        // Laddar in alla objekt vid start
+
+        // Laddar objekt initialt
         SearchItems searchItems = new SearchItems();
         ArrayList<Items> allItems = searchItems.search("", true);
         allItems.removeAll(itemCartList.getItems());
         ItemList.getItems().setAll(allItems);
-        
-        // Söker efter objekt i realtid och visar matchningar
+
+        // Sätter upp live-sökning
         ScearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
             ArrayList<Items> searchResults = searchItems.search(newValue, true);
             searchResults.removeAll(itemCartList.getItems());
             ItemList.getItems().setAll(searchResults);
         });
     }
-    
-    
+
     /**
-    * 
-    * kollar om filter är applicerad och uppdaterar listan med items.
-    * 
-    */
+     * Använder aktuell sökterm och filterinställningar för att uppdatera visade objekt.
+     */
     private void applyFilter() {
         String searchTerm = ScearchItem.getText();
         SearchItems searchItems = new SearchItems();
@@ -186,10 +214,10 @@ public class LoanItemController {
         ArrayList<Items> filteredItems = new ArrayList<>();
         for (Items item : allItems) {
             if (magazineFilterButton.isSelected() && item.getCategoryID() == 5) {
-                continue; // Om vi filtrerar på magasin och det inte är magasin → hoppa över
-}
+                continue;
+            }
             if (referensFilterButton.isSelected() && item.getCategoryID() == 4) {
-                continue; // Om vi filtrerar på referens och det inte är referens → hoppa över
+                continue;
             }
             filteredItems.add(item);
         }
@@ -197,3 +225,4 @@ public class LoanItemController {
         ItemList.getItems().setAll(filteredItems);
     }
 }
+
