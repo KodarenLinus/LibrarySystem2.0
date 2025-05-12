@@ -49,10 +49,10 @@ public class GetReservationRow {
         ArrayList<ReservationRow> reservationRows = new ArrayList<>();
 
         try (Connection conn = dbConnector.connect();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+             PreparedStatement getReservationRowAndDatestmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
+            getReservationRowAndDatestmt.setInt(1, userId);
+            ResultSet rs = getReservationRowAndDatestmt.executeQuery();
 
             while (rs.next()) {
                 reservationRows.add(mapResultSetToReservationRow(rs));
@@ -78,10 +78,10 @@ public class GetReservationRow {
         ArrayList<ReservationRow> rows = new ArrayList<>();
 
         try (Connection conn = dbConnector.connect();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+             PreparedStatement getReservationRowAndDatestmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, reservationId);
-            ResultSet rs = stmt.executeQuery();
+            getReservationRowAndDatestmt.setInt(1, reservationId);
+            ResultSet rs = getReservationRowAndDatestmt.executeQuery();
 
             while (rs.next()) {
                 rows.add(mapResultSetToReservationRow(rs));

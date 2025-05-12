@@ -34,10 +34,10 @@ public class RemoveReservationRow {
 
         try (
             Connection conn = dbConnector.connect();
-            PreparedStatement stmt = conn.prepareStatement(sql)
+            PreparedStatement deleteReservationRowstmt = conn.prepareStatement(sql)
         ) {
-            stmt.setInt(1, reservationRowID);
-            int affectedRows = stmt.executeUpdate();
+            deleteReservationRowstmt.setInt(1, reservationRowID);
+            int affectedRows = deleteReservationRowstmt.executeUpdate();
             return affectedRows > 0;
 
         } catch (SQLException e) {
