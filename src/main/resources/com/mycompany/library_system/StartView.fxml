@@ -10,7 +10,7 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.library_system.Controllers.StartViewController">
    <children>
       <TextField fx:id="SearchItem" layoutX="221.0" layoutY="334.0" promptText="Sök " />
-      <ListView fx:id="ItemList" layoutX="154.0" layoutY="120.0" prefHeight="200.0" prefWidth="293.0" onMouseClicked="#itemClicked" />
+      <ListView fx:id="ItemList" layoutX="154.0" layoutY="120.0" onMouseClicked="#itemClicked" prefHeight="200.0" prefWidth="293.0" />
       <Text layoutX="172.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Välkommen till biblioteket">
          <font>
             <Font size="24.0" />
