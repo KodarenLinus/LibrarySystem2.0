@@ -40,11 +40,13 @@ public class SearchItems {
         ArrayList<Items> results = new ArrayList<>();
         String query = "SELECT * FROM item WHERE title LIKE ?" + (onlyAvailable ? " AND available = true" : "");
 
-        try (Connection conn = dbConnector.connect();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (
+            Connection conn = dbConnector.connect();
+            PreparedStatement findItemStmt = conn.prepareStatement(query);
+        ) {
 
-            stmt.setString(1, "%" + searchText + "%");
-            ResultSet rs = stmt.executeQuery();
+            findItemStmt.setString(1, "%" + searchText + "%");
+            ResultSet rs = findItemStmt.executeQuery();
 
             while (rs.next()) {
                 Items item = ItemFactory.createItemFromResultSet(rs, conn);
@@ -71,11 +73,13 @@ public class SearchItems {
         GetCategoryLoanTime getLoanTime = new GetCategoryLoanTime();
         String baseQuery = "SELECT * FROM Item WHERE title LIKE ?";
 
-        try (Connection conn = dbConnector.connect();
-             PreparedStatement stmt = conn.prepareStatement(baseQuery)) {
+        try (
+            Connection conn = dbConnector.connect();
+            PreparedStatement findItemStmt = conn.prepareStatement(baseQuery);
+        ) {
 
-            stmt.setString(1, "%" + searchText + "%");
-            ResultSet rs = stmt.executeQuery();
+            findItemStmt.setString(1, "%" + searchText + "%");
+            ResultSet rs = findItemStmt.executeQuery();
 
             while (rs.next()) {
                 Items item = ItemFactory.createItemFromResultSet(rs, conn);
@@ -118,13 +122,15 @@ public class SearchItems {
                 "AND (r.reservationDate BETWEEN ? AND ? " +
                 "OR ? BETWEEN r.reservationDate AND DATE_ADD(r.reservationDate, INTERVAL ? DAY))";
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, itemID);
-            stmt.setDate(2, Date.valueOf(fromDate));
-            stmt.setDate(3, Date.valueOf(toDate));
-            stmt.setDate(4, Date.valueOf(fromDate));
-            stmt.setLong(5, loanDays);
-            return stmt.executeQuery().next();
+        try (
+            PreparedStatement checkReservationStmt = conn.prepareStatement(query);
+        ) {
+            checkReservationStmt.setInt(1, itemID);
+            checkReservationStmt.setDate(2, Date.valueOf(fromDate));
+            checkReservationStmt.setDate(3, Date.valueOf(toDate));
+            checkReservationStmt.setDate(4, Date.valueOf(fromDate));
+            checkReservationStmt.setLong(5, loanDays);
+            return checkReservationStmt.executeQuery().next();
         }
     }
 
@@ -146,13 +152,13 @@ public class SearchItems {
                 "OR RowLoanStartDate BETWEEN ? AND ?)";
 
         try (
-            PreparedStatement stmt = conn.prepareStatement(query)
+            PreparedStatement checkLoanStmt = conn.prepareStatement(query);
         ) {
-            stmt.setInt(1, itemID);
-            stmt.setDate(2, Date.valueOf(fromDate));
-            stmt.setDate(3, Date.valueOf(fromDate));
-            stmt.setDate(4, Date.valueOf(toDate));
-            return stmt.executeQuery().next();
+            checkLoanStmt.setInt(1, itemID);
+            checkLoanStmt.setDate(2, Date.valueOf(fromDate));
+            checkLoanStmt.setDate(3, Date.valueOf(fromDate));
+            checkLoanStmt.setDate(4, Date.valueOf(toDate));
+            return checkLoanStmt.executeQuery().next();
         }
     }
 }
