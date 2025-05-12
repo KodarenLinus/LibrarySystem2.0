@@ -86,10 +86,10 @@ public class LoanItem {
     private int getActiveLoanCount(Connection conn, int custID) throws SQLException {
         String sql = "SELECT COUNT(loanrowID) AS total FROM LoanRow WHERE ActiveLoan = true AND LoanID IN (SELECT LoanID FROM Loan WHERE CustomerID = ?)";
         try (
-            PreparedStatement stmt = conn.prepareStatement(sql)
+            PreparedStatement countLoanRowsStmt = conn.prepareStatement(sql)
         ) {
-            stmt.setInt(1, custID);
-            ResultSet rs = stmt.executeQuery();
+            countLoanRowsStmt.setInt(1, custID);
+            ResultSet rs = countLoanRowsStmt.executeQuery();
             return rs.next() ? rs.getInt("total") : 0;
         }
     }
@@ -105,10 +105,10 @@ public class LoanItem {
     private int getAllowedLoanLimit(Connection conn, int custID) throws SQLException {
         String sql = "SELECT LoanLimit FROM CustomerCategory WHERE CustomerCategoryID IN (SELECT CustomerCategoryID FROM Customer WHERE CustomerID = ?)";
         try (
-            PreparedStatement stmt = conn.prepareStatement(sql)
+            PreparedStatement findLoanLimitStmt = conn.prepareStatement(sql)
         ) {
-            stmt.setInt(1, custID);
-            ResultSet rs = stmt.executeQuery();
+            findLoanLimitStmt.setInt(1, custID);
+            ResultSet rs = findLoanLimitStmt.executeQuery();
             return rs.next() ? rs.getInt("LoanLimit") : 0;
         }
     }

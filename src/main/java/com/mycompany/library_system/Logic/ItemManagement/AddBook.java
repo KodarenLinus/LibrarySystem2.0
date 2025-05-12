@@ -46,25 +46,27 @@ public class AddBook {
                 + "VALUES (?, ?, ?)";
         
         try (
-            PreparedStatement stmt1 = conn.prepareStatement(insertToItem, PreparedStatement.RETURN_GENERATED_KEYS);
-            PreparedStatement stmt2 = conn.prepareStatement(insertToBook);
+            PreparedStatement insertToItemStmt = conn.prepareStatement(insertToItem, PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement insertToBookStmt = conn.prepareStatement(insertToBook);
         ){
             // Lägger in värden för item-tabelen
-            stmt1.setInt(1, book.getGenreID());
-            stmt1.setInt(2, book.getCategoryID());
-            stmt1.setString(3, book.getGenreName());
-            stmt1.setString(4, book.getCategoryName());
-            stmt1.setString(5, book.getTitle());
-            stmt1.setString(6, book.getLocation());
-            stmt1.setBoolean(7, true);
-            stmt1.executeUpdate();
+            insertToItemStmt.setInt(1, book.getGenreID());
+            insertToItemStmt.setInt(2, book.getCategoryID());
+            insertToItemStmt.setString(3, book.getGenreName());
+            insertToItemStmt.setString(4, book.getCategoryName());
+            insertToItemStmt.setString(5, book.getTitle());
+            insertToItemStmt.setString(6, book.getLocation());
+            insertToItemStmt.setBoolean(7, true);
+            insertToItemStmt.executeUpdate();
             
             
-        stmt1.executeUpdate();
+        insertToItemStmt.executeUpdate();
 
         // Hämta det genererade ItemID:t
         int generatedItemID = -1;
-        try (var generatedKeys = stmt1.getGeneratedKeys()) {
+        try (
+            var generatedKeys = insertToItemStmt.getGeneratedKeys();
+        ) {
             if (generatedKeys.next()) {
                 generatedItemID = generatedKeys.getInt(1);
             } else {
@@ -73,10 +75,10 @@ public class AddBook {
         }
 
         // Sätt parametrar för andra INSERT (Book)
-        stmt2.setInt(1, generatedItemID);
-        stmt2.setInt(2, book.getIsbn());
-        stmt2.setInt(3, book.getPublisherID());
-        stmt2.executeUpdate();
+        insertToBookStmt.setInt(1, generatedItemID);
+        insertToBookStmt.setInt(2, book.getIsbn());
+        insertToBookStmt.setInt(3, book.getPublisherID());
+        insertToBookStmt.executeUpdate();
 
         } catch (SQLException ex){
             ex.printStackTrace();

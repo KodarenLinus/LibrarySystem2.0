@@ -42,7 +42,9 @@ public class GetCategoryLoanTime {
         String getCategorySQL = "SELECT categoryID FROM item WHERE itemID = ?";
         Connection conn = dbConnector.connect();
         // Använder try-with-resources för att automatiskt stänga resurser
-        try (PreparedStatement categoryStmt = conn.prepareStatement(getCategorySQL)) {
+        try (
+            PreparedStatement categoryStmt = conn.prepareStatement(getCategorySQL);
+        ) {
             categoryStmt.setInt(1, itemID);
 
             try (ResultSet rs = categoryStmt.executeQuery()) {

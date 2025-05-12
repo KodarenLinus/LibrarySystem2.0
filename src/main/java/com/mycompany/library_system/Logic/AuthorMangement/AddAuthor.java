@@ -36,12 +36,12 @@ public class AddAuthor {
                 "VALUES (?, ?)";
 
         try (
-             PreparedStatement stmt1 = conn.prepareStatement(insertAuthor);   
+             PreparedStatement insertAuthorStmt = conn.prepareStatement(insertAuthor);   
         ){
-            stmt1.setString(1, author.getFirstname());
-            stmt1.setString(2, author.getLastname());
+            insertAuthorStmt.setString(1, author.getFirstname());
+            insertAuthorStmt.setString(2, author.getLastname());
           
-            stmt1.executeUpdate();
+            insertAuthorStmt.executeUpdate();
 
         } catch (SQLException ex){
             ex.printStackTrace(); 

@@ -37,16 +37,18 @@ public class AddAuthorToBook {
     public boolean insertToBookAuthor(Book book, ArrayList<Author> authors) {
         String sql = "INSERT INTO BookAuthor (ItemID, AuthorID) VALUES (?, ?)";
 
-        try (Connection conn = dbConnector.connect();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (
+            Connection conn = dbConnector.connect();
+            PreparedStatement addAuthorToBookStmt = conn.prepareStatement(sql);
+        ) {
 
             for (Author author : authors) {
-                stmt.setInt(1, book.getItemID());
-                stmt.setInt(2, author.getAuthorID());
-                stmt.addBatch();
+                addAuthorToBookStmt.setInt(1, book.getItemID());
+                addAuthorToBookStmt.setInt(2, author.getAuthorID());
+                addAuthorToBookStmt.addBatch();
             }
 
-            stmt.executeBatch();
+            addAuthorToBookStmt.executeBatch();
             return true;
 
         } catch (SQLException ex) {

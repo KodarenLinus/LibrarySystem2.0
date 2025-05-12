@@ -65,9 +65,11 @@ public class ItemFactory {
      */
     private static boolean isBook(Connection conn, int itemId) throws SQLException {
         String query = "SELECT 1 FROM Book WHERE itemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, itemId);
-            try (ResultSet rs = stmt.executeQuery()) {
+        try (
+            PreparedStatement findBookStmt = conn.prepareStatement(query);
+        ) {
+            findBookStmt.setInt(1, itemId);
+            try (ResultSet rs = findBookStmt.executeQuery()) {
                 return rs.next(); // true om posten finns
             }
         }
@@ -84,9 +86,11 @@ public class ItemFactory {
      */
     private static int getBookISBN(Connection conn, int itemId) throws SQLException {
         String query = "SELECT ISBN FROM Book WHERE itemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, itemId);
-            try (ResultSet rs = stmt.executeQuery()) {
+        try (
+            PreparedStatement findISBNforBookStmt = conn.prepareStatement(query);
+        ) {
+            findISBNforBookStmt.setInt(1, itemId);
+            try (ResultSet rs = findISBNforBookStmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("ISBN");
                 }
@@ -106,9 +110,11 @@ public class ItemFactory {
      */
     private static int getBookPublisherID(Connection conn, int itemId) throws SQLException {
         String query = "SELECT PublisherID FROM Book WHERE itemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, itemId);
-            try (ResultSet rs = stmt.executeQuery()) {
+        try (
+            PreparedStatement findPublisherIDStmt = conn.prepareStatement(query);
+        ) {
+            findPublisherIDStmt.setInt(1, itemId);
+            try (ResultSet rs = findPublisherIDStmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("PublisherID");
                 }
@@ -128,9 +134,11 @@ public class ItemFactory {
      */
     private static boolean isDVD(Connection conn, int itemId) throws SQLException {
         String query = "SELECT 1 FROM DVD WHERE itemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, itemId);
-            try (ResultSet rs = stmt.executeQuery()) {
+        try (
+            PreparedStatement findDVDStmt = conn.prepareStatement(query)
+        ) {
+            findDVDStmt.setInt(1, itemId);
+            try (ResultSet rs = findDVDStmt.executeQuery()) {
                 return rs.next(); // true om posten finns
             }
         }
@@ -147,9 +155,11 @@ public class ItemFactory {
      */
     private static int getDVDDirectorID(Connection conn, int itemId) throws SQLException {
         String query = "SELECT DirectorID FROM DVD WHERE itemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, itemId);
-            try (ResultSet rs = stmt.executeQuery()) {
+        try (
+            PreparedStatement findDirectorIDStmt = conn.prepareStatement(query)
+        ) {
+            findDirectorIDStmt.setInt(1, itemId);
+            try (ResultSet rs = findDirectorIDStmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("DirectorID");
                 }

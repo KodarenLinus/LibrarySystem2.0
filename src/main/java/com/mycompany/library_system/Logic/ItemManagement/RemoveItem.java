@@ -66,25 +66,31 @@ public class RemoveItem {
 
     private boolean deleteBook(Connection conn, int itemID) throws SQLException {
         String sql = "DELETE FROM Book WHERE ItemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, itemID);
-            return stmt.executeUpdate() > 0;
+        try (
+            PreparedStatement deleteBookStmt = conn.prepareStatement(sql)
+        ) {
+            deleteBookStmt.setInt(1, itemID);
+            return deleteBookStmt.executeUpdate() > 0;
         }
     }
 
     private boolean deleteDVD(Connection conn, int itemID) throws SQLException {
         String sql = "DELETE FROM DVD WHERE ItemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, itemID);
-            return stmt.executeUpdate() > 0;
+        try (
+            PreparedStatement deleteDVDStmt = conn.prepareStatement(sql)
+        ) {
+            deleteDVDStmt.setInt(1, itemID);
+            return deleteDVDStmt.executeUpdate() > 0;
         }
     }
 
     private boolean deleteFromItem(Connection conn, int itemID) throws SQLException {
         String sql = "DELETE FROM Item WHERE ItemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, itemID);
-            return stmt.executeUpdate() > 0;
+        try (
+            PreparedStatement deleteItemStmt = conn.prepareStatement(sql)
+        ) {
+            deleteItemStmt.setInt(1, itemID);
+            return deleteItemStmt.executeUpdate() > 0;
         }
     }
 }

@@ -39,8 +39,10 @@ public class GetLoanRows {
         String query = "SELECT * FROM LoanRow WHERE (ActiveLoan = ?) AND ( LoanID IN "
                 + "(SELECT LoanID FROM Loan WHERE CustomerID = ?))";
 
-        try (Connection conn = dbConnector.connect();
-             PreparedStatement loanRowStmt = conn.prepareStatement(query)) {
+        try (
+            Connection conn = dbConnector.connect();
+            PreparedStatement loanRowStmt = conn.prepareStatement(query)
+        ) {
 
             // Sätter parametrar i SQL-frågan
             loanRowStmt.setBoolean(1, activeLoans);

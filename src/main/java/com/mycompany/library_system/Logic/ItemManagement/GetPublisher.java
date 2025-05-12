@@ -36,8 +36,8 @@ public class GetPublisher {
 
         try (
             Connection conn = dbConnector.connect();
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery()
+            PreparedStatement findPublisherStmt = conn.prepareStatement(sql);
+            ResultSet rs = findPublisherStmt.executeQuery()
         ) {
             while (rs.next()) {
                 int publisherID = rs.getInt("PublisherID");
