@@ -18,6 +18,8 @@ import javafx.scene.control.TextField;
  */
 public class LoginViewController{
     
+    private Login login = new Login();
+    
     @FXML
     private TextField userName;
 
@@ -31,18 +33,16 @@ public class LoginViewController{
      */
     @FXML
     private void loginButton(ActionEvent event) throws IOException{
-        
-        Login login = new Login();
+
         boolean isLoggedIn = login.doLogin(userName.getText(), userPassword.getText());
 
         if (isLoggedIn) {
-
             String fxmlf = "CustomerView.fxml";
             ChangeWindow changeWindow = new ChangeWindow();
             changeWindow.windowChange(event, fxmlf);
         } else {
-                System.out.println("Login failed: wrong username or password");
-                // Lägg till 
+            System.out.println("Login failed: wrong username or password");
+            // Lägg till 
         }
     }
     
@@ -56,12 +56,17 @@ public class LoginViewController{
         
     @FXML
     private void loginButtonEmployee(ActionEvent event) throws IOException{
+        boolean isLoggedIn = login.doStaffLogin(userName.getText(), userPassword.getText());
+
+        if (isLoggedIn) {
+            String fxmlf = "StartMenu.fxml";
+            ChangeWindow changeWindow = new ChangeWindow();
+            changeWindow.windowChange(event, fxmlf);
+        } else {
+            System.out.println("Login failed: wrong username or password");
+            // Lägg till 
+        }
         
-        String fxmlf = "StartMenu.fxml";
-        ChangeWindow changeWindow = new ChangeWindow();
-        changeWindow.windowChange(event, fxmlf);
-    }
-    
-    
+    }   
     
 }

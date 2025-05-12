@@ -4,12 +4,13 @@
  */
 package com.mycompany.library_system.Controllers;
 
-import com.mycompany.library_system.Logic.GetLoanRows;
-import com.mycompany.library_system.Logic.ReturnLoanItem;
-import com.mycompany.library_system.Models.Author;
-import com.mycompany.library_system.Models.Book;
+import com.mycompany.library_system.Logic.LoanMangement.GetLoanRows;
+import com.mycompany.library_system.Logic.ReservationMangement.GetReservationRow;
+import com.mycompany.library_system.Logic.ReservationMangement.RemoveReservationRow;
+import com.mycompany.library_system.Logic.LoanMangement.ReturnLoanItem;
 import com.mycompany.library_system.Models.LoanRow;
-import com.mycompany.library_system.Search.SearchAuthor;
+import com.mycompany.library_system.Models.ReservationRow;
+import com.mycompany.library_system.Utils.AlertHandler;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,15 +26,32 @@ import javafx.scene.input.MouseEvent;
  */
 public class MyLoansController {
     
+    // Instans av AlertHandler för att visa meddelanden
+    private AlertHandler alertHandler = new AlertHandler();
+    
+    // Texter till popup-meddelanden
+    private String title;
+    private String header; 
+    private String content;
+    
     @FXML
     private ListView<LoanRow> AktiveLoansList;
-
+    
+    @FXML
+    private ListView<ReservationRow> ReservationList;
+    
     @FXML
     private ListView<LoanRow> LoanHistory;
 
     @FXML
     private ListView<LoanRow> ReturnLoanList;
     
+     /**
+     * Lägger ett valt aktivt lån till i listan för retur.
+     * 
+     * @param event Klick på ett objekt i listan över aktiva lån
+     * @throws SQLException om något går fel vid uppdatering av vyn
+     */
     @FXML
     void AddToReturnList(MouseEvent event) throws SQLException {
          LoanRow selectedItem = AktiveLoansList.getSelectionModel().getSelectedItem();
@@ -43,7 +61,13 @@ public class MyLoansController {
             applyFilter();
         }
     }
-
+    
+    /**
+     * Tar bort ett lån från retur-listan.
+     * 
+     * @param event Klick på ett objekt i retur-listan
+     * @throws SQLException om något går fel vid uppdatering av vyn
+     */
     @FXML
     void RemoveFromReturnList(MouseEvent event) throws SQLException {
           LoanRow selectedItem = ReturnLoanList.getSelectionModel().getSelectedItem();
@@ -53,7 +77,12 @@ public class MyLoansController {
             applyFilter();
         }
     }
-
+    
+     /**
+     * Returnerar alla lån som lagts till i retur-listan. Listan töms efter att operationen är klar.
+     * 
+     * @param event Klick på "Returnera"-knappen
+     */
     @FXML
     void ReturnLoans(ActionEvent event) {
         ReturnLoanItem returnLoanItem = new ReturnLoanItem();
@@ -62,6 +91,36 @@ public class MyLoansController {
         ReturnLoanList.getItems().clear();
     }
     
+     /**
+     * Tar bort vald reservation från listan och databasen.
+     * Visar en varning om ingen reservation är vald.
+     * 
+     * @param event Klick på "Ta bort reservation"-knappen
+     */
+    @FXML
+    void RemoveReservation(ActionEvent event) {
+        ReservationRow selectedRow = ReservationList.getSelectionModel().getSelectedItem();
+
+        if (selectedRow != null) {
+            // Ta bort från UI-listan
+            ReservationList.getItems().remove(selectedRow);
+
+            // (Valfritt) Ta bort från databasen
+            RemoveReservationRow remover = new RemoveReservationRow(); // eller visa felmeddelande i UI:t
+            remover.deleteReservationRow(selectedRow.getReservationRowID());
+        } else {
+            title = "Ingen reservation är vald";
+            header = "Du har inte valt en reservation"; 
+            content = "Du har missat att välja en reservation att ta bort";
+            alertHandler.createAlert(title, header, content);
+        }
+    }
+    
+    /**
+     * Navigerar tillbaka till kundvyn.
+     * 
+     * @param event Klick på "Tillbaka"-knappen
+     */
      @FXML
     void ReturnToCustomerView(ActionEvent event) {
         String fxmlf = "CustomerView.fxml";
@@ -69,9 +128,19 @@ public class MyLoansController {
         changeWindow.windowChange(event, fxmlf);
     }
     
+     /**
+     * Initierar vyerna när sidan laddas. Hämtar:
+     * - Aktiva lån
+     * - Tidigare lån (historik)
+     * - Aktuella reservationer
+     * Sätter även upp cellrenderers för att visa rätt information i listorna.
+     * 
+     * @throws SQLException om databasfel uppstår
+     */
     @FXML
     public void initialize() throws SQLException  {
         GetLoanRows getLoanRows = new GetLoanRows();
+        GetReservationRow getReservationRow = new GetReservationRow();
         boolean activeLoan;
         
         AktiveLoansList.setCellFactory(list -> new ListCell<LoanRow>() {
@@ -104,12 +173,12 @@ public class MyLoansController {
         
         LoanHistory.setCellFactory(list -> new ListCell<LoanRow>() {
             @Override
-            protected void updateItem(LoanRow item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
+            protected void updateItem(LoanRow loanRow, boolean empty) {
+                super.updateItem(loanRow, empty);
+                if (empty || loanRow == null) {
                     setText(null);
                 } else {
-                    setText(item.toString()); 
+                    setText(loanRow.toString()); 
                 }
             }
         });
@@ -128,9 +197,41 @@ public class MyLoansController {
         }
         
         LoanHistory.getItems().setAll(allLoanRowsHistory);
+        
+         LoanHistory.setCellFactory(list -> new ListCell<LoanRow>() {
+            @Override
+            protected void updateItem(LoanRow loanRow, boolean empty) {
+                super.updateItem(loanRow, empty);
+                if (empty || loanRow == null) {
+                    setText(null);
+                } else {
+                    setText(loanRow.toString()); 
+                }
+            }
+        });
+    
+        // Laddar in alla objekt vid start
+        ArrayList<ReservationRow> reservationRows = getReservationRow.getReservationRow();
+        
+        // Load the item for each LoanRow before display
+        for (ReservationRow row : reservationRows) {
+            try {
+                row.loadItem();
+            } catch (SQLException e) {
+                e.printStackTrace(); // or handle more gracefully
+            }
+        }
+        
+        ReservationList.getItems().setAll(reservationRows);
     }
     
-      private void applyFilter() throws SQLException {
+    
+    /**
+     * Hjälpmetod som uppdaterar listan över aktiva lån, filtrerar bort lån som redan finns i retur-listan.
+     * 
+     * @throws SQLException om databasfel uppstår
+     */
+    private void applyFilter() throws SQLException {
         boolean activeLoan = true;
         GetLoanRows getLoanRows = new GetLoanRows();
         ArrayList<LoanRow> allLoanRows = getLoanRows.getAllLoanRows(activeLoan);

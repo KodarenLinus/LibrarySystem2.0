@@ -2,20 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.library_system.Logic;
+package com.mycompany.library_system.Logic.LoanMangement;
 
+import com.mycompany.library_system.Logic.ItemManagement.GetCategoryLoanTime;
 import com.mycompany.library_system.Database.DatabaseConnector;
 import com.mycompany.library_system.Database.ConnDB;
-import com.mycompany.library_system.Models.CategoryType;
 import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Utils.AlertHandler;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import javafx.event.Event;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 /**
  *
@@ -24,6 +24,12 @@ import javafx.event.Event;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class LoanItem {    
+    
+    private final DatabaseConnector dbConnector;
+
+    public LoanItem () {
+        this.dbConnector = new ConnDB();
+    }
     
     /**
     * Lägger till objekt i lån (LoanRow) för en viss kund.
@@ -34,14 +40,15 @@ public class LoanItem {
     * @param itemsToLoan Lista med objekt som ska lånas
     * @param event Event som triggar popup-fönster vid fel
     */
-    public boolean addToLoanRows(int custID, ArrayList<Items> itemsToLoan, Event event) {
+    public boolean addToLoanRows(int custID, ArrayList<Items> itemsToLoan) {
         AlertHandler alertHandler = new AlertHandler();
         String title;
         String header; 
         String content;
         
-        DatabaseConnector connDB = new ConnDB();
-        try (Connection conn = connDB.connect()) {
+        try (
+            Connection conn = dbConnector.connect()
+        ) {
             int currentLoans = getActiveLoanCount(conn, custID);
             int allowedLoan = getAllowedLoanLimit(conn, custID);
             
@@ -155,27 +162,23 @@ public class LoanItem {
     * @return Det nya lånets ID eller -1 om något går fel
     * @throws SQLException vid fel i SQL-frågan
     */
-    private int createLoanAndReturnID(Connection conn, int custID) throws SQLException {
+   private int createLoanAndReturnID(Connection conn, int custID) throws SQLException {
         String insertLoanSQL = "INSERT INTO loan (customerID) VALUES (?)";
-        String getLoanIDSQL = "SELECT MAX(loanid) FROM loan WHERE customerID = ?";
 
         try (
-            PreparedStatement insertStmt = conn.prepareStatement(insertLoanSQL);
-            PreparedStatement getLoanIDStmt = conn.prepareStatement(getLoanIDSQL);
+            PreparedStatement insertStmt = conn.prepareStatement(insertLoanSQL, Statement.RETURN_GENERATED_KEYS)
         ) {
-            // Lägger in värden i loan tabelen
             insertStmt.setInt(1, custID);
             insertStmt.executeUpdate();
 
-            getLoanIDStmt.setInt(1, custID);
-            ResultSet rs = getLoanIDStmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1);
+            try (ResultSet generatedKeys = insertStmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Misslyckades att hämta genererat loan-ID.");
+                }
             }
         }
-
-        return -1;
     }
     
     /**
@@ -188,61 +191,45 @@ public class LoanItem {
     * @throws SQLException vid fel i SQL-frågan
     */
     private void insertLoanRows(Connection conn, int loanID, ArrayList<Items> itemsToLoan) throws SQLException {
-        String getCategorySQL = "SELECT categoryID FROM item WHERE itemID = ?";
         String insertLoanRowSQL = "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate, ActiveLoan) VALUES (?, ?, ?, ?, ?)";
-
+        String reservationSQL = "SELECT r.reservationDate " +
+                            "FROM reservationrow rr " +
+                            "JOIN reservation r ON rr.reservationID = r.reservationID " +
+                            "WHERE rr.itemID = ? AND r.reservationDate >= ?";
+        
         LocalDate today = LocalDate.now();
 
         try (
-            PreparedStatement getCategoryStmt = conn.prepareStatement(getCategorySQL);
-            PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRowSQL)
+            PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRowSQL);
+            PreparedStatement checkReservationStmt = conn.prepareStatement(reservationSQL);
         )   {
             for (Items item : itemsToLoan) {
-                LocalDate endDate = calculatetLoanEndDate(getCategoryStmt, item.getItemID(), today);
+                GetCategoryLoanTime getCategoryLoanTime = new GetCategoryLoanTime();
+                LocalDate endDate = getCategoryLoanTime.calculateLoanEndDate(item.getItemID(), today);
+                LocalDate finalEndDate = endDate;
                 
+                checkReservationStmt.setInt(1, item.getItemID());
+                checkReservationStmt.setDate(2, java.sql.Date.valueOf(today));
+                ResultSet rs = checkReservationStmt.executeQuery();
+
+                if (rs.next() && rs.getDate("reservationDate") != null) {
+                    LocalDate reservedDate = rs.getDate("reservationDate").toLocalDate();
+
+                    // Om reservationens datum är före det vanliga återlämningsdatumet
+                    if (reservedDate.isBefore(endDate)) {
+                        finalEndDate = reservedDate.minusDays(1); // sätt till dagen innan
+                    }
+                }
                 // Lägger in värden i loanRow tabelen
                 insertLoanRowStmt.setInt(1, loanID);
                 insertLoanRowStmt.setInt(2, item.getItemID());
                 insertLoanRowStmt.setString(3, today.toString());
-                insertLoanRowStmt.setString(4, endDate.toString());
+                insertLoanRowStmt.setString(4, finalEndDate.toString());
                 insertLoanRowStmt.setBoolean(5, true);
                 insertLoanRowStmt.addBatch();
             }
 
             insertLoanRowStmt.executeBatch();
         }
-    }
-    
-    /**
-    * Beräknar lånets slutdatum beroende på objektets kategori.
-    * T.ex. böcker lånas i en månad, filmer i en vecka, etc.
-    *
-    * @param categoryStmt Förberedd SQL-fråga för att hämta kategoriID
-    * @param itemID ID för objektet
-    * @param date Startdatum för lånet
-    * @return Uträknat slutdatum för lånet
-    * @throws SQLException vid fel i SQL-frågan
-    */
-    private LocalDate calculatetLoanEndDate(PreparedStatement categoryStmt, int itemID, LocalDate date) throws SQLException {
-        categoryStmt.setInt(1, itemID);
-        ResultSet rs = categoryStmt.executeQuery();
-
-        if (rs.next()) {
-            int categoryID = rs.getInt("categoryID");
-            CategoryType categoryType = CategoryType.fromId(categoryID);
-
-            switch (categoryType) {
-                case BOOK: 
-                    return date.plusMonths(1);                    
-                case COURSE_LITERATURE: 
-                    return date.plusWeeks(1);
-                case DVD: 
-                    return date.plusWeeks(2);
-                default: 
-                    return date;
-            }
-        }
-        return date;
-    }
-     
+    } 
 }

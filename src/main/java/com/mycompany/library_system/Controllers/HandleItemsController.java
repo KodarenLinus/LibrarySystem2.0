@@ -4,6 +4,7 @@
  */
 package com.mycompany.library_system.Controllers;
 
+import com.mycompany.library_system.Logic.ItemManagement.RemoveItem;
 import com.mycompany.library_system.Models.Book;
 import com.mycompany.library_system.Models.DVD;
 import com.mycompany.library_system.Models.Items;
@@ -41,20 +42,43 @@ public class HandleItemsController {
         }
     }
     
-    
     @FXML
     void RemoveObject(ActionEvent event) {
+        Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            RemoveItem removeItem = new RemoveItem();
+            boolean success = removeItem.deleteItem(selectedItem);
 
+            if (success) {
+                ItemList.getItems().remove(selectedItem);
+            } else {
+                // Visa felmeddelande
+                AlertHandler alert = new AlertHandler();
+                alert.createAlert("Fel vid borttagning", "Objektet kunde inte tas bort", "Kontrollera databasen och försök igen.");
+            }
+        } else {
+            AlertHandler alert = new AlertHandler();
+            alert.createAlert("Inget objekt valt", "Du måste välja ett objekt", "Vänligen välj ett objekt i listan att ta bort.");
+        }
     }
 
     @FXML
     void UpdateObject(ActionEvent event) {
-
+        Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            ObjectSession.getInstance().setCurrentItem(selectedItem);
+            String fxmlFile = "UpdateTitleItem.fxml";
+            PopUpWindow popUpWindow = new PopUpWindow();
+            popUpWindow.popUp(event, fxmlFile);
+        } else {
+            AlertHandler alert = new AlertHandler();
+            alert.createAlert("Inget objekt valt", "Du måste välja ett objekt", "Välj ett objekt i listan att uppdatera.");
+        }
     }
+    
     
     @FXML
     void back(ActionEvent event) throws IOException{
-        
         String fxmlf = "StartMenu.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
@@ -84,7 +108,7 @@ public class HandleItemsController {
         
         // Laddar in alla objekt vid start
         SearchItems searchItems = new SearchItems();
-        ArrayList<Items> allItems = searchItems.search("");
+        ArrayList<Items> allItems = searchItems.search("", false);
         ItemList.getItems().setAll(allItems);
         
         // Söker efter objekt i realtid och visar matchningar
@@ -123,7 +147,7 @@ public class HandleItemsController {
     private void applyFilter() {
        String searchTerm = SearchItem.getText();
        SearchItems searchItems = new SearchItems();
-       ArrayList<Items> allItems = searchItems.search(searchTerm);
+       ArrayList<Items> allItems = searchItems.search(searchTerm, false);
        ItemList.getItems().setAll(allItems);
     }
 }

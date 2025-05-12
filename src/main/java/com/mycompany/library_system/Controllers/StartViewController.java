@@ -18,42 +18,65 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
 /**
- *
- * @author emildahlback
+ * Kontroller för startsidan där användare (utan inloggning) kan se tillgängliga objekt i biblioteket.
+ * Funktioner:
+ * - Visar en lista över alla objekt (böcker, DVD:er etc.)
+ * - Gör det möjligt att söka efter objekt
+ * - Varje klick på ett objekt visar en varning att inloggning krävs
+ * - Möjlighet att navigera till inloggningsvyn
+ * 
+ * Denna vy används som en "publik katalog" innan användaren loggar in.
+ * 
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class StartViewController {
-    
-    @FXML
-    private TextField SearchItem;
 
     @FXML
-    private ListView<Items> ItemList;
+    private TextField SearchItem; // Textfält för sökning efter objekt
 
+    @FXML
+    private ListView<Items> ItemList; // Lista som visar objekten (böcker/DVD etc.)
+
+    /**
+     * Hanterar klick på "Logga in"-knappen. Navigerar användaren till LoginView.fxml.
+     *
+     * @param event Klick på login-knappen
+     * @throws IOException Om fönsterbytet misslyckas
+     */
     @FXML
     void login(ActionEvent event) throws IOException {
-        
         String fxmlf = "LoginView.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }
-    
+
+    /**
+     * Hanterar klick på ett objekt i listan. Visar en varning om att inloggning krävs.
+     *
+     * @param event Klick på ett objekt i listan
+     */
     @FXML
     void itemClicked(MouseEvent event) {
-    Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
-    if (selectedItem != null) {
-        // Visa alert-varning
-                String title = "Inloggning krävs";
-                String header ="Du måste vara inloggad"; 
-                String content = ("Logga in för att kunna låna detta objekt.");
-                AlertHandler alertHandler = new AlertHandler();
-                alertHandler.createAlert(title, header, content);
-                return;
+        Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            // Visa varning om att inloggning krävs
+            String title = "Inloggning krävs";
+            String header = "Du måste vara inloggad";
+            String content = "Logga in för att kunna låna detta objekt.";
+            AlertHandler alertHandler = new AlertHandler();
+            alertHandler.createAlert(title, header, content);
+        }
     }
-}
+
+    /**
+     * Initialiserar vyn:
+     * - Sätter cellfabriken så att varje objekt visas med titel
+     * - Laddar in alla objekt vid start
+     * - Lägger till lyssnare för sökfältet så att sökresultaten uppdateras i realtid
+     */
     @FXML
-    public void initialize()  {
-        
-        // Visar titel för varje objekt i listan
+    public void initialize() {
+        // Konfigurerar hur varje objekt visas i listan
         ItemList.setCellFactory(list -> new ListCell<Items>() {
             @Override
             protected void updateItem(Items item, boolean empty) {
@@ -61,25 +84,20 @@ public class StartViewController {
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(item.toString()); 
+                    setText(item.toString()); // toString() från Items visar titel/namn
                 }
             }
         });
-        
-        // Laddar in alla objekt vid start
+
+        // Hämta alla objekt från databasen (utan filter, ej lånebara)
         SearchItems searchItems = new SearchItems();
-        ArrayList<Items> allItems = searchItems.search("");
-        
-        
-        // Söker efter objekt i realtid och visar matchningar
+        ArrayList<Items> allItems = searchItems.search("", false);
+        ItemList.getItems().setAll(allItems);
+
+        // Lägg till söklyssnare – uppdatera listan vid varje teckenanvändning
         SearchItem.textProperty().addListener((observable, oldValue, newValue) -> {
-            ArrayList<Items> searchResults = searchItems.search(newValue);
+            ArrayList<Items> searchResults = searchItems.search(newValue, false);
             ItemList.getItems().setAll(searchResults);
-            
-            
         });
     }
-    
-    
-
 }

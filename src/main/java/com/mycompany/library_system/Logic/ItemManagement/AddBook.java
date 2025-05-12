@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.library_system.Logic;
+package com.mycompany.library_system.Logic.ItemManagement;
 
 import com.mycompany.library_system.Models.Book;
 import com.mycompany.library_system.Database.DatabaseConnector;
@@ -18,6 +18,12 @@ import java.sql.SQLException;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class AddBook {
+    
+    private final DatabaseConnector dbConnector;
+
+    public AddBook () {
+        this.dbConnector = new ConnDB();
+    }
 
      /**
      * Lägger till en bok i databasen.
@@ -29,8 +35,7 @@ public class AddBook {
     public void insertBook (Book book) {
         
         // Skapar en databasanslutning
-        DatabaseConnector connDB = new ConnDB();
-        Connection conn = connDB.connect();
+        Connection conn = dbConnector.connect();
         
         // SQL-fråga för att infoga i Item-tabellen
         String insertToItem = "INSERT INTO Item (GenreID, CategoryID, GenreName, CategoryName, Title, Location, Available) "
@@ -41,7 +46,7 @@ public class AddBook {
                 + "VALUES (?, ?, ?)";
         
         try (
-            PreparedStatement stmt1 = conn.prepareStatement(insertToItem);
+            PreparedStatement stmt1 = conn.prepareStatement(insertToItem, PreparedStatement.RETURN_GENERATED_KEYS);
             PreparedStatement stmt2 = conn.prepareStatement(insertToBook);
         ){
             // Lägger in värden för item-tabelen
@@ -70,7 +75,7 @@ public class AddBook {
         // Sätt parametrar för andra INSERT (Book)
         stmt2.setInt(1, generatedItemID);
         stmt2.setInt(2, book.getIsbn());
-        stmt2.setInt(3, 7); // TODO: Byt till dynamiskt PublisherID senare
+        stmt2.setInt(3, book.getPublisherID());
         stmt2.executeUpdate();
 
         } catch (SQLException ex){

@@ -21,9 +21,10 @@ public class Book implements Items{
     private String location;
     private boolean available;
     private int isbn;
+    private int publisherID;
     
     
-    public Book(String title, String location, int isbn, int categoryID, String categoryName, int genreID, String genreName) {
+    public Book(String title, String location, int isbn, int categoryID, String categoryName, int genreID, String genreName, int publisherID) {
         this.title = title;
         this.location = location;
         this.isbn = isbn;
@@ -31,6 +32,7 @@ public class Book implements Items{
         this.categoryName = categoryName;
         this.genreID = genreID;
         this.genreName = genreName;
+        this.publisherID = publisherID;
     }
     
     public void setItemID(int itemID) {
@@ -79,6 +81,10 @@ public class Book implements Items{
     
     public int getIsbn () {
         return isbn;
+    }
+    
+    public int getPublisherID () {
+        return publisherID;
     }
     
     /**

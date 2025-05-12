@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.library_system.Logic;
+package com.mycompany.library_system.Logic.ItemManagement;
 
 import com.mycompany.library_system.Models.DVD;
 import com.mycompany.library_system.Database.DatabaseConnector;
@@ -19,6 +19,12 @@ import java.sql.SQLException;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class AddDVD {
+    
+    private final DatabaseConnector dbConnector;
+
+    public AddDVD () {
+        this.dbConnector = new ConnDB();
+    }
 
     /**
      * Lägger till en DVD i databasen.
@@ -29,8 +35,7 @@ public class AddDVD {
     public void insertDVD (DVD dvd) {
         
          // Skapar en databasanslutning
-        DatabaseConnector connDB = new ConnDB();
-        Connection conn = connDB.connect();
+        Connection conn = dbConnector.connect();
         
         // SQL-fråga för att infoga i Item-tabellen
         String insertToItem = "INSERT INTO Item (GenreID, CategoryID, GenreName, CategoryName, Title, Location, Available) "
@@ -41,7 +46,7 @@ public class AddDVD {
                 + "VALUES (?, ?)";
                 
         try (
-            PreparedStatement stmt1 = conn.prepareStatement(insertToItem);
+            PreparedStatement stmt1 = conn.prepareStatement(insertToItem, PreparedStatement.RETURN_GENERATED_KEYS);
             PreparedStatement stmt2 = conn.prepareStatement(insertToDVD);
         ){
             // lägger till värden i item-tabelen

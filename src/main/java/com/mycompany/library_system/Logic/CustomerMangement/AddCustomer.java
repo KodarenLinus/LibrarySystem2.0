@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.library_system.Logic;
+package com.mycompany.library_system.Logic.CustomerMangement;
 
 import com.mycompany.library_system.Models.Customer;
 import com.mycompany.library_system.Database.DatabaseConnector;
@@ -19,6 +19,12 @@ import java.sql.SQLException;
  */
 public class AddCustomer {
     
+    private final DatabaseConnector dbConnector;
+
+    public AddCustomer () {
+        this.dbConnector = new ConnDB();
+    }
+    
     /**
      * Lägger till en customer i databasen
      *
@@ -27,8 +33,7 @@ public class AddCustomer {
     public void insertCustomer(Customer customer){
         
         // Skapar en databasanslutning
-        DatabaseConnector connDB = new ConnDB();
-        Connection conn = connDB.connect();
+        Connection conn = dbConnector.connect();
         
         // SQL-fråga för att infoga en ny kund
         String insertCustomer = "INSERT INTO Customer (CustomerCategoryID, CategoryName, FirstName, LastName, Email, Adress, TelNumber, PasswordCustomer) " +

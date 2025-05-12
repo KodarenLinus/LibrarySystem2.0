@@ -15,6 +15,11 @@ import java.sql.ResultSet;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class Login {
+    private final DatabaseConnector dbConnector;
+
+    public Login () {
+        this.dbConnector = new ConnDB();
+    }
     
     /**
      * Lägger till valt objekt i kundvagnen om det inte redan finns där.
@@ -25,8 +30,7 @@ public class Login {
      */
     public boolean doLogin (String username, String password) {
         
-        DatabaseConnector connDB = new ConnDB();
-        Connection conn = connDB.connect();
+        Connection conn = dbConnector.connect();
         
         String getCustomerLogin = "SELECT customerID, passwordCustomer From Customer where Email = ?";
         
@@ -41,7 +45,7 @@ public class Login {
                 
                 if (password_.equals(password)){
                     int customerId = rsCustomer.getInt("CustomerID");
-                    Session.getInstance().setUser(customerId, username); 
+                    Session.getInstance().setCustomer(customerId, username); 
                     return true;
                 }
             }
@@ -52,4 +56,40 @@ public class Login {
         
         return false;
     }
+    
+   /**
+    * Verifierar inloggning för personal med användarnamn och lösenord.
+    *
+    * @param username personalens användarnamn (e-post)
+    * @param password personalens lösenord
+    * @return true om inloggningen lyckas, annars false
+    */
+   public boolean doStaffLogin(String username, String password) {
+       Connection conn = dbConnector.connect();
+
+       String getStaffLogin = "SELECT staffID, passwordStaff FROM Staff WHERE Email = ?";
+
+       try (
+           PreparedStatement staffStmt = conn.prepareStatement(getStaffLogin);
+       ) {
+           staffStmt.setString(1, username);
+           ResultSet rsStaff = staffStmt.executeQuery();
+
+           while (rsStaff.next()) {
+               String dbPassword = rsStaff.getString("passwordStaff");
+
+               if (dbPassword.equals(password)) {
+                   int staffId = rsStaff.getInt("staffID");
+                   Session.getInstance().setStaff(staffId, username); // Du kan behöva skapa setStaff-metod
+                   return true;
+               }
+           }
+
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+
+       return false;
+   }
+
 }
