@@ -6,6 +6,7 @@ package com.mycompany.library_system.Controllers;
 
 import com.mycompany.library_system.Utils.ChangeWindow;
 import com.mycompany.library_system.Login.Login;
+import com.mycompany.library_system.Utils.AlertHandler;
 import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,6 +18,8 @@ import javafx.scene.control.TextField;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class LoginViewController{
+
+    AlertHandler alert = new AlertHandler();
     
     private Login login = new Login();
     
@@ -32,7 +35,7 @@ public class LoginViewController{
      * @param event ActionEvent som triggas när användaren vill logga in
      */
     @FXML
-    private void loginButton(ActionEvent event) throws IOException{
+    private void loginButton(ActionEvent event) throws IOException {
 
         boolean isLoggedIn = login.doLogin(userName.getText(), userPassword.getText());
 
@@ -42,6 +45,8 @@ public class LoginViewController{
             changeWindow.windowChange(event, fxmlf);
         } else {
             System.out.println("Login failed: wrong username or password");
+
+            alert.createAlert("Fel vid inloggning", "Fel användarnamn eller lösenord", "Kolla att du skrivit användaruppgifterna är rätt");
             // Lägg till 
         }
     }
@@ -64,6 +69,7 @@ public class LoginViewController{
             changeWindow.windowChange(event, fxmlf);
         } else {
             System.out.println("Login failed: wrong username or password");
+            alert.createAlert("Fel vid inloggning", "Fel användarnamn eller lösenord", "Kolla att du skrivit användaruppgifterna är rätt");
             // Lägg till 
         }
         

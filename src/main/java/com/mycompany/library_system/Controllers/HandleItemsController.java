@@ -51,11 +51,7 @@ public class HandleItemsController {
 
             if (success) {
                 ItemList.getItems().remove(selectedItem);
-            } else {
-                // Visa felmeddelande
-                AlertHandler alert = new AlertHandler();
-                alert.createAlert("Fel vid borttagning", "Objektet kunde inte tas bort", "Kontrollera databasen och försök igen.");
-            }
+            } 
         } else {
             AlertHandler alert = new AlertHandler();
             alert.createAlert("Inget objekt valt", "Du måste välja ett objekt", "Vänligen välj ett objekt i listan att ta bort.");
