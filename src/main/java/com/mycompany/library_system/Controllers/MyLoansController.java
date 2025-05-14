@@ -13,11 +13,13 @@ import com.mycompany.library_system.Models.ReservationRow;
 import com.mycompany.library_system.Utils.AlertHandler;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -46,7 +48,38 @@ public class MyLoansController {
     @FXML
     private ListView<LoanRow> ReturnLoanList;
     
-     /**
+    @FXML
+    private RadioButton LateLoansRadioButton;
+    
+    @FXML
+    void ShowLateLoans(ActionEvent event) throws SQLException {
+        boolean activeLoan = true;
+        GetLoanRows getLoanRows = new GetLoanRows();
+        ArrayList<LoanRow> allLoanRows = getLoanRows.getAllLoanRows(activeLoan);
+
+        // Ladda in tillhörande objekt
+        for (LoanRow row : allLoanRows) {
+            try {
+                row.loadItem();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Om radioknappen är markerad, filtrera sena lån
+        if (LateLoansRadioButton.isSelected()) {
+            LocalDate today = LocalDate.now();
+            allLoanRows.removeIf(row -> !row.getLoanRowEndDate().isBefore(today));
+        }
+
+        // Filtrera bort de som redan är i retur-listan
+        allLoanRows.removeAll(ReturnLoanList.getItems());
+
+        // Uppdatera listan
+        AktiveLoansList.getItems().setAll(allLoanRows);
+    }
+    
+    /**
      * Lägger ett valt aktivt lån till i listan för retur.
      * 
      * @param event Klick på ett objekt i listan över aktiva lån
@@ -121,7 +154,7 @@ public class MyLoansController {
      * 
      * @param event Klick på "Tillbaka"-knappen
      */
-     @FXML
+    @FXML
     void ReturnToCustomerView(ActionEvent event) {
         String fxmlf = "CustomerView.fxml";
         ChangeWindow changeWindow = new ChangeWindow();

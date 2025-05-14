@@ -1,41 +1,40 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.library_system.Models;
+
 
 import com.mycompany.library_system.Logic.ItemManagement.GetItemsByID;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  *
  * @author Linus, Emil, Oliver, Viggo
  */
 public class LoanRow {
-    private int LoanRowID;
-    private int itemID;
-    private int loanID;
-    private String loanRowStartDate;
-    private String loanRowEndDate;
-    private boolean activeLoan;
+    private int loanRowID;
+    private final int itemID;
+    private final int loanID;
+    private final LocalDate loanRowStartDate;
+    private final LocalDate loanRowEndDate;
+    private final boolean activeLoan;
     private Items item;
 
-    public LoanRow(int loanID, int itemID, String loanRowStartDate, String loanRowEndDate, boolean activeLoan) {
+    public LoanRow(int loanID, int itemID, LocalDate loanRowStartDate, LocalDate loanRowEndDate, boolean activeLoan) {
         this.loanID = loanID;
         this.itemID = itemID;
         this.loanRowStartDate = loanRowStartDate;
         this.loanRowEndDate = loanRowEndDate;
         this.activeLoan = activeLoan;
     }
-    
-    public void setLoanRowID(int LoanRowID) {
-        this.LoanRowID = LoanRowID;
+
+    public void setLoanRowID(int loanRowID) {
+        this.loanRowID = loanRowID;
     }
-    
+
     public int getLoanRowID() {
-        return LoanRowID;
+        return loanRowID;
     }
-    
+
     public int getLoanID() {
         return loanID;
     }
@@ -43,41 +42,42 @@ public class LoanRow {
     public int getItemID() {
         return itemID;
     }
-    
-    public String getLoanRowStartDate () {
+
+    public LocalDate getLoanRowStartDate() {
         return loanRowStartDate;
     }
-    
-    public String getLoanRowEndDate () {
+
+    public LocalDate getLoanRowEndDate() {
         return loanRowEndDate;
     }
-    
-    public boolean getActiveLoan () {
+
+    public boolean isActiveLoan() {
         return activeLoan;
     }
-    
+
     public void loadItem() throws SQLException {
-        GetItemsByID itemFetcher = new GetItemsByID();
-        this.item = itemFetcher.getItemById(this.itemID);
+        this.item = new GetItemsByID().getItemById(this.itemID);
     }
-     
+
+    public Items getItem() {
+        return item;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-
         LoanRow other = (LoanRow) obj;
-        return this.getLoanRowID() == other.getLoanRowID(); // or use itemID + loanID combo if needed
+        return loanRowID != 0 ? loanRowID == other.loanRowID : loanID == other.loanID && itemID == other.itemID;
     }
 
     @Override
     public int hashCode() {
-        return Integer.hashCode(this.getLoanRowID()); // match with the equals() field
+        return loanRowID != 0 ? Integer.hashCode(loanRowID) : Objects.hash(loanID, itemID);
     }
-    
+
     @Override
     public String toString() {
-       return loanRowStartDate + " -> " + loanRowEndDate + ": " + item.toString();
+        return loanRowStartDate + " -> " + loanRowEndDate + ": " + (item != null ? item.toString() : "Item not loaded");
     }
 }
-

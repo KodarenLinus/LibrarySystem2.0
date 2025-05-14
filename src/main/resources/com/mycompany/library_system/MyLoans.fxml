@@ -3,6 +3,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
@@ -11,10 +12,11 @@
       <AnchorPane layoutY="9.0" prefHeight="381.0" prefWidth="367.0">
          <children>
             <ListView fx:id="ReturnLoanList" layoutX="231.0" layoutY="47.0" prefHeight="301.0" prefWidth="135.0" />
-            <ListView fx:id="AktiveLoansList" layoutX="20.0" layoutY="48.0" onMouseClicked="#AddToReturnList" prefHeight="331.0" prefWidth="204.0" />
+            <ListView fx:id="AktiveLoansList" layoutX="20.0" layoutY="48.0" onMouseClicked="#AddToReturnList" prefHeight="301.0" prefWidth="204.0" />
             <Label layoutX="96.0" layoutY="31.0" text="Aktiva lån" />
             <Label layoutX="244.0" layoutY="22.0" prefHeight="36.0" prefWidth="96.0" text="lämna tillbaka lån" />
             <Button layoutX="231.0" layoutY="351.0" mnemonicParsing="false" onAction="#ReturnLoans" prefHeight="25.0" prefWidth="135.0" text="Lämna tillbaka" />
+            <RadioButton fx:id="LateLoansRadioButton" layoutX="40.0" layoutY="355.0" mnemonicParsing="false" onAction="#ShowLateLoans" text="Visa bara försenade Objekt" />
          </children>
       </AnchorPane>
       <AnchorPane layoutX="378.0" layoutY="26.0" prefHeight="359.0" prefWidth="309.0">
