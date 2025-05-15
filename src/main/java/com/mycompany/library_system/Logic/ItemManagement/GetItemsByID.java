@@ -38,10 +38,10 @@ public class GetItemsByID {
 
         try (
             Connection conn = dbConnector.connect();
-            PreparedStatement stmt = conn.prepareStatement(query)
+            PreparedStatement findItemStmt = conn.prepareStatement(query)
         ) {
-            stmt.setInt(1, itemId);
-            ResultSet rs = stmt.executeQuery();
+            findItemStmt.setInt(1, itemId);
+            ResultSet rs = findItemStmt.executeQuery();
 
             if (rs.next()) {
                 // Använd vår factory för att skapa rätt objekt

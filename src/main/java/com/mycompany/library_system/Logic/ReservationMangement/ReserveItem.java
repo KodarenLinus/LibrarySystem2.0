@@ -83,12 +83,14 @@ public class ReserveItem {
     private int createReservation(Connection conn, int custID, LocalDate reserveDate) throws SQLException {
         String sql = "INSERT INTO reservation (CustomerID, ReservationDate) VALUES (?, ?)";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, custID);
-            stmt.setDate(2, Date.valueOf(reserveDate));
-            stmt.executeUpdate();
+        try (
+            PreparedStatement insertReservationstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
+        ) {
+            insertReservationstmt.setInt(1, custID);
+            insertReservationstmt.setDate(2, Date.valueOf(reserveDate));
+            insertReservationstmt.executeUpdate();
 
-            ResultSet keys = stmt.getGeneratedKeys();
+            ResultSet keys = insertReservationstmt.getGeneratedKeys();
             if (keys.next()) {
                 return keys.getInt(1);
             }
@@ -152,15 +154,15 @@ public class ReserveItem {
             "AND (r.reservationDate BETWEEN ? AND ? " +
             "OR ? BETWEEN r.reservationDate AND DATE_ADD(r.reservationDate, INTERVAL ? DAY))";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement findReservationRowConflictstmt = conn.prepareStatement(sql)) {
             long days = ChronoUnit.DAYS.between(start, end);
-            stmt.setInt(1, itemID);
-            stmt.setDate(2, Date.valueOf(start));
-            stmt.setDate(3, Date.valueOf(end));
-            stmt.setDate(4, Date.valueOf(start));
-            stmt.setLong(5, days);
+            findReservationRowConflictstmt.setInt(1, itemID);
+            findReservationRowConflictstmt.setDate(2, Date.valueOf(start));
+            findReservationRowConflictstmt.setDate(3, Date.valueOf(end));
+            findReservationRowConflictstmt.setDate(4, Date.valueOf(start));
+            findReservationRowConflictstmt.setLong(5, days);
 
-            return stmt.executeQuery().next();
+            return findReservationRowConflictstmt.executeQuery().next();
         }
     }
 
@@ -181,13 +183,13 @@ public class ReserveItem {
             "AND (? BETWEEN RowLoanStartDate AND RowLoanEndDate " +
             "OR RowLoanStartDate BETWEEN ? AND ?)";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, itemID);
-            stmt.setDate(2, Date.valueOf(start));
-            stmt.setDate(3, Date.valueOf(start));
-            stmt.setDate(4, Date.valueOf(end));
+        try (PreparedStatement findLoanConflictstmt = conn.prepareStatement(sql)) {
+            findLoanConflictstmt.setInt(1, itemID);
+            findLoanConflictstmt.setDate(2, Date.valueOf(start));
+            findLoanConflictstmt.setDate(3, Date.valueOf(start));
+            findLoanConflictstmt.setDate(4, Date.valueOf(end));
 
-            return stmt.executeQuery().next();
+            return findLoanConflictstmt.executeQuery().next();
         }
     }
 
@@ -202,14 +204,14 @@ public class ReserveItem {
     private void insertReservationRows(Connection conn, int reservationID, ArrayList<Items> items) throws SQLException {
         String sql = "INSERT INTO reservationrow (ReservationID, ItemID, IsFullfilled) VALUES (?, ?, ?)";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement insertReservationRowstmt = conn.prepareStatement(sql)) {
             for (Items item : items) {
-                stmt.setInt(1, reservationID);
-                stmt.setInt(2, item.getItemID());
-                stmt.setBoolean(3, false); // Ej uppfylld ännu
-                stmt.addBatch();
+                insertReservationRowstmt.setInt(1, reservationID);
+                insertReservationRowstmt.setInt(2, item.getItemID());
+                insertReservationRowstmt.setBoolean(3, false); // Ej uppfylld ännu
+                insertReservationRowstmt.addBatch();
             }
-            stmt.executeBatch();
+            insertReservationRowstmt.executeBatch();
         }
     }
 

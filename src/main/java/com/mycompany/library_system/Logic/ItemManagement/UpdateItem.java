@@ -6,8 +6,6 @@ package com.mycompany.library_system.Logic.ItemManagement;
 
 import com.mycompany.library_system.Database.ConnDB;
 import com.mycompany.library_system.Database.DatabaseConnector;
-import com.mycompany.library_system.Models.Book;
-import com.mycompany.library_system.Models.DVD;
 import com.mycompany.library_system.Models.Items;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

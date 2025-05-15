@@ -5,6 +5,7 @@ import com.mycompany.library_system.Database.DatabaseConnector;
 import com.mycompany.library_system.Models.Book;
 import com.mycompany.library_system.Models.DVD;
 import com.mycompany.library_system.Models.Items;
+import com.mycompany.library_system.Utils.AlertHandler;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -66,25 +67,42 @@ public class RemoveItem {
 
     private boolean deleteBook(Connection conn, int itemID) throws SQLException {
         String sql = "DELETE FROM Book WHERE ItemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, itemID);
-            return stmt.executeUpdate() > 0;
+        try (
+            PreparedStatement deleteBookStmt = conn.prepareStatement(sql)
+        ) {
+            deleteBookStmt.setInt(1, itemID);
+            return deleteBookStmt.executeUpdate() > 0;
         }
     }
 
     private boolean deleteDVD(Connection conn, int itemID) throws SQLException {
         String sql = "DELETE FROM DVD WHERE ItemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, itemID);
-            return stmt.executeUpdate() > 0;
+        try (
+            PreparedStatement deleteDVDStmt = conn.prepareStatement(sql)
+        ) {
+            deleteDVDStmt.setInt(1, itemID);
+            return deleteDVDStmt.executeUpdate() > 0;
         }
     }
 
     private boolean deleteFromItem(Connection conn, int itemID) throws SQLException {
-        String sql = "DELETE FROM Item WHERE ItemID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, itemID);
-            return stmt.executeUpdate() > 0;
+        String sql = "DELETE FROM Item " +
+             "WHERE ItemID = ? " +
+             "AND ItemID NOT IN (" +
+             "    SELECT ItemID FROM LoanRow WHERE ActiveLoan = TRUE" +
+             ")";
+        try (
+            PreparedStatement deleteItemStmt = conn.prepareStatement(sql)
+        ) {
+            deleteItemStmt.setInt(1, itemID);
+            int rowsAffected = deleteItemStmt.executeUpdate();
+            AlertHandler alert = new AlertHandler();
+            if (rowsAffected > 0) {
+                return true;
+            } else {
+                alert.createAlert("Fel vid borttagning", "Objektet kunde inte tas bort", "Item är utlånat");
+                return false;
+            }
         }
     }
 }

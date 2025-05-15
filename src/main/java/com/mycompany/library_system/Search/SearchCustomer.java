@@ -35,13 +35,15 @@ public class SearchCustomer {
         String customerSearch = "SELECT CustomerID, FirstName, LastName, TelNumber, Email, PasswordCustomer " +
                                 "FROM Customer WHERE FirstName LIKE ? OR LastName LIKE ?";
 
-        try (Connection conn = dbConnector.connect();
-             PreparedStatement stmt = conn.prepareStatement(customerSearch)) {
+        try (
+            Connection conn = dbConnector.connect();
+            PreparedStatement findCustomerStmt = conn.prepareStatement(customerSearch);
+        ) {
 
-            stmt.setString(1, "%" + searchText + "%");
-            stmt.setString(2, "%" + searchText + "%");
+            findCustomerStmt.setString(1, "%" + searchText + "%");
+            findCustomerStmt.setString(2, "%" + searchText + "%");
 
-            ResultSet rs = stmt.executeQuery();
+            ResultSet rs = findCustomerStmt.executeQuery();
 
             while (rs.next()) {
                 int id = rs.getInt("CustomerID");

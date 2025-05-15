@@ -43,14 +43,14 @@ public class SearchAuthor {
 
         try (
             Connection conn = dbConnector.connect(); // Öppna databasanslutning
-            PreparedStatement stmt = conn.prepareStatement(query) // Förbered SQL-satsen
+            PreparedStatement findAuthorStmt = conn.prepareStatement(query) // Förbered SQL-satsen
         ) {
             // Parametrar till sökningen
-            stmt.setString(1, "%" + searchText + "%");
-            stmt.setString(2, "%" + searchText + "%");
-            stmt.setInt(3, book.getItemID());
+            findAuthorStmt.setString(1, "%" + searchText + "%");
+            findAuthorStmt.setString(2, "%" + searchText + "%");
+            findAuthorStmt.setInt(3, book.getItemID());
 
-            ResultSet rs = stmt.executeQuery();
+            ResultSet rs = findAuthorStmt.executeQuery();
 
             // Gå igenom resultatet och skapa Author-objekt
             while (rs.next()) {

@@ -6,9 +6,11 @@ import com.mycompany.library_system.Login.Session;
 import com.mycompany.library_system.Models.LoanRow;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 /**
@@ -39,8 +41,10 @@ public class GetLoanRows {
         String query = "SELECT * FROM LoanRow WHERE (ActiveLoan = ?) AND ( LoanID IN "
                 + "(SELECT LoanID FROM Loan WHERE CustomerID = ?))";
 
-        try (Connection conn = dbConnector.connect();
-             PreparedStatement loanRowStmt = conn.prepareStatement(query)) {
+        try (
+            Connection conn = dbConnector.connect();
+            PreparedStatement loanRowStmt = conn.prepareStatement(query)
+        ) {
 
             // Sätter parametrar i SQL-frågan
             loanRowStmt.setBoolean(1, activeLoans);
@@ -53,9 +57,12 @@ public class GetLoanRows {
                     int loanRowID = rs.getInt("LoanRowID");
                     int loanID = rs.getInt("LoanID");
                     int itemID = rs.getInt("ItemID");
-                    String loanStartDate = rs.getString("RowLoanStartDate");
-                    String loanEndDate = rs.getString("RowLoanEndDate");
+                    Date sqlStartDate = rs.getDate("RowLoanStartDate");
+                    Date sqlEndDate = rs.getDate("RowLoanEndDate");
                     boolean isActive = rs.getBoolean("ActiveLoan");
+                    
+                    LocalDate loanStartDate = sqlStartDate.toLocalDate();
+                    LocalDate loanEndDate = sqlEndDate.toLocalDate();
 
                     // Skapar LoanRow-objekt och lägger till i listan
                     LoanRow loanRow = new LoanRow(loanID, itemID, loanStartDate, loanEndDate, isActive);

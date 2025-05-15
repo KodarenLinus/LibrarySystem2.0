@@ -37,11 +37,11 @@ public class GetReservationDate {
                 + "ReservationID IN (SELECT ReservationID FROM ReservationRow WHERE itemID = ?)";
 
         try (Connection conn = dbConnector.connect();
-             PreparedStatement stmt = conn.prepareStatement(sql);
+             PreparedStatement getReservationDateStmt = conn.prepareStatement(sql);
         ) {
 
-            stmt.setInt(1, itemId);
-            try (ResultSet rs = stmt.executeQuery()) {
+            getReservationDateStmt.setInt(1, itemId);
+            try (ResultSet rs = getReservationDateStmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getDate("reservationDate").toLocalDate();
                 }

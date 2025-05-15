@@ -40,20 +40,20 @@ public class AddCustomer {
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (
-             PreparedStatement stmt1 = conn.prepareStatement(insertCustomer);   
+             PreparedStatement insertCustomerStmt = conn.prepareStatement(insertCustomer);   
         ){
             // Sätter värden i frågan
-            stmt1.setInt(1, 3);  // Exempel: Staff: @ToDo fixa så att vi hämtar categorier från db.
-            stmt1.setString(2, "Studenet");
-            stmt1.setString(3, customer.getFirstName());
-            stmt1.setString(4, customer.getLastName());
-            stmt1.setString(5, customer.getEmail());
-            stmt1.setString(6, "ltu"); // Du kan byta till riktig adress senare
-            stmt1.setInt(7, customer.getTelNr());
-            stmt1.setString(8, customer.getPassword());
+            insertCustomerStmt.setInt(1, 3);  // Exempel: Staff: @ToDo fixa så att vi hämtar categorier från db.
+            insertCustomerStmt.setString(2, "Studenet");
+            insertCustomerStmt.setString(3, customer.getFirstName());
+            insertCustomerStmt.setString(4, customer.getLastName());
+            insertCustomerStmt.setString(5, customer.getEmail());
+            insertCustomerStmt.setString(6, "ltu"); // Du kan byta till riktig adress senare
+            insertCustomerStmt.setInt(7, customer.getTelNr());
+            insertCustomerStmt.setString(8, customer.getPassword());
             
             // Utför insättningen
-            stmt1.executeUpdate();
+            insertCustomerStmt.executeUpdate();
 
         } catch (SQLException ex){
             ex.printStackTrace(); // Bra att skriva ut för felsökning

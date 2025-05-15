@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- *
+ * En book klass som vi använder när vi hämtar och skall lägga in böcker i databasen
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class Book implements Items{

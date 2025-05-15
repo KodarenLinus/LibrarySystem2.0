@@ -46,22 +46,24 @@ public class AddDVD {
                 + "VALUES (?, ?)";
                 
         try (
-            PreparedStatement stmt1 = conn.prepareStatement(insertToItem, PreparedStatement.RETURN_GENERATED_KEYS);
-            PreparedStatement stmt2 = conn.prepareStatement(insertToDVD);
+            PreparedStatement insertToItemStmt = conn.prepareStatement(insertToItem, PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement insertToDVDStmt = conn.prepareStatement(insertToDVD);
         ){
             // lägger till värden i item-tabelen
-            stmt1.setInt(1, dvd.getGenreID());
-            stmt1.setInt(2, dvd.getCategoryID());
-            stmt1.setString(3, dvd.getGenreName());
-            stmt1.setString(4, dvd.getCategoryName());
-            stmt1.setString(5, dvd.getTitle());
-            stmt1.setString(6, dvd.getLocation());
-            stmt1.setBoolean(7, true);
-            stmt1.executeUpdate();
+            insertToItemStmt.setInt(1, dvd.getGenreID());
+            insertToItemStmt.setInt(2, dvd.getCategoryID());
+            insertToItemStmt.setString(3, dvd.getGenreName());
+            insertToItemStmt.setString(4, dvd.getCategoryName());
+            insertToItemStmt.setString(5, dvd.getTitle());
+            insertToItemStmt.setString(6, dvd.getLocation());
+            insertToItemStmt.setBoolean(7, true);
+            insertToItemStmt.executeUpdate();
             
             // Hämta genererat ItemID
             int generatedItemID = -1;
-            try (var generatedKeys = stmt1.getGeneratedKeys()) {
+            try (
+                var generatedKeys = insertToItemStmt.getGeneratedKeys();
+            ) {
                 if (generatedKeys.next()) {
                     generatedItemID = generatedKeys.getInt(1);
                 } else {
@@ -70,9 +72,9 @@ public class AddDVD {
             }
 
             // Lägger till värden i DVD-tabellen
-            stmt2.setInt(1, generatedItemID);
-            stmt2.setInt(2, dvd.getDirectorID());
-            stmt2.executeUpdate();
+            insertToDVDStmt.setInt(1, generatedItemID);
+            insertToDVDStmt.setInt(2, dvd.getDirectorID());
+            insertToDVDStmt.executeUpdate();
 
         } catch (SQLException ex){
             ex.printStackTrace();
