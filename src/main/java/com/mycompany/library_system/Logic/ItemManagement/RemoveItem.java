@@ -64,7 +64,17 @@ public class RemoveItem {
             return false;
         }
     }
+    
+    
 
+    /**
+     * Tar bort en bok från Book-tabellen med angivet itemID.
+     *
+     * @param conn Databasanslutning
+     * @param itemID ID för objektet som ska tas bort
+     * @return true om minst en rad togs bort
+     * @throws SQLException vid fel i SQL
+     */
     private boolean deleteBook(Connection conn, int itemID) throws SQLException {
         String sql = "DELETE FROM Book WHERE ItemID = ?";
         try (
@@ -74,7 +84,16 @@ public class RemoveItem {
             return deleteBookStmt.executeUpdate() > 0;
         }
     }
+    
 
+    /**
+     * Tar bort en DVD från DVD-tabellen med angivet itemID.
+     *
+     * @param conn Databasanslutning
+     * @param itemID ID för objektet som ska tas bort
+     * @return true om minst en rad togs bort
+     * @throws SQLException vid fel i SQL
+     */
     private boolean deleteDVD(Connection conn, int itemID) throws SQLException {
         String sql = "DELETE FROM DVD WHERE ItemID = ?";
         try (
@@ -85,6 +104,14 @@ public class RemoveItem {
         }
     }
 
+    /**
+     * Försöker ta bort ett objekt från Item-tabellen, men endast om det inte är aktivt utlånat.
+     *
+     * @param conn Databasanslutning
+     * @param itemID ID för objektet som ska tas bort
+     * @return true om borttagningen lyckades, annars false
+     * @throws SQLException vid fel i SQL
+     */
     private boolean deleteFromItem(Connection conn, int itemID) throws SQLException {
         String sql = "DELETE FROM Item " +
              "WHERE ItemID = ? " +

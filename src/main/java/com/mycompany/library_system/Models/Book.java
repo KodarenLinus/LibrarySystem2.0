@@ -24,7 +24,18 @@ public class Book implements Items{
     private int isbn;
     private int publisherID;
     
-    
+    /**
+     * Skapar ett nytt Book-objekt med angivna attribut.
+     * 
+     * @param title Titel på boken
+     * @param location Plats i biblioteket
+     * @param isbn ISBN-nummer
+     * @param categoryID ID för kategori
+     * @param categoryName Namn på kategori
+     * @param genreID ID för genre
+     * @param genreName Namn på genre
+     * @param publisherID ID för utgivare
+     */
     public Book(String title, String location, int isbn, int categoryID, String categoryName, int genreID, String genreName, int publisherID) {
         this.title = title;
         this.location = location;
@@ -36,9 +47,15 @@ public class Book implements Items{
         this.publisherID = publisherID;
     }
     
+    /**
+     * Sätter det unika itemID:t, vanligtvis från databasen.
+     * 
+     * @param itemID Unikt ID för objektet
+     */
     public void setItemID(int itemID) {
         this.itemID = itemID;
     }
+    
     
     @Override
     public int getItemID() {
