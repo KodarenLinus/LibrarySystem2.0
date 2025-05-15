@@ -34,6 +34,11 @@ public class HandleItemsController {
     @FXML
     private TextField SearchItem;
 
+    /**
+     * Lägger till en författare (om boken är vald) eller visar varning om objektet är en DVD.
+     * 
+     * @param event ActionEvent som triggas vid knapptryckning
+     */
     @FXML
     void AddDirectorOrAuthor(ActionEvent event) {
         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
@@ -42,6 +47,11 @@ public class HandleItemsController {
         }
     }
     
+    /**
+     * Tar bort valt objekt från listan och databasen.
+     * 
+     * @param event ActionEvent som triggas vid knapptryckning
+     */
     @FXML
     void RemoveObject(ActionEvent event) {
         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
@@ -62,6 +72,11 @@ public class HandleItemsController {
         }
     }
 
+    /**
+     * Navigerar till vyn för att uppdatera valt objekt.
+     * 
+     * @param event ActionEvent som triggas vid knapptryckning
+     */
     @FXML
     void UpdateObject(ActionEvent event) {
         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
@@ -76,7 +91,12 @@ public class HandleItemsController {
         }
     }
     
-    
+    /**
+     * Navigerar tillbaka till startmenyn.
+     * 
+     * @param event ActionEvent som triggas vid knapptryckning
+     * @throws IOException om FXML-filen inte kan laddas
+     */
     @FXML
     void back(ActionEvent event) throws IOException{
         String fxmlf = "StartMenu.fxml";
@@ -85,7 +105,10 @@ public class HandleItemsController {
     }
     
     
-    
+    /**
+     * Initierar komponenter och laddar in objekt i listan.
+     * Ställer in cellformat och lägger till lyssnare för sökning.
+     */
     @FXML
     public void initialize()  {
         
@@ -118,6 +141,13 @@ public class HandleItemsController {
        
     }
     
+    /**
+     * Hanterar tillägg av skapare till valt objekt beroende på typ.
+     * Öppnar nytt fönster för bok, annars visas varning.
+     * 
+     * @param item  Det valda objektet
+     * @param event MouseEvent om popup kräver det (kan vara null)
+     */
     private void handleAddCreator(Items item, MouseEvent event) {
         ObjectSession.getInstance().setCurrentItem(item);
         

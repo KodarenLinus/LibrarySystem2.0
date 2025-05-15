@@ -25,18 +25,23 @@ public class AddCustomerController {
     @FXML
     private TextField email;
 
+    // Textfält för att mata in förnamn
     @FXML
     private TextField firstName;
 
+    // Textfält för att mata in efternamn
     @FXML
     private TextField lastName;
 
+    // Textfält för att mata in telefonnummer
     @FXML
     private TextField telNr;
 
+    // Textfält för att mata in lösenord
     @FXML
     private TextField password;
 
+    // Växlingsknapp för att lägga till en ny kund
     @FXML
     private ToggleButton addNewCustomer;
 

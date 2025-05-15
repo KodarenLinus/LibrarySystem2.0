@@ -46,6 +46,13 @@ public class LoginViewController{
         }
     }
     
+    
+    /**
+     * Navigerar tillbaka till startvyn.
+     *
+     * @param event ActionEvent som triggas vid knapptryckning
+     * @throws IOException om det uppstår fel vid vybyte
+     */
     @FXML
     void back(ActionEvent event) throws IOException{
         
@@ -54,6 +61,12 @@ public class LoginViewController{
         changeWindow.windowChange(event, fxmlf);
     }
         
+    /**
+     * Hanterar inloggning för anställda.
+     *
+     * @param event ActionEvent som triggas när anställd vill logga in
+     * @throws IOException om det uppstår fel vid vybyte
+     */
     @FXML
     private void loginButtonEmployee(ActionEvent event) throws IOException{
         boolean isLoggedIn = login.doStaffLogin(userName.getText(), userPassword.getText());
