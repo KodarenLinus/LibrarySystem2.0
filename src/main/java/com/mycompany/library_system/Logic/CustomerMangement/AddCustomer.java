@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+
 /**
  * Klass som hanterar logiken för att lägga till kunder i databasen.
  * Skickar ett Customer-objekt till databasen via SQL.
@@ -43,12 +44,12 @@ public class AddCustomer {
              PreparedStatement insertCustomerStmt = conn.prepareStatement(insertCustomer);   
         ){
             // Sätter värden i frågan
-            insertCustomerStmt.setInt(1, 3);  // Exempel: Staff: @ToDo fixa så att vi hämtar categorier från db.
-            insertCustomerStmt.setString(2, "Studenet");
+            insertCustomerStmt.setInt(1, 10);  
+            insertCustomerStmt.setString(2, "Student");
             insertCustomerStmt.setString(3, customer.getFirstName());
             insertCustomerStmt.setString(4, customer.getLastName());
             insertCustomerStmt.setString(5, customer.getEmail());
-            insertCustomerStmt.setString(6, "ltu"); // Du kan byta till riktig adress senare
+            insertCustomerStmt.setString(6, "ltu"); 
             insertCustomerStmt.setInt(7, customer.getTelNr());
             insertCustomerStmt.setString(8, customer.getPassword());
             
@@ -56,7 +57,9 @@ public class AddCustomer {
             insertCustomerStmt.executeUpdate();
 
         } catch (SQLException ex){
-            ex.printStackTrace(); // Bra att skriva ut för felsökning
+            ex.printStackTrace(); 
         }
     }
+    
+
 }

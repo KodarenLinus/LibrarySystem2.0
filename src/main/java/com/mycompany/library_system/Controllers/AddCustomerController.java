@@ -74,6 +74,13 @@ public class AddCustomerController {
             customerList.getItems().clear();
             customerList.getItems().addAll(searchCustomer.searchCustomer(newValue));
         });
+        
+        // Lägg till lyssnare för när man klickar på en kund
+        customerList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, selectedCustomer) -> {
+        if (selectedCustomer != null) {
+            populateFieldsWithCustomer(selectedCustomer);
+        }
+    });
     }
 
     /**
@@ -84,6 +91,7 @@ public class AddCustomerController {
      */
     @FXML
     void addCustomer(ActionEvent event) {
+        System.out.println("test");
         try {
             // Skapa kundobjekt från inputfält och lagra i databasen
             Customer customer = new Customer(
@@ -100,6 +108,7 @@ public class AddCustomerController {
             e.printStackTrace();
         }
     }
+    
 
     /**
      * Navigerar användaren tillbaka till startmenyn.
@@ -112,4 +121,12 @@ public class AddCustomerController {
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }
+    
+    private void populateFieldsWithCustomer(Customer customer) {
+    firstName.setText(customer.getFirstName());
+    lastName.setText(customer.getLastName());
+    email.setText(customer.getEmail());
+    telNr.setText(String.valueOf(customer.getTelNr()));
+    password.setText(String.valueOf(customer.getPassword()));
+}
 }
