@@ -106,7 +106,7 @@ public class AddAuthorToBookController {
     /**
      * Flyttar vald författare från listan till listan över författare som ska läggas till.
      * 
-     * @event -> Händelsen som triggas när användaren klickar på ett objekt i listan.
+     * @event Händelsen som triggas när användaren klickar på ett objekt i listan.
      */
     @FXML
     void addToBookAuthorList(MouseEvent event) {
@@ -122,7 +122,7 @@ public class AddAuthorToBookController {
     /**
      * Tar bort en författare från listan över de som ska läggas till.
      * 
-     * @event -> Händelsen som triggas när användaren klickar på ett objekt i listan.
+     * @event Händelsen som triggas när användaren klickar på ett objekt i listan.
      */
     @FXML
     void RemoveFromBookAuthorList(MouseEvent event) {

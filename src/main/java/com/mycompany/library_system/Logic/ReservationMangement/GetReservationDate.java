@@ -14,7 +14,7 @@ import java.time.LocalDate;
  * 
  * Följer SRP (Single Responsibility Principle): denna klass ansvarar endast för att läsa ut ett datum.
  * 
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class GetReservationDate {
 

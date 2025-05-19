@@ -11,6 +11,7 @@ import java.sql.SQLException;
 
 /**
  * Factory-klass för att skapa Items (Book eller DVD) baserat på data från databasen.
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class ItemFactory {
 

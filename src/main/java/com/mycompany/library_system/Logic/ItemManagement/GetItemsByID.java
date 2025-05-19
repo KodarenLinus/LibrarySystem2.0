@@ -14,7 +14,7 @@ import java.sql.SQLException;
  * Klass som hämtar ett enskilt objekt (Item) baserat på dess ID.
  * Använder ItemFactory för att skapa rätt typ av objekt (Book eller DVD).
  * 
- * @author Linus
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class GetItemsByID {
 

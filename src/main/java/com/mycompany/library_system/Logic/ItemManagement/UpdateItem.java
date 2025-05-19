@@ -12,7 +12,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- *
+ * Klassen ansvarar för att uppdatera information om ett objekt (Item) i databasen.
+ * 
+ * Här finns en metod för att uppdatera titeln på ett specifikt objekt baserat på dess ID.
+ * Klassen använder sig av en databasanslutning för att utföra SQL-uppdateringar.
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class UpdateItem {

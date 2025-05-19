@@ -178,9 +178,7 @@ public class HandleItemsController {
     
     
     /**
-    * 
     * kollar om filter är applicerad och uppdaterar listan med items.
-    * 
     */
     private void applyFilter() {
        String searchTerm = SearchItem.getText();

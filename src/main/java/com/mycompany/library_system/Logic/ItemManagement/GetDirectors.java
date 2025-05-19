@@ -14,8 +14,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- *
- * @author Linus
+ * En hjälparklass för att hämta alla regissörer (Directors) från databasen.
+ * @author Linus, Emil, Oliver, viggo
  */
 public class GetDirectors {
     

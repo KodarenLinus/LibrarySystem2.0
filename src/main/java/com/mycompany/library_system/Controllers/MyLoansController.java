@@ -52,6 +52,14 @@ public class MyLoansController {
     @FXML
     private RadioButton LateLoansRadioButton;
     
+    /**
+    * Visar aktiva lån, med möjlighet att filtrera fram endast försenade lån.
+    *
+    *
+    * @param event Händelse som triggas vid klick på en relevant knapp (t.ex. "Visa lån")
+    * @throws SQLException om ett fel uppstår vid databasåtkomst
+    */
+    
     @FXML
     void ShowLateLoans(ActionEvent event) throws SQLException {
         boolean activeLoan = true;

@@ -29,7 +29,7 @@ public class AddCustomer {
     /**
      * Lägger till en customer i databasen
      *
-     * @param Ett Customer objekt som vi skickar till databasen
+     * @param Customer objekt som vi skickar till databasen
      */
     public void insertCustomer(Customer customer){
         

@@ -14,8 +14,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- *
- * @author Linus
+ *Den här hämtar alla objekt i customerCategry för att man ska kunna 
+ * klicka i den kategori den kund man ska lägga till tillhör
+ * 
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class GetCustomerCategory {
     
@@ -26,6 +28,14 @@ public class GetCustomerCategory {
         this.dbConnector = new ConnDB();
     }
 
+    /**
+    * Hämtar alla kundkategorier från databasen.
+    * Metoden ansluter till databasen och utför en SQL-fråga för att hämta alla rader
+    * från tabellen "CustomerCategory".
+    * 
+    * @return en lista med alla kundkategorier i databasen
+    * @throws SQLException om ett fel uppstår vid databasanslutning eller SQL-exekvering
+    */
     
     public ArrayList<CustomerCategory> getAllCustomerCategory() throws SQLException {
         ArrayList<CustomerCategory> customerCategoryList = new ArrayList<>();

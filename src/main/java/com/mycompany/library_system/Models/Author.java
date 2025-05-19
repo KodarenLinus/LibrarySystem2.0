@@ -6,6 +6,10 @@ package com.mycompany.library_system.Models;
 
 
 /**
+ * Modellen för en författare med förnamn, efternamn och ett unikt ID.
+ * 
+ * Klassen innehåller metoder för att hämta och sätta författarens egenskaper,
+ * samt metoder för att jämföra författarobjekt baserat på deras ID.
  *
  * @author Linus, Emil, Oliver, Viggo
  */

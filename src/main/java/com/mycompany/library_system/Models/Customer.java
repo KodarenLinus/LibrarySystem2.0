@@ -5,6 +5,10 @@
 package com.mycompany.library_system.Models;
 
 /**
+ * Representerar en kund i bibliotekssystemet med personliga uppgifter och kategori.
+ * 
+ * Klassen innehåller information som namn, telefonnummer, e-post, lösenord samt
+ * koppling till en kategori.
  *
  * @author Linus, Emil, Oliver, Viggo
  */
@@ -18,6 +22,17 @@ public class Customer {
     private int categoryID;
     private String categoryName;
     
+    /**
+     * Skapar en ny kund med angivna personuppgifter och kategori.
+     * 
+     * @param firstName Kundens förnamn
+     * @param lastName Kundens efternamn
+     * @param telNr Kundens telefonnummer (som heltal)
+     * @param email Kundens e-postadress
+     * @param password Kundens lösenord (bör hanteras säkert)
+     * @param categoryID ID för kundens kategori
+     * @param categoryName Namn på kundens kategori
+     */
     
     public Customer(String firstName, String lastName, int telNr, String email, String password, int categoryID, String categoryName) {
         this.firstName = firstName;
@@ -28,6 +43,12 @@ public class Customer {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
     }
+    
+    /**
+     * Sätter kundens unika ID (vanligtvis från databasen).
+     * 
+     * @param customerID Kundens ID
+     */
     
     public void setCustomerID(int customerID) {
         this.customerID = customerID;

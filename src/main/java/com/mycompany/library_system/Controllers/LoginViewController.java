@@ -41,6 +41,7 @@ public class LoginViewController{
      * Hanterar inloggning för användare
      *
      * @param event ActionEvent som triggas när användaren vill logga in
+     * @throws IOException Om något går fel vid hantering av vyn
      */
     @FXML
     private void loginButton(ActionEvent event) throws IOException {

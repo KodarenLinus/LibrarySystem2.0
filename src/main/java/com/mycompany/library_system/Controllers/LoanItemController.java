@@ -78,7 +78,7 @@ public class LoanItemController {
     /**
      * Filtrerar listan när referenslitteratur-filter aktiveras.
      * 
-     * @param event -> en radiobutton som när den är aktiv filrerar bort referenslitteratur
+     * @param event en radiobutton som när den är aktiv filrerar bort referenslitteratur
      */
     @FXML
     void FilterReferensBook(ActionEvent event) {

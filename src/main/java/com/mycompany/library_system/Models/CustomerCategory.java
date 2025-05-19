@@ -5,13 +5,25 @@
 package com.mycompany.library_system.Models;
 
 /**
- *
- * @author Linus
+ * Representerar en kundkategori i bibliotekssystemet.
+ * 
+ * En kundkategori definierar en grupp kunder med gemensamma egenskaper,
+ * såsom ett maximalt antal lån (loan limit).
+ * 
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class CustomerCategory {
     private int categoryID;
     private String categoryName;
     private int loanLimit;
+    
+    /**
+     * Skapar en ny kundkategori med angivet ID, namn och lånebegränsning.
+     * 
+     * @param categoryID   Det unika ID:t för kategorin
+     * @param categoryName Namnet på kundkategorin
+     * @param loanLimit    Max antal objekt kunden får låna samtidigt
+     */
     
     public CustomerCategory (int categoryID, String categoryName, int loanLimit) {
         this.categoryID = categoryID;
