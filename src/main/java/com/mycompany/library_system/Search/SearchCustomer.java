@@ -32,7 +32,7 @@ public class SearchCustomer {
     public ArrayList<Customer> searchCustomer(String searchText) {
         ArrayList<Customer> results = new ArrayList<>();
 
-        String customerSearch = "SELECT CustomerID, FirstName, LastName, TelNumber, Email, PasswordCustomer " +
+        String customerSearch = "SELECT CustomerID, FirstName, LastName, TelNumber, Email, PasswordCustomer, CustomerCategoryID, CategoryName " +
                                 "FROM Customer WHERE FirstName LIKE ? OR LastName LIKE ?";
 
         try (
@@ -52,8 +52,10 @@ public class SearchCustomer {
                 int telNr = rs.getInt("TelNumber");
                 String email = rs.getString("Email");
                 String password = rs.getString("PasswordCustomer");
+                int categoryID  = rs.getInt("CustomerCategoryID");
+                String categoryName  = rs.getString("CategoryName");
 
-                Customer customer = new Customer(firstName, lastName, telNr, email, password);
+                Customer customer = new Customer(firstName, lastName, telNr, email, password, categoryID, categoryName);
                 customer.setCustomerID(id);
 
                 results.add(customer);

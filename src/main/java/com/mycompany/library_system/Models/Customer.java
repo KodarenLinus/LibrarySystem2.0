@@ -15,14 +15,18 @@ public class Customer {
     private int telNr;
     private String email;
     private String password;
+    private int categoryID;
+    private String categoryName;
     
     
-    public Customer(String firstName, String lastName, int telNr, String email, String password) {
+    public Customer(String firstName, String lastName, int telNr, String email, String password, int categoryID, String categoryName) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.telNr = telNr;
         this.email = email;
         this.password = password;
+        this.categoryID = categoryID;
+        this.categoryName = categoryName;
     }
     
     public void setCustomerID(int customerID) {
@@ -55,6 +59,14 @@ public class Customer {
     
     public String getPassword(){
         return password;
+    }
+    
+    public int getCategoryID() {
+        return categoryID;
+    }
+    
+    public String getCategoryName() {
+        return categoryName;
     }
     
     

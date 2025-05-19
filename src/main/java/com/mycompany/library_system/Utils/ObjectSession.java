@@ -4,7 +4,6 @@
  */
 package com.mycompany.library_system.Utils;
 
-import com.mycompany.library_system.Models.Book;
 import com.mycompany.library_system.Models.Items;
 /**
  * Singleton-klass som håller ett referensobjekt under en session.

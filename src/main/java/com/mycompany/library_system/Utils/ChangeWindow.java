@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author Linus, EOliver, Viggo
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class ChangeWindow {
     /**

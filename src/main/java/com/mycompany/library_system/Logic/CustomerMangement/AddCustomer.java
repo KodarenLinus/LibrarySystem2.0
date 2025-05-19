@@ -37,21 +37,20 @@ public class AddCustomer {
         Connection conn = dbConnector.connect();
         
         // SQL-fråga för att infoga en ny kund
-        String insertCustomer = "INSERT INTO Customer (CustomerCategoryID, CategoryName, FirstName, LastName, Email, Adress, TelNumber, PasswordCustomer) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertCustomer = "INSERT INTO Customer (CustomerCategoryID, CategoryName, FirstName, LastName, Email, TelNumber, PasswordCustomer) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (
              PreparedStatement insertCustomerStmt = conn.prepareStatement(insertCustomer);   
         ){
             // Sätter värden i frågan
-            insertCustomerStmt.setInt(1, 10);  
-            insertCustomerStmt.setString(2, "Student");
+            insertCustomerStmt.setInt(1, customer.getCategoryID());  
+            insertCustomerStmt.setString(2, customer.getCategoryName());
             insertCustomerStmt.setString(3, customer.getFirstName());
             insertCustomerStmt.setString(4, customer.getLastName());
             insertCustomerStmt.setString(5, customer.getEmail());
-            insertCustomerStmt.setString(6, "ltu"); 
-            insertCustomerStmt.setInt(7, customer.getTelNr());
-            insertCustomerStmt.setString(8, customer.getPassword());
+            insertCustomerStmt.setInt(6, customer.getTelNr());
+            insertCustomerStmt.setString(7, customer.getPassword());
             
             // Utför insättningen
             insertCustomerStmt.executeUpdate();

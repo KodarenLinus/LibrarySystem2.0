@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -65,7 +66,7 @@
             <TextField fx:id="password" prefHeight="26.0" prefWidth="311.0" />
          </children>
       </HBox>
-      <ToggleButton fx:id="addNewCustomer" layoutX="430.0" layoutY="273.0" mnemonicParsing="false" onAction="#addCustomer" text="Lägg till ny kund" />
+      <ToggleButton fx:id="addNewCustomer" layoutX="428.0" layoutY="317.0" mnemonicParsing="false" onAction="#addCustomer" text="Lägg till ny kund" />
       <Text layoutX="95.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sök kund">
          <font>
             <Font size="18.0" />
@@ -96,6 +97,16 @@
             <Font size="18.0" />
          </font>
       </Text>
-      <ToggleButton layoutX="482.0" layoutY="331.0" mnemonicParsing="false" onAction="#backToMenu" text="Tillbaka" />
+      <ToggleButton layoutX="480.0" layoutY="345.0" mnemonicParsing="false" onAction="#backToMenu" text="Tillbaka" />
+      <HBox alignment="CENTER_LEFT" layoutX="300.0" layoutY="267.0" prefHeight="50.0" prefWidth="292.0" spacing="20.0">
+         <children>
+            <Label prefHeight="24.0" prefWidth="160.0" text="Kategori">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="Category" prefHeight="25.0" prefWidth="309.0" />
+         </children>
+      </HBox>
    </children>
 </AnchorPane>
