@@ -52,4 +52,25 @@ public class GetCustomerCategory {
 
         return customerCategoryList;
     }
+    
+    public CustomerCategory getCustomerCategoryByID (int customerCategoryID) throws SQLException{
+        String findCustomerCategoryByID = "SELECT * FROM CustomerCategory "
+                + "WHERE CustomerCategoryID = ?";
+        try (
+            Connection conn = dbConnector.connect();
+            PreparedStatement customerCategoryStmt = conn.prepareStatement(findCustomerCategoryByID); 
+        ){
+            customerCategoryStmt.setInt(1, customerCategoryID);
+            ResultSet rsCustomerCategory = customerCategoryStmt.executeQuery();
+            if (rsCustomerCategory.next()) {
+                String customerCategoryName = rsCustomerCategory.getString("CategoryName");
+                int loanLimit = rsCustomerCategory.getInt("LoanLimit");
+
+                // Skapar Genre-objekt och lägger till i listan
+                CustomerCategory customerCategory = new CustomerCategory(customerCategoryID, customerCategoryName, loanLimit);
+                return customerCategory;
+            }
+        } 
+        return null;
+    }
 }

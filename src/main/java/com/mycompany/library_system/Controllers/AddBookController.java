@@ -62,7 +62,7 @@ public class AddBookController {
     /**
      * Navigerar användaren till vyn för att välja objekt att lägga till (t.ex. bok eller DVD).
      *
-     * @param event Händelsen som triggas av användarens klick på "Tillbaka"-knappen.
+     * @param event -> Händelsen som triggas av användarens klick på "Tillbaka"-knappen.
      */
     @FXML
     void GoToItem(ActionEvent event) {
@@ -75,7 +75,7 @@ public class AddBookController {
      * Försöker skapa och lägga till en ny bok efter att ha validerat fälten.
      * Visar en alert vid lyckad registrering eller om något fält är felaktigt ifyllt.
      *
-     * @param event Händelsen som triggas när användaren klickar på "Lägg till bok".
+     * @param event -> Händelsen som triggas när användaren klickar på "Lägg till bok".
      */
     @FXML
     void addBook(ActionEvent event) {
@@ -92,7 +92,8 @@ public class AddBookController {
             Category selectedCategory = Category.getValue();
             Genre selectedGenre = Genre.getValue();
             Publisher selectedPublisher = Publisher.getValue();
-
+            
+            //Skapar ett book objekt
             Book book = new Book(
                 Title.getText(), 
                 Location.getText(), 
@@ -104,14 +105,17 @@ public class AddBookController {
                 selectedPublisher.getPublisherID()
             );
             
+            //Skickar book objektet till AddBook för att lägga till den i databasen
             AddBook addBook = new AddBook();
             addBook.insertBook(book);
-
+            
+            //Skapar en alert som säger vi lyckas
             title = "Lyckades";
             header = "Boken har lagts till"; 
             content = "Grattis, du har lagt till en ny bok i systemet.";
             alertHandler.createAlert(title, header, content);
         } catch (NumberFormatException e) {
+            //Skapar en alert som berättar att man skrivit annat än int i ISBN 
             title = "Ej tillåten input";
             header = "ISBN måste vara heltal"; 
             content = "Du skrev in ogiltiga tecken i ISBN. Använd endast siffror.";

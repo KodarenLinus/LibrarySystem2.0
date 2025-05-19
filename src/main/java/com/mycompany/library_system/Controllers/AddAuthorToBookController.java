@@ -51,7 +51,7 @@ public class AddAuthorToBookController {
 
     /**
      * Öppnar ett nytt fönster för att skapa en ny författare.
-     * @event
+     * @event -> Händelsen som triggas när användaren klickar på "Lägg till författare".
      */
     @FXML
     void AddAuthor(ActionEvent event) {
@@ -64,7 +64,7 @@ public class AddAuthorToBookController {
      * Lägger till valda författare till den valda boken i databasen.
      * Visar alert beroende på om åtgärden lyckades eller misslyckades.
      * 
-     * @event -> Händelsen som triggas när användaren klickar på "Lägg till författare".
+     * @event -> Händelsen som triggas när användaren klickar på "Lägg till författare till book".
      */
     @FXML
     void AddAuthorsToBook(ActionEvent event) {
