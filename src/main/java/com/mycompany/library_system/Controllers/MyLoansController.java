@@ -165,7 +165,7 @@ public class MyLoansController {
      */
     @FXML
     void ReturnToCustomerView(ActionEvent event) {
-        String fxmlf = "CustomerView.fxml";
+        String fxmlf = "CustomerStart.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }

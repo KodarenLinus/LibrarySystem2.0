@@ -16,7 +16,6 @@ import javafx.scene.control.TextField;
 /**
  * Controller klass som hanterar uppdatering av titlar för items
  * 
- * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class UpdateTitleItemController {

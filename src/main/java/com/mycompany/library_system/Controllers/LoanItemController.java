@@ -137,7 +137,7 @@ public class LoanItemController {
      */
     @FXML
     void backToMenu(ActionEvent event) {
-        String fxmlf = "CustomerView.fxml";
+        String fxmlf = "CustomerStart.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }

@@ -7,7 +7,9 @@ package com.mycompany.library_system.Logic.LoanMangement;
 import com.mycompany.library_system.Logic.ItemManagement.GetCategoryLoanTime;
 import com.mycompany.library_system.Database.DatabaseConnector;
 import com.mycompany.library_system.Database.ConnDB;
+import com.mycompany.library_system.Logic.ItemManagement.GetItemsByID;
 import com.mycompany.library_system.Models.Items;
+import com.mycompany.library_system.Models.LoanRow;
 import com.mycompany.library_system.Utils.AlertHandler;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,45 +37,56 @@ public class LoanItem {
     * Lägger till objekt i lån (LoanRow) för en viss kund.
     * Kontrollerar först om kunden får låna fler objekt utifrån sin lånegräns.
     * Om gränsen överskrids visas ett popup-meddelande.
+    * Annars skrivs ett kvito ut med hela ordern.
     *
     * @param custID ID för kunden som lånar
     * @param itemsToLoan Lista med objekt som ska lånas
     * @param event Event som triggar popup-fönster vid fel
     */
     public boolean addToLoanRows(int custID, ArrayList<Items> itemsToLoan) {
-        AlertHandler alertHandler = new AlertHandler();
-        String title;
-        String header; 
-        String content;
-        
-        try (
-            Connection conn = dbConnector.connect()
-        ) {
-            int currentLoans = getActiveLoanCount(conn, custID);
-            int allowedLoan = getAllowedLoanLimit(conn, custID);
-            
-            //Kollar om användaren har för många aktiva lån, men också om loanlimit överskrids med aktiva lån + kundvagnen
-            if (exceedsLoanLimit(currentLoans, itemsToLoan.size(), allowedLoan)) {
-                boolean cartTooBig = currentLoans < allowedLoan;
-                handleLoanLimitExceeded(cartTooBig);
-                return false;
-            }
+    AlertHandler alertHandler = new AlertHandler();
+    String title;
+    String header;
+    StringBuilder content = new StringBuilder();
 
-            int loanID = createLoanAndReturnID(conn, custID);
-            if (loanID == -1) return false;
+    try (Connection conn = dbConnector.connect()) {
+        int currentLoans = getActiveLoanCount(conn, custID);
+        int allowedLoan = getAllowedLoanLimit(conn, custID);
 
-            insertLoanRows(conn, loanID, itemsToLoan);
-            title = "Lån popUp";
-            header ="Lyckat lån"; 
-            content = "Du har lånat följande: ";
-            for(Items item: itemsToLoan){ content += (item.getTitle() + ", "); }
-            alertHandler.createAlert(title, header, content);
+        if (exceedsLoanLimit(currentLoans, itemsToLoan.size(), allowedLoan)) {
+            boolean cartTooBig = currentLoans < allowedLoan;
+            handleLoanLimitExceeded(cartTooBig);
+            return false;
+        }
+
+        int loanID = createLoanAndReturnID(conn, custID);
+        if (loanID == -1) return false;
+
+        // Få tillbaka loanrows med datum för popup
+        ArrayList<LoanRow> loanRows = insertLoanRows(conn, loanID, itemsToLoan);
+
+        // Pop-up med info
+        title = "Lån popUp";
+        header = "Lyckat lån";
+        content.append("Du har lånat följande:\n\n");
+        GetItemsByID getItemsByID = new GetItemsByID();
+        for (LoanRow row : loanRows) {
+            content.append(String.format("%s - %s (Från: %s Till: %s)\n",
+                    row.getItemID(),
+                    getItemsByID.getItemById(row.getItemID()).getTitle(),
+                    row.getLoanRowStartDate(),
+                    row.getLoanRowEndDate()));
+        }
+
+        alertHandler.createAlert(title, header, content.toString());
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
         return true;
     }
+
     
     /**
     * Hämtar antalet aktiva lån som en kund har.
@@ -181,55 +194,63 @@ public class LoanItem {
         }
     }
     
-   /**
-    * Lägger till flera rader i LoanRow-tabellen för ett lån.
-    * Varje objekt får ett start- och slutdatum för utlåningen.
-    *
-    * @param conn Databasanslutning
-    * @param loanID ID för det skapade lånet
-    * @param itemsToLoan Objekt som ska lånas
-    * @throws SQLException vid fel i SQL-frågan
-    */
-    private void insertLoanRows(Connection conn, int loanID, ArrayList<Items> itemsToLoan) throws SQLException {
+    /**
+     * Lägger till flera rader i LoanRow-tabellen för ett lån.
+     * Varje objekt får ett start- och slutdatum för utlåningen.
+     *
+     * @param conn Databasanslutning
+     * @param loanID ID för det skapade lånet
+     * @param itemsToLoan Objekt som ska lånas
+     * @return Lista med skapade LoanRow objekt innehållande låneinfo
+     * @throws SQLException vid fel i SQL-frågan
+     */
+    private ArrayList<LoanRow> insertLoanRows(Connection conn, int loanID, ArrayList<Items> itemsToLoan) throws SQLException {
         String insertLoanRowSQL = "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate, ActiveLoan) VALUES (?, ?, ?, ?, ?)";
         String reservationSQL = "SELECT r.reservationDate " +
-                            "FROM reservationrow rr " +
-                            "JOIN reservation r ON rr.reservationID = r.reservationID " +
-                            "WHERE rr.itemID = ? AND r.reservationDate >= ?";
-        
+                                "FROM reservationrow rr " +
+                                "JOIN reservation r ON rr.reservationID = r.reservationID " +
+                                "WHERE rr.itemID = ? AND r.reservationDate >= ?";
+
         LocalDate today = LocalDate.now();
+        ArrayList<LoanRow> loanRows = new ArrayList<>();
 
         try (
             PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRowSQL);
             PreparedStatement checkReservationStmt = conn.prepareStatement(reservationSQL);
-        )   {
+        ) {
             for (Items item : itemsToLoan) {
                 GetCategoryLoanTime getCategoryLoanTime = new GetCategoryLoanTime();
                 LocalDate endDate = getCategoryLoanTime.calculateLoanEndDate(item.getItemID(), today);
                 LocalDate finalEndDate = endDate;
-                
+
                 checkReservationStmt.setInt(1, item.getItemID());
                 checkReservationStmt.setDate(2, java.sql.Date.valueOf(today));
                 ResultSet rs = checkReservationStmt.executeQuery();
 
                 if (rs.next() && rs.getDate("reservationDate") != null) {
                     LocalDate reservedDate = rs.getDate("reservationDate").toLocalDate();
-
-                    // Om reservationens datum är före det vanliga återlämningsdatumet
                     if (reservedDate.isBefore(endDate)) {
-                        finalEndDate = reservedDate.minusDays(1); // sätt till dagen innan
+                        finalEndDate = reservedDate.minusDays(1);
                     }
                 }
-                // Lägger in värden i loanRow tabelen
+
+                // Lägg till i databasen
                 insertLoanRowStmt.setInt(1, loanID);
                 insertLoanRowStmt.setInt(2, item.getItemID());
                 insertLoanRowStmt.setString(3, today.toString());
                 insertLoanRowStmt.setString(4, finalEndDate.toString());
                 insertLoanRowStmt.setBoolean(5, true);
                 insertLoanRowStmt.addBatch();
+
+                // Lägg till info i listan för alert
+                LoanRow row = new LoanRow(loanID, item.getItemID(), today, finalEndDate, true);
+                loanRows.add(row);
             }
 
             insertLoanRowStmt.executeBatch();
         }
-    } 
+
+        return loanRows;
+    }
+ 
 }
