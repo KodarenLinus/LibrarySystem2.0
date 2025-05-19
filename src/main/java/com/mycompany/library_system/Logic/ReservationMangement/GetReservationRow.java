@@ -13,6 +13,7 @@ import java.util.ArrayList;
  * Klass som hanterar hämtning av reservationsrader från databasen.
  * 
  * Följer SRP (Single Responsibility Principle) – endast ansvarig för att hämta data relaterad till ReservationRow.
+ * @author Linus, Emil, Viggo, Oliver
  */
 public class GetReservationRow {
 

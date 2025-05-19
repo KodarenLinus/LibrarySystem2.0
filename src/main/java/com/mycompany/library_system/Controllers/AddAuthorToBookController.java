@@ -28,10 +28,10 @@ import javafx.stage.Stage;
 public class AddAuthorToBookController {
 
     // Alert-komponenter
-    String title;
-    String header;
-    String content;
-    AlertHandler alertHandler = new AlertHandler();
+    private String title;
+    private String header;
+    private String content;
+    private AlertHandler alertHandler = new AlertHandler();
 
     // Bokobjekt som författare ska läggas till på
     private Object item = ObjectSession.getInstance().getCurrentItem();
@@ -64,7 +64,7 @@ public class AddAuthorToBookController {
      * Lägger till valda författare till den valda boken i databasen.
      * Visar alert beroende på om åtgärden lyckades eller misslyckades.
      * 
-     * @event -> Händelsen som triggas när användaren klickar på "Lägg till författare".
+     * @event Händelsen som triggas när användaren klickar på "Lägg till författare".
      */
     @FXML
     void AddAuthorsToBook(ActionEvent event) {
@@ -103,7 +103,7 @@ public class AddAuthorToBookController {
     /**
      * Flyttar vald författare från listan till listan över författare som ska läggas till.
      * 
-     * @event -> Händelsen som triggas när användaren klickar på ett objekt i listan.
+     * @event Händelsen som triggas när användaren klickar på ett objekt i listan.
      */
     @FXML
     void addToBookAuthorList(MouseEvent event) {
@@ -119,7 +119,7 @@ public class AddAuthorToBookController {
     /**
      * Tar bort en författare från listan över de som ska läggas till.
      * 
-     * @event -> Händelsen som triggas när användaren klickar på ett objekt i listan.
+     * @event Händelsen som triggas när användaren klickar på ett objekt i listan.
      */
     @FXML
     void RemoveFromBookAuthorList(MouseEvent event) {

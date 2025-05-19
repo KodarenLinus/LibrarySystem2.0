@@ -24,14 +24,18 @@ import java.util.stream.Collectors;
 public class ReserveItem {
 
     private static final Logger logger = Logger.getLogger(ReserveItem.class.getName());
-
-    private final AlertHandler alertHandler;
+    
+    private String title;
+    private String header;
+    private String content;
+    private final AlertHandler alert;
+    
     private final GetCategoryLoanTime loanTimeHelper;
     private final DatabaseConnector dbConnector;
 
     public ReserveItem() {
         this.dbConnector = new ConnDB();
-        this.alertHandler = new AlertHandler();
+        this.alert = new AlertHandler();
         this.loanTimeHelper = new GetCategoryLoanTime();
     }
 
@@ -54,7 +58,10 @@ public class ReserveItem {
 
             ArrayList<Items> validItems = filterAvailableItems(conn, itemsToReserve, reserveDate);
             if (validItems.isEmpty()) {
-                alertHandler.createAlert("Reservation", "Ingen reservation kunde genomföras", "Inga objekt tillgängliga.");
+                title = "Reservation";
+                header = "Ingen reservation kunde genomföras";
+                content = "Inga objekt tillgängliga.";
+                alert.createAlert(title, header, content);
                 conn.rollback(); // Rullar tillbaka om inget kunde reserveras
                 return false;
             }
@@ -67,7 +74,7 @@ public class ReserveItem {
 
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Fel vid reservation", e);
-            alertHandler.createAlert("Fel", "Databasfel", e.getMessage());
+            alert.createAlert("Fel", "Databasfel", e.getMessage());
             return false;
         }
     }
@@ -115,7 +122,10 @@ public class ReserveItem {
             if (isAvailable(conn, item.getItemID(), reserveDate, endDate)) {
                 validItems.add(item);
             } else {
-                alertHandler.createAlert("Reservation", "Kan inte reservera", "Ej tillgänglig: " + item.getTitle());
+                title = "Reservation";
+                header = "Kan inte reservera";
+                content = "Ej tillgänglig: " + item.getTitle();
+                alert.createAlert(title, header, content);
             }
         }
 
@@ -224,6 +234,9 @@ public class ReserveItem {
         String titles = items.stream()
             .map(Items::getTitle)
             .collect(Collectors.joining(", "));
-        alertHandler.createAlert("Reservation", "Lyckad reservation", titles);
+        title = "Reservation";
+        header = "Lyckad reservation";
+        content = titles;
+        alert.createAlert(title, header, content);
     }
 }

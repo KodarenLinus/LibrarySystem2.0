@@ -6,7 +6,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.library_system.Controllers.CustomerViewController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.library_system.Controllers.CustomerStartController">
    <children>
       <ToggleButton layoutX="50.0" layoutY="161.0" mnemonicParsing="false" onAction="#loanItem" prefHeight="53.0" prefWidth="92.0" text="Låna" />
       <Text layoutX="223.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Kund " wrappingWidth="132.8720703125">

@@ -11,6 +11,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+    /**
+     * Hanterar borttagning av objekt (Items) från databasen.
+     * 
+     * Denna klass används för att ta bort ett objekt från systemet, vilket inkluderar borttagning
+     * från huvudtabellen `Item` samt den relaterade tabellen beroende på objekttyp 
+     * (antingen `Book` eller `DVD`). Om objektet är aktivt utlånat förhindras borttagningen 
+     * och ett felmeddelande visas.
+     * @author Emil, Linus, Oliver, Viggo
+     */
+
 public class RemoveItem {
     private final DatabaseConnector dbConnector;
 
@@ -113,6 +123,9 @@ public class RemoveItem {
      * @throws SQLException vid fel i SQL
      */
     private boolean deleteFromItem(Connection conn, int itemID) throws SQLException {
+        String title;
+        String header; 
+        String content;
         String sql = "DELETE FROM Item " +
              "WHERE ItemID = ? " +
              "AND ItemID NOT IN (" +
@@ -127,7 +140,10 @@ public class RemoveItem {
             if (rowsAffected > 0) {
                 return true;
             } else {
-                alert.createAlert("Fel vid borttagning", "Objektet kunde inte tas bort", "Item är utlånat");
+                title = "Fel vid borttagning";
+                header = "Objektet kunde inte tas bort";
+                content = "Item är utlånat";
+                alert.createAlert(title, header, content);
                 return false;
             }
         }

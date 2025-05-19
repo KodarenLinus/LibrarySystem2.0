@@ -21,6 +21,8 @@ import java.time.LocalDate;
  * - Använder try-with-resources för att stänga databasresurser automatiskt
  * - Felhantering för okända kategori-ID:n
  * - Fixat metodnamn från 'calculatetLoanEndDate' till 'calculateLoanEndDate'
+ * 
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class GetCategoryLoanTime {
 

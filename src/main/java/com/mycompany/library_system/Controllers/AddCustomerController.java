@@ -1,11 +1,16 @@
 package com.mycompany.library_system.Controllers;
 
 import com.mycompany.library_system.Logic.CustomerMangement.AddCustomer;
+import com.mycompany.library_system.Logic.CustomerMangement.GetCustomerCategory;
 import com.mycompany.library_system.Utils.ChangeWindow;
 import com.mycompany.library_system.Models.Customer;
+import com.mycompany.library_system.Models.CustomerCategory;
 import com.mycompany.library_system.Search.SearchCustomer;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ToggleButton;
@@ -21,6 +26,9 @@ import javafx.scene.control.TextField;
  */
 public class AddCustomerController {
 
+    @FXML
+    private ComboBox<CustomerCategory> Category;
+    
     // Fält för användarens input
     @FXML
     private TextField email;
@@ -58,7 +66,7 @@ public class AddCustomerController {
      * Sätter hur kunder visas i listan samt lyssnar på sökfältet för att filtrera i realtid.
      */
     @FXML
-    public void initialize() {
+    public void initialize() throws SQLException {
         // Anpassad cell-rendering: visar toString()-representation av Customer-objekt
         customerList.setCellFactory(list -> new ListCell<Customer>() {
             @Override
@@ -77,10 +85,24 @@ public class AddCustomerController {
         
         // Lägg till lyssnare för när man klickar på en kund
         customerList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, selectedCustomer) -> {
-        if (selectedCustomer != null) {
-            populateFieldsWithCustomer(selectedCustomer);
-        }
-    });
+            if (selectedCustomer != null) {
+                populateFieldsWithCustomer(selectedCustomer);
+            }
+        });
+        
+         // Anpassad cellrendering för genrer
+        Category.setCellFactory(list -> new ListCell<CustomerCategory>() {
+            @Override
+            protected void updateItem(CustomerCategory category, boolean empty) {
+                super.updateItem(category, empty);
+                setText((empty || category == null) ? null : category.toString());
+            }
+        });
+
+        // Hämta och sätt genrer
+        GetCustomerCategory getCustomerCategory = new GetCustomerCategory();
+        ArrayList<CustomerCategory> allPublisher = getCustomerCategory.getAllCustomerCategory();
+        Category.getItems().setAll(allPublisher);
     }
 
     /**
@@ -92,6 +114,7 @@ public class AddCustomerController {
     @FXML
     void addCustomer(ActionEvent event) {
         System.out.println("test");
+        CustomerCategory selectedCategory = Category.getValue();
         try {
             // Skapa kundobjekt från inputfält och lagra i databasen
             Customer customer = new Customer(
@@ -99,7 +122,9 @@ public class AddCustomerController {
                 lastName.getText(), 
                 Integer.parseInt(telNr.getText()), 
                 email.getText(), 
-                password.getText()
+                password.getText(),
+                selectedCategory.getCategoryID(),
+                selectedCategory.getCategoryName()
             );
             AddCustomer addCustomer = new AddCustomer();
             addCustomer.insertCustomer(customer);
@@ -117,16 +142,16 @@ public class AddCustomerController {
      */
     @FXML
     void backToMenu(ActionEvent event) {
-        String fxmlf = "StartMenu.fxml";
+        String fxmlf = "StaffStart.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }
     
     private void populateFieldsWithCustomer(Customer customer) {
-    firstName.setText(customer.getFirstName());
-    lastName.setText(customer.getLastName());
-    email.setText(customer.getEmail());
-    telNr.setText(String.valueOf(customer.getTelNr()));
-    password.setText(String.valueOf(customer.getPassword()));
-}
+        firstName.setText(customer.getFirstName());
+        lastName.setText(customer.getLastName());
+        email.setText(customer.getEmail());
+        telNr.setText(String.valueOf(customer.getTelNr()));
+        password.setText(String.valueOf(customer.getPassword()));
+    }
 }

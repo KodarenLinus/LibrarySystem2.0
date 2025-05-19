@@ -25,7 +25,7 @@ import javafx.fxml.FXML;
  * 
  * @author Linus, Emil, Oliver, Viggo
  */
-public class MenuController {
+public class StaffStartController {
 
     /**
      * Navigerar till vyn för hantering av artiklar (t.ex. redigering, borttagning).

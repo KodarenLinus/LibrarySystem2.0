@@ -20,7 +20,7 @@ import javafx.scene.control.TextField;
 public class UpdateTitleItemController {
     
     // Instans av AlertHandler för att visa meddelanden
-    private AlertHandler alertHandler = new AlertHandler();
+    private AlertHandler alert = new AlertHandler();
     
     // Texter till popup-meddelanden
     private String title;
@@ -50,7 +50,7 @@ public class UpdateTitleItemController {
             title = "Felaktig titel";
             header = "Titel saknas";
             content = "Vänligen fyll i ett nytt titelvärde innan du uppdaterar.";
-            alertHandler.createAlert(title, header, content);
+            alert.createAlert(title, header, content);
             return;
         }
 
@@ -60,7 +60,7 @@ public class UpdateTitleItemController {
         title = "Uppdaterad";
         header = "Titel uppdaterad";
         content = "Titeln har uppdaterats till: " + newTitle;
-        alertHandler.createAlert(title, header, content);
+        alert.createAlert(title, header, content);
     }
     
     /**

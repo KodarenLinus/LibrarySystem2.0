@@ -157,7 +157,7 @@ public class AddBookController {
         ArrayList<Genre> allGenres = getGenres.getAllGenres();
         Genre.getItems().setAll(allGenres);
         
-         // Anpassad cellrendering för genrer
+        // Anpassad cellrendering för genrer
         Publisher.setCellFactory(list -> new ListCell<Publisher>() {
             @Override
             protected void updateItem(Publisher publisher, boolean empty) {

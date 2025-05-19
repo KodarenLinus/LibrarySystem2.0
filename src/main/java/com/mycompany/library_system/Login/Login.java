@@ -11,7 +11,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 /**
- *
+ * Klassen hanterar inloggning för både kunder och personal.
+ * Den verifierar användarnamn och lösenord mot databasen och
+ * skapar en sessionsinstans vid lyckad inloggning.
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class Login {

@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Klass för att hämta publishers från databasen.
  * Hämtar alla publishers från Publisher-tabellen.
  * 
- * @author Linus
+ * @author Emil, Oliver, Viggo, Linus
  */
 public class GetPublisher {
 
