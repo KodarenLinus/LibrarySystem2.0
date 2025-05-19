@@ -113,6 +113,9 @@ public class RemoveItem {
      * @throws SQLException vid fel i SQL
      */
     private boolean deleteFromItem(Connection conn, int itemID) throws SQLException {
+        String title;
+        String header; 
+        String content;
         String sql = "DELETE FROM Item " +
              "WHERE ItemID = ? " +
              "AND ItemID NOT IN (" +
@@ -127,7 +130,10 @@ public class RemoveItem {
             if (rowsAffected > 0) {
                 return true;
             } else {
-                alert.createAlert("Fel vid borttagning", "Objektet kunde inte tas bort", "Item är utlånat");
+                title = "Fel vid borttagning";
+                header = "Objektet kunde inte tas bort";
+                content = "Item är utlånat";
+                alert.createAlert(title, header, content);
                 return false;
             }
         }

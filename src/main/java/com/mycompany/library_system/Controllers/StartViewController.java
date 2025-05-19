@@ -30,7 +30,11 @@ import javafx.scene.input.MouseEvent;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class StartViewController {
-
+    private String title;
+    private String header;
+    private String content;
+    private AlertHandler alert = new AlertHandler();
+    
     @FXML
     private TextField SearchItem; // Textfält för sökning efter objekt
 
@@ -60,11 +64,10 @@ public class StartViewController {
         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             // Visa varning om att inloggning krävs
-            String title = "Inloggning krävs";
-            String header = "Du måste vara inloggad";
-            String content = "Logga in för att kunna låna detta objekt.";
-            AlertHandler alertHandler = new AlertHandler();
-            alertHandler.createAlert(title, header, content);
+            title = "Inloggning krävs";
+            header = "Du måste vara inloggad";
+            content = "Logga in för att kunna låna detta objekt.";
+            alert.createAlert(title, header, content);
         }
     }
 

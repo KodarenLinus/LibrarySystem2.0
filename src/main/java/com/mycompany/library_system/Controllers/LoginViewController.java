@@ -18,7 +18,10 @@ import javafx.scene.control.TextField;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class LoginViewController{
-
+    
+    String title;
+    String header;
+    String content;
     AlertHandler alert = new AlertHandler();
     
     private Login login = new Login();
@@ -40,14 +43,15 @@ public class LoginViewController{
         boolean isLoggedIn = login.doLogin(userName.getText(), userPassword.getText());
 
         if (isLoggedIn) {
-            String fxmlf = "CustomerView.fxml";
+            String fxmlf = "CustomerStart.fxml";
             ChangeWindow changeWindow = new ChangeWindow();
             changeWindow.windowChange(event, fxmlf);
         } else {
             System.out.println("Login failed: wrong username or password");
-
-            alert.createAlert("Fel vid inloggning", "Fel användarnamn eller lösenord", "Kolla att du skrivit användaruppgifterna är rätt");
-            // Lägg till 
+            title = "Fel vid inloggning";
+            header = "Fel användarnamn eller lösenord";
+            content = "Kolla att du skrivit användaruppgifterna är rätt";
+            alert.createAlert(title, content, content);
         }
     }
     
@@ -77,13 +81,15 @@ public class LoginViewController{
         boolean isLoggedIn = login.doStaffLogin(userName.getText(), userPassword.getText());
 
         if (isLoggedIn) {
-            String fxmlf = "StartMenu.fxml";
+            String fxmlf = "StaffStart.fxml";
             ChangeWindow changeWindow = new ChangeWindow();
             changeWindow.windowChange(event, fxmlf);
         } else {
             System.out.println("Login failed: wrong username or password");
-            alert.createAlert("Fel vid inloggning", "Fel användarnamn eller lösenord", "Kolla att du skrivit användaruppgifterna är rätt");
-            // Lägg till 
+            title = "Fel vid inloggning";
+            header = "Fel användarnamn eller lösenord";
+            content = "Kolla att du skrivit användaruppgifterna är rätt";
+            alert.createAlert(title, content, content);
         }
         
     }   

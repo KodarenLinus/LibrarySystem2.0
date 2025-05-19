@@ -14,7 +14,7 @@ import javafx.fxml.FXML;
  * 
  * @author Linus, Emil, Oliver, Viggo
  */
-public class CustomerViewController {
+public class CustomerStartController {
 
     /**
      * Navigerar till vyn där kunden kan se sina aktuella lån.

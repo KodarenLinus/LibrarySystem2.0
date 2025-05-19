@@ -27,12 +27,10 @@ import javafx.scene.input.MouseEvent;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class HandleItemsController {
-    
-    private AlertHandler alert = new AlertHandler();
     private String title;
     private String header;
     private String content;
-
+    private AlertHandler alert = new AlertHandler();
     
     @FXML
     private ListView<Items> ItemList;
@@ -165,11 +163,10 @@ public class HandleItemsController {
             // Öppna fönster för att lägga till författare
             popUpWindow.popUp(event, "AddAuthorToBook.fxml");
         } else if (choicenItem instanceof DVD) {
-            String title = "Kan inte lägga till författare";
-            String header = "DVD kan inte lägga till författare";
-            String content = "Vänlingen välj en book";
-            AlertHandler alertHandler = new AlertHandler();
-            alertHandler.createAlert(title, header, content);
+            title = "Kan inte lägga till författare";
+            header = "DVD kan inte lägga till författare";
+            content = "Vänlingen välj en book";
+            alert.createAlert(title, header, content);
         } else {
             System.out.println("Okänd typ av item");
         }

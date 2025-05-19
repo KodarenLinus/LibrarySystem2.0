@@ -28,10 +28,10 @@ import javafx.stage.Stage;
 public class AddAuthorToBookController {
 
     // Alert-komponenter
-    String title;
-    String header;
-    String content;
-    AlertHandler alertHandler = new AlertHandler();
+    private String title;
+    private String header;
+    private String content;
+    private AlertHandler alertHandler = new AlertHandler();
 
     // Bokobjekt som författare ska läggas till på
     private Object item = ObjectSession.getInstance().getCurrentItem();
