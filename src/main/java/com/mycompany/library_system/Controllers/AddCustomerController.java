@@ -148,10 +148,10 @@ public class AddCustomerController {
     }
     
     private void populateFieldsWithCustomer(Customer customer) {
-    firstName.setText(customer.getFirstName());
-    lastName.setText(customer.getLastName());
-    email.setText(customer.getEmail());
-    telNr.setText(String.valueOf(customer.getTelNr()));
-    password.setText(String.valueOf(customer.getPassword()));
-}
+        firstName.setText(customer.getFirstName());
+        lastName.setText(customer.getLastName());
+        email.setText(customer.getEmail());
+        telNr.setText(String.valueOf(customer.getTelNr()));
+        password.setText(String.valueOf(customer.getPassword()));
+    }
 }
