@@ -27,6 +27,7 @@ public class UpdateTitleItemController {
     private String header; 
     private String content;
     
+    // Det objekt som för närvarande är valt att uppdateras
     private Object item = ObjectSession.getInstance().getCurrentItem();
     
     @FXML
@@ -35,6 +36,12 @@ public class UpdateTitleItemController {
     @FXML
     private TextField Title;
 
+    /**
+     * Uppdaterar titeln för det valda objektet.
+     * Validerar input och visar meddelande om titel saknas.
+     *
+     * @param event ActionEvent som triggas när användaren klickar på "Uppdatera"
+     */
     @FXML
     void UpdateTitle(ActionEvent event) {
         String newTitle = Title.getText().trim();
@@ -56,6 +63,10 @@ public class UpdateTitleItemController {
         alertHandler.createAlert(title, header, content);
     }
     
+    /**
+     * Initialiserar vyn genom att visa aktuell titel för objektet.
+     * Denna metod körs automatiskt när fxml-filen laddas.
+     */
     @FXML
     public void initialize() {
         ItemTitle.setText("Ändra title på " + item.toString());

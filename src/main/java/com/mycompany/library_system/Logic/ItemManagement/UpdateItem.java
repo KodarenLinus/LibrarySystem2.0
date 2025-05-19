@@ -17,11 +17,22 @@ import java.sql.SQLException;
  */
 public class UpdateItem {
     private final DatabaseConnector dbConnector;
+    
 
+    /**
+     * Konstruktor som initialiserar databasanslutningen.
+     */
     public UpdateItem() {
         this.dbConnector = new ConnDB();
     }
     
+    /**
+     * Uppdaterar titeln på ett item i databasen baserat på dess ID.
+     *
+     * @param item  Objektet vars titel ska uppdateras
+     * @param title Den nya titeln som ska sparas i databasen
+     * @return null (ingen återkoppling på objektet hanteras här)
+     */
     public Items updateItemTitle(Items item, String title) {
         int itemID = item.getItemID();
         String updateTitle = "UPDATE Item "

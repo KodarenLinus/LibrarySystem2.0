@@ -141,6 +141,10 @@ public class ReserveItemController {
     }
 
 
+    /**
+    * Filtrerar listan med tillgängliga objekt baserat på valt datum och sökterm.
+    * Tar bort redan reserverade objekt och objekt med otillåtna kategorier.
+    */
     private void applyFilter() {
         LocalDate selectedDate = dateToReserve.getValue();
         String search = ScearchItem.getText();
