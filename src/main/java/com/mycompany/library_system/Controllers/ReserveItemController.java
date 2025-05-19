@@ -20,18 +20,6 @@ import javafx.scene.input.MouseEvent;
  * Användare kan söka efter tillgängliga items (böcker, DVD:er etc.), välja ett datum och reservera dem.
  * Klassen använder en kombination av FXML-element och logikklasser för att hantera interaktionen.
  *
- * Funktioner:
- * - Visa lista över tillgängliga items utifrån valt datum och söktext
- * - Lägga till och ta bort items från en tillfällig "reservationslista"
- * - Genomföra reservationer
- * - Navigera tillbaka till kundmenyn
- * 
- * Fält från FXML:
- * - ItemList: Visar tillgängliga items att reservera
- * - itemReservationList: Visar tillfälligt valda items att reservera
- * - ScearchItem: Textfält för filtrering
- * - dateToReserve: DatePicker för att välja reservationsdatum
- *
  * Denna vy filtrerar bort kategorier med ID 4 och 5.
  * 
  * @author Linus, Emil, Oliver, Viggo

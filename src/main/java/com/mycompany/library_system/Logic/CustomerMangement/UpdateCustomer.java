@@ -16,13 +16,8 @@ import java.sql.SQLException;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class UpdateCustomer {
-
-    /** Objekt för att hantera databaskopplingen */
     private final DatabaseConnector dbConnector;
 
-    /**
-     * Skapar en ny instans av {@code UpdateCustomer} med standarddatabaskoppling.
-     */
     public UpdateCustomer() {
         this.dbConnector = new ConnDB();
     }
