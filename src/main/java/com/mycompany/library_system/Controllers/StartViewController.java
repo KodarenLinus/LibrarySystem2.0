@@ -30,11 +30,15 @@ import javafx.scene.input.MouseEvent;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class StartViewController {
-    private String title;
-    private String header;
-    private String content;
+    // Instans av AlertHandler för att visa meddelanden
     private AlertHandler alert = new AlertHandler();
     
+    // Texter till popup-meddelanden
+    private String title;
+    private String header; 
+    private String content;
+    
+    // FXML-kopplingar till gränssnittets komponenter
     @FXML
     private TextField SearchItem; // Textfält för sökning efter objekt
 

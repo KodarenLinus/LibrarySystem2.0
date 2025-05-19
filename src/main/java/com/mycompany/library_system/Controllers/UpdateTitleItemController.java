@@ -14,7 +14,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 /**
- *
+ * Controller klass som hanterar uppdatering av titlar för items
+ * 
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class UpdateTitleItemController {
@@ -30,6 +32,7 @@ public class UpdateTitleItemController {
     // Det objekt som för närvarande är valt att uppdateras
     private Object item = ObjectSession.getInstance().getCurrentItem();
     
+    // FXML-kopplingar till gränssnittets komponenter
     @FXML
     private Label ItemTitle;
 

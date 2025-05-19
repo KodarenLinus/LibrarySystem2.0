@@ -37,6 +37,7 @@ import javafx.scene.input.MouseEvent;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class ReserveItemController {
+    // FXML-kopplingar till gränssnittets komponenter
     @FXML
     private ListView<Items> ItemList;
 
@@ -97,7 +98,8 @@ public class ReserveItemController {
     /**
      * Tar bort ett item från reservationslistan.
      * Filtrerar om tillgängliga items efteråt.
-     * @param event klickhändelse på item i itemReservationList
+     * 
+     * @param event -> klickhändelse på item i itemReservationList
      */
     @FXML
     void removeFromReservation(MouseEvent event) {

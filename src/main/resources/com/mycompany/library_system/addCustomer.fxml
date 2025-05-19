@@ -66,7 +66,7 @@
             <TextField fx:id="password" prefHeight="26.0" prefWidth="311.0" />
          </children>
       </HBox>
-      <ToggleButton fx:id="addNewCustomer" layoutX="428.0" layoutY="317.0" mnemonicParsing="false" onAction="#addCustomer" text="Lägg till ny kund" />
+      <ToggleButton layoutX="381.0" layoutY="317.0" mnemonicParsing="false" onAction="#addNewCustomerOrUpdate" text="Lägg till/ uppdatera kund ny kund" />
       <Text layoutX="95.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sök kund">
          <font>
             <Font size="18.0" />

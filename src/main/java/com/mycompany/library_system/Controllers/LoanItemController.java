@@ -41,14 +41,15 @@ import javafx.scene.input.MouseEvent;
  */
 public class LoanItemController {
 
-    // AlertHandler-instans för att visa varningsmeddelanden
-    private AlertHandler alertHandler = new AlertHandler();
-
-    // Texter för varningspopup
+    // Instans av AlertHandler för att visa meddelanden
+    private AlertHandler alert = new AlertHandler();
+    
+    // Texter till popup-meddelanden
     private String title;
     private String header; 
     private String content;
-
+    
+    // FXML-kopplingar till gränssnittets komponenter
     @FXML
     private ListView<Items> ItemList; // Lista med tillgängliga objekt
 
@@ -102,7 +103,7 @@ public class LoanItemController {
                 title = "Ej tillåtet";
                 header ="Kan inte läggas till"; 
                 content = (selectedItem.getCategoryName() + " är inte tillåten i kundvagnen.");
-                alertHandler.createAlert(title, header, content);
+                alert.createAlert(title, header, content);
                 return;
             }
 

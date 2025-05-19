@@ -30,7 +30,7 @@ import javafx.scene.control.TextField;
 public class AddBookController {
 
     // Instans av AlertHandler för att visa meddelanden
-    private AlertHandler alertHandler = new AlertHandler();
+    private AlertHandler alert = new AlertHandler();
     
     // Texter till popup-meddelanden
     private String title;
@@ -83,7 +83,7 @@ public class AddBookController {
             title = "Alla fält är inte ifyllda";
             header = "Du måste fylla i alla fälten"; 
             content = "Du har missat att fylla i ett eller flera fält. Se till att allt är ifyllt.";
-            alertHandler.createAlert(title, header, content);
+            alert.createAlert(title, header, content);
             return;
         }
         
@@ -113,13 +113,13 @@ public class AddBookController {
             title = "Lyckades";
             header = "Boken har lagts till"; 
             content = "Grattis, du har lagt till en ny bok i systemet.";
-            alertHandler.createAlert(title, header, content);
+            alert.createAlert(title, header, content);
         } catch (NumberFormatException e) {
             //Skapar en alert som berättar att man skrivit annat än int i ISBN 
             title = "Ej tillåten input";
             header = "ISBN måste vara heltal"; 
             content = "Du skrev in ogiltiga tecken i ISBN. Använd endast siffror.";
-            alertHandler.createAlert(title, header, content);
+            alert.createAlert(title, header, content);
         }
     }
 

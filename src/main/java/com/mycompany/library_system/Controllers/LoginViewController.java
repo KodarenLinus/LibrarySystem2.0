@@ -19,13 +19,18 @@ import javafx.scene.control.TextField;
  */
 public class LoginViewController{
     
-    String title;
-    String header;
-    String content;
-    AlertHandler alert = new AlertHandler();
+    // Instans av AlertHandler för att visa meddelanden
+    private AlertHandler alert = new AlertHandler();
     
+    // Texter till popup-meddelanden
+    private String title;
+    private String header; 
+    private String content;
+    
+    // Login objekt
     private Login login = new Login();
     
+    // FXML-kopplingar till gränssnittets komponenter
     @FXML
     private TextField userName;
 
@@ -89,7 +94,7 @@ public class LoginViewController{
             title = "Fel vid inloggning";
             header = "Fel användarnamn eller lösenord";
             content = "Kolla att du skrivit användaruppgifterna är rätt";
-            alert.createAlert(title, content, content);
+            alert.createAlert(title, header, content);
         }
         
     }   

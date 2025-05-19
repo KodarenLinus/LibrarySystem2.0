@@ -29,13 +29,14 @@ import javafx.scene.input.MouseEvent;
 public class MyLoansController {
     
     // Instans av AlertHandler för att visa meddelanden
-    private AlertHandler alertHandler = new AlertHandler();
+    private AlertHandler alert = new AlertHandler();
     
     // Texter till popup-meddelanden
     private String title;
     private String header; 
     private String content;
     
+    // FXML-kopplingar till gränssnittets komponenter
     @FXML
     private ListView<LoanRow> AktiveLoansList;
     
@@ -145,7 +146,7 @@ public class MyLoansController {
             title = "Ingen reservation är vald";
             header = "Du har inte valt en reservation"; 
             content = "Du har missat att välja en reservation att ta bort";
-            alertHandler.createAlert(title, header, content);
+            alert.createAlert(title, header, content);
         }
     }
     

@@ -31,7 +31,7 @@ import javafx.scene.control.TextField;
 public class AddCustomerController {
     
     // Instans av AlertHandler för att visa meddelanden
-    private AlertHandler alertHandler = new AlertHandler();
+    private AlertHandler alert = new AlertHandler();
     
     // Texter till popup-meddelanden
     private String title;
@@ -39,7 +39,6 @@ public class AddCustomerController {
     private String content;
     
     // FXML-kopplingar till gränssnittets komponenter
-    
     @FXML
     private ComboBox<CustomerCategory> Category;
     
@@ -105,7 +104,7 @@ public class AddCustomerController {
                 content = "Grattis, du har lagt till en ny kund i systemet.";
             }
 
-            alertHandler.createAlert(title, header, content);
+            alert.createAlert(title, header, content);
 
             // Uppdatera kundlistan i gränssnittet
             loadCustomerList();
@@ -117,7 +116,7 @@ public class AddCustomerController {
             title = "Ej tillåten input";
             header = "Telefonnummer måste vara heltal"; 
             content = "Du skrev in ogiltiga tecken i telefonnummerfältet. Använd endast siffror.";
-            alertHandler.createAlert(title, header, content);
+            alert.createAlert(title, header, content);
         }
     }
 
@@ -197,6 +196,7 @@ public class AddCustomerController {
         CustomerCategory category = getCustomerCategory.getCustomerCategoryByID(customer.getCategoryID());
         Category.setValue(category);
     }
+    
     /**
      * Laddar in kunder
      * 

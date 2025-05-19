@@ -27,16 +27,18 @@ import javafx.stage.Stage;
  */
 public class AddAuthorToBookController {
 
-    // Alert-komponenter
+    // Instans av AlertHandler för att visa meddelanden
+    private AlertHandler alert = new AlertHandler();
+    
+    // Texter till popup-meddelanden
     private String title;
-    private String header;
+    private String header; 
     private String content;
-    private AlertHandler alertHandler = new AlertHandler();
 
     // Bokobjekt som författare ska läggas till på
     private Object item = ObjectSession.getInstance().getCurrentItem();
 
-    // FXML-element
+    // FXML-kopplingar till gränssnittets komponenter
     @FXML
     private ListView<Author> AuthorList;
 
@@ -51,6 +53,7 @@ public class AddAuthorToBookController {
 
     /**
      * Öppnar ett nytt fönster för att skapa en ny författare.
+     * 
      * @event -> Händelsen som triggas när användaren klickar på "Lägg till författare".
      */
     @FXML
@@ -90,13 +93,13 @@ public class AddAuthorToBookController {
                 content = "Ingen författare kunde kopplas till boken.";
             }
 
-            alertHandler.createAlert(title, header, content);
+            alert.createAlert(title, header, content);
 
         } catch (ClassCastException e) {
             title = "Fel objekt valt";
             header = "Du försökte lägga till författare till något som inte är en bok.";
             content = "Vänligen välj en bok innan du lägger till författare.";
-            alertHandler.createAlert(title, header, content);
+            alert.createAlert(title, header, content);
         }
     }
 
@@ -162,7 +165,7 @@ public class AddAuthorToBookController {
             title = "ClassCastException";
             header = "Objektet kunde inte tolkas som en bok";
             content = "Vänligen kontrollera att ett bokobjekt är valt.";
-            alertHandler.createAlert(title, header, content);
+            alert.createAlert(title, header, content);
         }
 
         // Lyssnar efter ändringar i sökfältet

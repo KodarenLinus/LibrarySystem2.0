@@ -18,7 +18,7 @@ import javafx.scene.control.TextField;
 public class CreateAuthorController {
     
     // Instans av AlertHandler för att visa meddelanden
-    private AlertHandler alertHandler = new AlertHandler();
+    private AlertHandler alert = new AlertHandler();
     
     // Texter till popup-meddelanden
     private String title;
@@ -45,7 +45,7 @@ public class CreateAuthorController {
             header = "Du måste fylla i alla fälten"; 
             content = "Du har missat att fylla i ett eller flera fält, "
                     + "se till att alla fält är ifyllda innan du klickar dig vidare";
-            alertHandler.createAlert(title, header, content);
+            alert.createAlert(title, header, content);
             return;
         }
         String firstname = AuthorFirstname.getText();
@@ -57,7 +57,7 @@ public class CreateAuthorController {
         title = "Lyckades";
         header = "Customer har lagts till"; 
         content = "Grattis, du har lagt till en ny kund i systemet.";
-        alertHandler.createAlert(title, header, content);
+        alert.createAlert(title, header, content);
     }
     
      /**
