@@ -14,14 +14,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- *Den här hämtar alla objekt i customerCategry för att man ska kunna 
- * klicka i den kategori den kund man ska lägga till tillhör
+ * Denna klass används för att hämta kundkategorier från databasen.
+ * Den tillhandahåller funktionalitet för att hämta alla kategorier samt
+ * en specifik kategori baserat på ID. Kategorier används till exempel 
+ * vid registrering av nya kunder.
  * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class GetCustomerCategory {
-    
-    
     private final DatabaseConnector dbConnector;
 
     public GetCustomerCategory() {
@@ -29,18 +29,17 @@ public class GetCustomerCategory {
     }
 
     /**
-    * Hämtar alla kundkategorier från databasen.
-    * Metoden ansluter till databasen och utför en SQL-fråga för att hämta alla rader
-    * från tabellen "CustomerCategory".
-    * 
-    * @return en lista med alla kundkategorier i databasen
-    * @throws SQLException om ett fel uppstår vid databasanslutning eller SQL-exekvering
-    */
-    
+     * Hämtar alla kundkategorier från databasen.
+     * Metoden ansluter till databasen och utför en SQL-fråga för att hämta alla rader
+     * från tabellen "CustomerCategory".
+     * 
+     * @return en lista med alla kundkategorier i databasen
+     * @throws SQLException om ett fel uppstår vid databasanslutning eller SQL-exekvering
+     */
     public ArrayList<CustomerCategory> getAllCustomerCategory() throws SQLException {
         ArrayList<CustomerCategory> customerCategoryList = new ArrayList<>();
 
-        // SQL-fråga för att hämta alla genrer
+        // SQL-fråga för att hämta alla kundkategorier
         String selectAllCustomerCategories = "SELECT * FROM CustomerCategory";
 
         // Try-with-resources ser till att alla resurser stängs korrekt
@@ -54,7 +53,7 @@ public class GetCustomerCategory {
                 String customerCategoryName = rsCustomerCategory.getString("CategoryName");
                 int loanLimit = rsCustomerCategory.getInt("LoanLimit");
 
-                // Skapar Genre-objekt och lägger till i listan
+                // Skapar CustomerCategory-objekt och lägger till i listan
                 CustomerCategory customerCategory = new CustomerCategory(customerCategoryID, customerCategoryName, loanLimit);
                 customerCategoryList.add(customerCategory);
             }
@@ -62,25 +61,35 @@ public class GetCustomerCategory {
 
         return customerCategoryList;
     }
-    
-    public CustomerCategory getCustomerCategoryByID (int customerCategoryID) throws SQLException{
-        String findCustomerCategoryByID = "SELECT * FROM CustomerCategory "
-                + "WHERE CustomerCategoryID = ?";
+
+    /**
+     * Hämtar en specifik kundkategori från databasen baserat på ID.
+     * Används exempelvis för att identifiera en kunds kategori vid inloggning
+     * eller detaljvisning.
+     * 
+     * @param customerCategoryID ID för den kundkategori som ska hämtas
+     * @return ett CustomerCategory objekt om det hittas, annars null
+     * @throws SQLException om ett fel uppstår vid databasanslutning eller SQL-exekvering
+     */
+    public CustomerCategory getCustomerCategoryByID(int customerCategoryID) throws SQLException {
+        String findCustomerCategoryByID = "SELECT * FROM CustomerCategory WHERE CustomerCategoryID = ?";
+        
         try (
             Connection conn = dbConnector.connect();
-            PreparedStatement customerCategoryStmt = conn.prepareStatement(findCustomerCategoryByID); 
-        ){
+            PreparedStatement customerCategoryStmt = conn.prepareStatement(findCustomerCategoryByID)
+        ) {
             customerCategoryStmt.setInt(1, customerCategoryID);
             ResultSet rsCustomerCategory = customerCategoryStmt.executeQuery();
+            
             if (rsCustomerCategory.next()) {
                 String customerCategoryName = rsCustomerCategory.getString("CategoryName");
                 int loanLimit = rsCustomerCategory.getInt("LoanLimit");
 
-                // Skapar Genre-objekt och lägger till i listan
-                CustomerCategory customerCategory = new CustomerCategory(customerCategoryID, customerCategoryName, loanLimit);
-                return customerCategory;
+                // Skapar CustomerCategory-objekt
+                return new CustomerCategory(customerCategoryID, customerCategoryName, loanLimit);
             }
-        } 
+        }
+        
         return null;
     }
 }

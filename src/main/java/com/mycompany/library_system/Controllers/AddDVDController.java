@@ -48,9 +48,6 @@ public class AddDVDController {
     @FXML
     private TextField Title;
 
-    @FXML
-    private ToggleButton addNewDVD;
-
     /**
      * Navigerar tillbaka till valfönstret för att lägga till olika typer av objekt.
      * 
@@ -65,10 +62,12 @@ public class AddDVDController {
 
     /**
      * Lägger till en ny DVD i databasen efter att ha validerat formuläret.
-     * Visar popup och använder AddDVD-logik för att infoga data.
-     * 
+     * Om något fält saknas visas en varning. Om alla fält är korrekta
+     * skapas ett nytt DVD-objekt och skickas till databasen
+     *
      * @param event ActionEvent från knapptryckning
      */
+
     @FXML
     void addDVD(ActionEvent event) {
         if (!isFormValid()) {
@@ -79,13 +78,15 @@ public class AddDVDController {
             alert.createAlert(title, header, content);
             return;
         }
-
+        
+        // Hämtar data från genre och category combo box
         Genre selectedGenre = Genre.getValue();
         Director selectedDirector = Director.getValue();
 
         AddDVD addDVD = new AddDVD();
         CategoryType dvd_ = CategoryType.DVD;
-
+        
+        // Skapar ett DVD objekt
         DVD dvd = new DVD(
             Title.getText(),
             Location.getText(),
@@ -95,8 +96,11 @@ public class AddDVDController {
             selectedGenre.getGenreName(),
             selectedDirector.getDirectorID()
         );
+        
+        //Skickar DVD objektet till AddDVD för att lägga till den i databasen
         addDVD.insertDVD(dvd);
-         
+        
+        //En alert som säger att vi lyckas lägga till DVD i databasen
         title = "Lyckades";
         header = "DVD har lagts till"; 
         content = "Grattis, du har lagt till en ny DVD i systemet.";
@@ -105,10 +109,10 @@ public class AddDVDController {
     }
 
     /**
-     * Initierar fält och laddar in tillgängliga genrer och regissörer från databasen.
-     * Kallas automatiskt när scenen laddas.
-     * 
-     * @throws SQLException om databasen inte kan nås
+     * Initialiserar ComboBox-komponenterna med regissörer och genrer från databasen.
+     * Denna metod körs automatiskt av JavaFX när scenen laddas.
+     *
+     * @throws SQLException om det uppstår ett fel vid hämtning av data från databasen
      */
     @FXML
     public void initialize() throws SQLException {

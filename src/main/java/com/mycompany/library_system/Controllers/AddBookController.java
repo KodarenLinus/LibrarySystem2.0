@@ -56,9 +56,6 @@ public class AddBookController {
     @FXML
     private TextField Title;
 
-    @FXML
-    private ToggleButton addNewBook;
-
     /**
      * Navigerar användaren till vyn för att välja objekt att lägga till (t.ex. bok eller DVD).
      *
@@ -104,7 +101,6 @@ public class AddBookController {
                 selectedGenre.getGenreName(),
                 selectedPublisher.getPublisherID()
             );
-            
             //Skickar book objektet till AddBook för att lägga till den i databasen
             AddBook addBook = new AddBook();
             addBook.insertBook(book);
@@ -114,6 +110,7 @@ public class AddBookController {
             header = "Boken har lagts till"; 
             content = "Grattis, du har lagt till en ny bok i systemet.";
             alert.createAlert(title, header, content);
+            
         } catch (NumberFormatException e) {
             //Skapar en alert som berättar att man skrivit annat än int i ISBN 
             title = "Ej tillåten input";
