@@ -154,7 +154,7 @@ public class LoanItem {
         alertHandler.createAlert(title, header, content);
     }
 
-    /**
+   /**
     * Skapar ett nytt lån i databasen och returnerar ID:t för det nya lånet.
     *
     * @param conn Databasanslutning
@@ -181,7 +181,7 @@ public class LoanItem {
         }
     }
     
-    /**
+   /**
     * Lägger till flera rader i LoanRow-tabellen för ett lån.
     * Varje objekt får ett start- och slutdatum för utlåningen.
     *

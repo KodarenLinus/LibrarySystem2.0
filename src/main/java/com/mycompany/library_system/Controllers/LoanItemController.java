@@ -180,7 +180,8 @@ public class LoanItemController {
                     } catch (SQLException ex) {
                         Logger.getLogger(ReserveItemController.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
+                    
+                    //Sätter ut att item är reserverat om de är inom lån tid.
                     String dateInfo = (reservationDate != null && reservationDate.isAfter(LocalDate.now())) ?
                             " (Reserverad: " + reservationDate + ")" : " (Ej reserverad)";
                     setText(item.toString() + dateInfo);

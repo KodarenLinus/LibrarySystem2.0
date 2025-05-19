@@ -28,6 +28,12 @@ import javafx.scene.input.MouseEvent;
  */
 public class HandleItemsController {
     
+    private AlertHandler alert = new AlertHandler();
+    private String title;
+    private String header;
+    private String content;
+
+    
     @FXML
     private ListView<Items> ItemList;
 
@@ -54,7 +60,10 @@ public class HandleItemsController {
             } 
         } else {
             AlertHandler alert = new AlertHandler();
-            alert.createAlert("Inget objekt valt", "Du måste välja ett objekt", "Vänligen välj ett objekt i listan att ta bort.");
+            title = "Inget objekt valt";
+            header = "Du måste välja ett objekt";
+            content = "Vänligen välj ett objekt i listan att ta bort.";
+            alert.createAlert(title, header, content);
         }
     }
 
@@ -67,8 +76,10 @@ public class HandleItemsController {
             PopUpWindow popUpWindow = new PopUpWindow();
             popUpWindow.popUp(event, fxmlFile);
         } else {
-            AlertHandler alert = new AlertHandler();
-            alert.createAlert("Inget objekt valt", "Du måste välja ett objekt", "Välj ett objekt i listan att uppdatera.");
+            title = "Inget objekt valt";
+            header = "Du måste välja ett objekt";
+            content = "Välj ett objekt i listan att uppdatera.";
+            alert.createAlert(title, header, content);
         }
     }
     
