@@ -67,20 +67,22 @@ public class LoanItem {
         ArrayList<LoanRow> loanRows = insertLoanRows(conn, loanID, itemsToLoan);
 
         // Pop-up med info
-        title = "Lån popUp";
-        header = "Lyckat lån";
-        content.append("Du har lånat följande:\n\n");
-        GetItemsByID getItemsByID = new GetItemsByID();
-        for (LoanRow row : loanRows) {
-            content.append(String.format("%s - %s (Från: %s Till: %s)\n",
-                row.getItemID(),
-                getItemsByID.getItemById(row.getItemID()).getTitle(),
-                row.getLoanRowStartDate(),
-                row.getLoanRowEndDate()));
-        }
-
+        if (loanRows.size() > 0){
+            title = "Lån popUp";
+            header = "Lyckat lån";
+            content.append("Du har lånat följande:\n\n");
+            GetItemsByID getItemsByID = new GetItemsByID();
+            for (LoanRow row : loanRows) {
+                content.append(String.format("%s - %s (Från: %s Till: %s)\n",
+                    row.getItemID(),
+                    getItemsByID.getItemById(row.getItemID()).getTitle(),
+                    row.getLoanRowStartDate(),
+                    row.getLoanRowEndDate()));
+            }
+        
         alertHandler.createAlert(title, header, content.toString());
-
+        }
+        
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -145,8 +147,6 @@ public class LoanItem {
     * @param cartTooBig Om felet beror på att kundvagnen innehåller för många objekt
     */
     private void handleLoanLimitExceeded(boolean cartTooBig) {
-        //PopUpWindow popUpWindow = new PopUpWindow();
-        //String fxml;
         String title;
         String header;
         String content;
@@ -157,13 +157,11 @@ public class LoanItem {
             header = "Du måste lämna tillbaka föremål eller ta bort föremål ur din kundvagn";
             content = "Gå till 'Mina lån' för att lämna tillbaka föremål eller ta bort några föremål ur kundvagnen.";
         } else {
-            //fxml = "PopUpToManyActiveLoans.fxml";
             title = "För Många aktiva lån";
             header = "Du måste lämna tillbaka föremål";
             content = "Gå till 'Mina lån' för att lämna tillbaka föremål.";
         }
         
-        //popUpWindow.popUp(event, fxml);
         AlertHandler alertHandler = new AlertHandler();
         alertHandler.createAlert(title, header, content);
     }
@@ -195,93 +193,135 @@ public class LoanItem {
         }
     }
     
+
     /**
      * Lägger till flera rader i LoanRow-tabellen för ett lån.
      * Varje objekt får ett start- och slutdatum för utlåningen.
      *
      * @param conn Databasanslutning
      * @param loanID ID för det skapade lånet
-     * @param itemsToLoan Objekt som ska lånas
-     * @return Lista med skapade LoanRow objekt innehållande låneinfo
-     * @throws SQLException vid fel i SQL-frågan
+     * @param itemsToLoan Lista med objekt som ska lånas
+     * @return Lista med skapade LoanRow-objekt innehållande låneinformation
      */
     public ArrayList<LoanRow> insertLoanRows(Connection conn, int loanID, ArrayList<Items> itemsToLoan) {
+        String title;
+        String header;
+        String content;
+        
         int currentUserID = Session.getInstance().getUserId();
         LocalDate today = LocalDate.now();
-        LocalDate futureDate = today.plusDays(14);
-
-        String insertLoanRowSQL = "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate, ActiveLoan) VALUES (?, ?, ?, ?, true)";
-        String reservationSQL = "SELECT r.CustomerID, res.reservationDate FROM reservationrow rr " +
-                                "JOIN reservation r ON rr.reservationID = r.reservationID " +
-                                "JOIN reservation res ON r.reservationID = res.reservationID " +
-                                "WHERE rr.itemID = ? AND res.reservationDate = ?";
-        String futureReservationSQL = "SELECT r.reservationDate FROM reservationrow rr " +
-                                      "JOIN reservation r ON rr.reservationID = r.reservationID " +
-                                      "WHERE rr.itemID = ? AND r.reservationDate > ?";
-        String updateReservationSQL = "UPDATE reservationrow SET IsFullfilled = true " +
-                                      "WHERE itemID = ? AND reservationID IN (" +
-                                      "SELECT reservationID FROM reservation WHERE CustomerID = ? AND reservationDate = ?)";
-
         ArrayList<LoanRow> loanRows = new ArrayList<>();
 
         try (
-            PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRowSQL, Statement.RETURN_GENERATED_KEYS);
-            PreparedStatement checkReservationStmt = conn.prepareStatement(reservationSQL);
-            PreparedStatement futureReservationStmt = conn.prepareStatement(futureReservationSQL);
-            PreparedStatement updateReservationStmt = conn.prepareStatement(updateReservationSQL);
+            PreparedStatement insertLoanRowStmt = conn.prepareStatement(
+                "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate, ActiveLoan) VALUES (?, ?, ?, ?, true)",
+                Statement.RETURN_GENERATED_KEYS
+            );
+            PreparedStatement checkReservationStmt = conn.prepareStatement(
+                "SELECT r.CustomerID, res.reservationDate FROM reservationrow rr " +
+                "JOIN reservation r ON rr.reservationID = r.reservationID " +
+                "JOIN reservation res ON r.reservationID = res.reservationID " +
+                "WHERE rr.itemID = ? AND res.reservationDate = ?"
+            );
+            PreparedStatement futureReservationStmt = conn.prepareStatement(
+                "SELECT r.reservationDate FROM reservationrow rr " +
+                "JOIN reservation r ON rr.reservationID = r.reservationID " +
+                "WHERE rr.itemID = ? AND r.reservationDate > ?"
+            );
+            PreparedStatement updateReservationStmt = conn.prepareStatement(
+                "UPDATE reservationrow SET IsFullfilled = true " +
+                "WHERE itemID = ? AND reservationID IN (" +
+                "SELECT reservationID FROM reservation WHERE CustomerID = ? AND reservationDate = ?)"
+            );
         ) {
             for (Items item : itemsToLoan) {
-                // Kontrollera om objektet är reserverat idag
-                checkReservationStmt.setInt(1, item.getItemID());
-                checkReservationStmt.setDate(2, java.sql.Date.valueOf(today));
-                ResultSet rs = checkReservationStmt.executeQuery();
-
-                if (rs.next()) {
-                    int reservingUserID = rs.getInt("CustomerID");
-                    if (reservingUserID != currentUserID) {
-                        System.out.println("Objektet med ID " + item.getItemID() + " är reserverat av annan användare idag och kan inte lånas.");
-                        continue; // hoppa över detta item
-                    } else {
-                        // Rätt användare lånar objektet på sin reserverade dag → markera som uppfylld
-                        updateReservationStmt.setInt(1, item.getItemID());
-                        updateReservationStmt.setInt(2, currentUserID);
-                        updateReservationStmt.setDate(3, java.sql.Date.valueOf(today));
-                        updateReservationStmt.executeUpdate();
-                    }
+                if (!canLoanItemToday(item.getItemID(), currentUserID, today, checkReservationStmt, updateReservationStmt)) {
+                    System.out.println("Objektet med ID " + item.getItemID() + " är reserverat av annan användare idag och kan inte lånas.");
+                    title = "Reserverat av annan användare";
+                    header = "Du kan inte låna " + item.getTitle();
+                    content = "Du kan inte låna " + item.getTitle() + " Eftersom det är reserverat idag";
+                    AlertHandler alertHandler = new AlertHandler();
+                    alertHandler.createAlert(title, header, content);
+                    continue;
                 }
 
-                // Kontrollera om framtida reservation finns
-                futureReservationStmt.setInt(1, item.getItemID());
-                futureReservationStmt.setDate(2, java.sql.Date.valueOf(today));
-                ResultSet futureRs = futureReservationStmt.executeQuery();
+                LocalDate endDate = calculateReturnDate(item.getItemID(), today, futureReservationStmt);
 
-                LocalDate calculatedReturnDate = futureDate;
-                if (futureRs.next()) {
-                    LocalDate futureReservationDate = futureRs.getDate("reservationDate").toLocalDate();
-                    calculatedReturnDate = futureReservationDate.minusDays(1);
-                }
-
-                // Lägg till loanrow och hämta genererat ID
                 insertLoanRowStmt.setInt(1, loanID);
                 insertLoanRowStmt.setInt(2, item.getItemID());
                 insertLoanRowStmt.setDate(3, java.sql.Date.valueOf(today));
-                insertLoanRowStmt.setDate(4, java.sql.Date.valueOf(calculatedReturnDate));
+                insertLoanRowStmt.setDate(4, java.sql.Date.valueOf(endDate));
                 insertLoanRowStmt.executeUpdate();
 
                 ResultSet generatedKeys = insertLoanRowStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
-
-                    LoanRow loanRow = new LoanRow(loanID, item.getItemID(), today, calculatedReturnDate, true);
+                    LoanRow loanRow = new LoanRow(loanID, item.getItemID(), today, endDate, true);
                     loanRows.add(loanRow);
                 }
             }
-
             System.out.println("Lånerader har lagts till.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return loanRows;
     }
 
+    /**
+     * Kontrollerar om objektet kan lånas idag, baserat på eventuella reservationer.
+     * Uppdaterar reservationen som uppfylld om den tillhör aktuell användare.
+     *
+     * @param itemId Objektets ID
+     * @param userId Aktuell användares ID
+     * @param today Dagens datum
+     * @param checkStmt Förberedd SQL-sats för att kontrollera reservation
+     * @param updateStmt Förberedd SQL-sats för att uppdatera reservation
+     * @return true om objektet får lånas, annars false
+     * @throws SQLException vid SQL-fel
+     */
+    private boolean canLoanItemToday(int itemId, int userId, LocalDate today,
+        PreparedStatement checkStmt, PreparedStatement updateStmt) throws SQLException {
+        checkStmt.setInt(1, itemId);
+        checkStmt.setDate(2, java.sql.Date.valueOf(today));
+        ResultSet rs = checkStmt.executeQuery();
 
+        if (rs.next()) {
+            int reservingUserID = rs.getInt("CustomerID");
+            if (reservingUserID != userId) {
+                return false; // reserverat av någon annan
+            } else {
+                updateStmt.setInt(1, itemId);
+                updateStmt.setInt(2, userId);
+                updateStmt.setDate(3, java.sql.Date.valueOf(today));
+                updateStmt.executeUpdate();
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Beräknar ett slutdatum för utlåning, beroende på framtida reservationer.
+     *
+     * @param itemId Objektets ID
+     * @param startDate Startdatum för utlåning
+     * @param stmt Förberedd SQL-sats för framtida reservationer
+     * @return Datum då objektet ska återlämnas
+     * @throws SQLException vid SQL-fel
+     */
+    private LocalDate calculateReturnDate(int itemId, LocalDate startDate,
+                                          PreparedStatement stmt) throws SQLException {
+        stmt.setInt(1, itemId);
+        stmt.setDate(2, java.sql.Date.valueOf(startDate));
+        ResultSet rs = stmt.executeQuery();
+
+        LocalDate defaultReturnDate = startDate.plusDays(14);
+        if (rs.next()) {
+            LocalDate reservedDate = rs.getDate("reservationDate").toLocalDate();
+            return reservedDate.minusDays(1);
+        }
+        return defaultReturnDate;
+    }
 }
+
+
+
