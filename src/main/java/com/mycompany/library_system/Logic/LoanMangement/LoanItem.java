@@ -8,6 +8,7 @@ import com.mycompany.library_system.Logic.ItemManagement.GetCategoryLoanTime;
 import com.mycompany.library_system.Database.DatabaseConnector;
 import com.mycompany.library_system.Database.ConnDB;
 import com.mycompany.library_system.Logic.ItemManagement.GetItemsByID;
+import com.mycompany.library_system.Login.Session;
 import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Models.LoanRow;
 import com.mycompany.library_system.Utils.AlertHandler;
@@ -20,13 +21,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 /**
+ * Klass som hanterar utlåning av objekt och sparar lånerader i databasen.
+ * Metoderna kontrollerar kundens lånegräns, skapar lån, lägger till LoanRow-poster
+ * och visar popup-meddelanden med lånedatum och återlämningsdatum.
  *
- * En klass som hantera lån och lägger in dem i databasen
- * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class LoanItem {    
-    
     private final DatabaseConnector dbConnector;
 
     public LoanItem () {
@@ -34,15 +35,15 @@ public class LoanItem {
     }
     
     /**
-    * Lägger till objekt i lån (LoanRow) för en viss kund.
-    * Kontrollerar först om kunden får låna fler objekt utifrån sin lånegräns.
-    * Om gränsen överskrids visas ett popup-meddelande.
-    * Annars skrivs ett kvito ut med hela ordern.
-    *
-    * @param custID ID för kunden som lånar
-    * @param itemsToLoan Lista med objekt som ska lånas
-    * @param event Event som triggar popup-fönster vid fel
-    */
+     * Lägger till objekt i lån (LoanRow) för en viss kund.
+     * Kontrollerar först om kunden får låna fler objekt utifrån sin lånegräns.
+     * Om gränsen överskrids visas ett popup-meddelande.
+     * Annars skrivs ett kvito ut med hela ordern.
+     *
+     * @param custID ID för kunden som lånar
+     * @param itemsToLoan Lista med objekt som ska lånas
+     * @param event Event som triggar popup-fönster vid fel
+     */
     public boolean addToLoanRows(int custID, ArrayList<Items> itemsToLoan) {
     AlertHandler alertHandler = new AlertHandler();
     String title;
@@ -72,10 +73,10 @@ public class LoanItem {
         GetItemsByID getItemsByID = new GetItemsByID();
         for (LoanRow row : loanRows) {
             content.append(String.format("%s - %s (Från: %s Till: %s)\n",
-                    row.getItemID(),
-                    getItemsByID.getItemById(row.getItemID()).getTitle(),
-                    row.getLoanRowStartDate(),
-                    row.getLoanRowEndDate()));
+                row.getItemID(),
+                getItemsByID.getItemById(row.getItemID()).getTitle(),
+                row.getLoanRowStartDate(),
+                row.getLoanRowEndDate()));
         }
 
         alertHandler.createAlert(title, header, content.toString());
@@ -204,53 +205,83 @@ public class LoanItem {
      * @return Lista med skapade LoanRow objekt innehållande låneinfo
      * @throws SQLException vid fel i SQL-frågan
      */
-    private ArrayList<LoanRow> insertLoanRows(Connection conn, int loanID, ArrayList<Items> itemsToLoan) throws SQLException {
-        String insertLoanRowSQL = "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate, ActiveLoan) VALUES (?, ?, ?, ?, ?)";
-        String reservationSQL = "SELECT r.reservationDate " +
-                                "FROM reservationrow rr " +
-                                "JOIN reservation r ON rr.reservationID = r.reservationID " +
-                                "WHERE rr.itemID = ? AND r.reservationDate >= ?";
-
+    public ArrayList<LoanRow> insertLoanRows(Connection conn, int loanID, ArrayList<Items> itemsToLoan) {
+        int currentUserID = Session.getInstance().getUserId();
         LocalDate today = LocalDate.now();
+        LocalDate futureDate = today.plusDays(14);
+
+        String insertLoanRowSQL = "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate, ActiveLoan) VALUES (?, ?, ?, ?, true)";
+        String reservationSQL = "SELECT r.CustomerID, res.reservationDate FROM reservationrow rr " +
+                                "JOIN reservation r ON rr.reservationID = r.reservationID " +
+                                "JOIN reservation res ON r.reservationID = res.reservationID " +
+                                "WHERE rr.itemID = ? AND res.reservationDate = ?";
+        String futureReservationSQL = "SELECT r.reservationDate FROM reservationrow rr " +
+                                      "JOIN reservation r ON rr.reservationID = r.reservationID " +
+                                      "WHERE rr.itemID = ? AND r.reservationDate > ?";
+        String updateReservationSQL = "UPDATE reservationrow SET IsFullfilled = true " +
+                                      "WHERE itemID = ? AND reservationID IN (" +
+                                      "SELECT reservationID FROM reservation WHERE CustomerID = ? AND reservationDate = ?)";
+
         ArrayList<LoanRow> loanRows = new ArrayList<>();
 
         try (
-            PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRowSQL);
+            PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRowSQL, Statement.RETURN_GENERATED_KEYS);
             PreparedStatement checkReservationStmt = conn.prepareStatement(reservationSQL);
+            PreparedStatement futureReservationStmt = conn.prepareStatement(futureReservationSQL);
+            PreparedStatement updateReservationStmt = conn.prepareStatement(updateReservationSQL);
         ) {
             for (Items item : itemsToLoan) {
-                GetCategoryLoanTime getCategoryLoanTime = new GetCategoryLoanTime();
-                LocalDate endDate = getCategoryLoanTime.calculateLoanEndDate(item.getItemID(), today);
-                LocalDate finalEndDate = endDate;
-
+                // Kontrollera om objektet är reserverat idag
                 checkReservationStmt.setInt(1, item.getItemID());
                 checkReservationStmt.setDate(2, java.sql.Date.valueOf(today));
                 ResultSet rs = checkReservationStmt.executeQuery();
 
-                if (rs.next() && rs.getDate("reservationDate") != null) {
-                    LocalDate reservedDate = rs.getDate("reservationDate").toLocalDate();
-                    if (reservedDate.isBefore(endDate)) {
-                        finalEndDate = reservedDate.minusDays(1);
+                if (rs.next()) {
+                    int reservingUserID = rs.getInt("CustomerID");
+                    if (reservingUserID != currentUserID) {
+                        System.out.println("Objektet med ID " + item.getItemID() + " är reserverat av annan användare idag och kan inte lånas.");
+                        continue; // hoppa över detta item
+                    } else {
+                        // Rätt användare lånar objektet på sin reserverade dag → markera som uppfylld
+                        updateReservationStmt.setInt(1, item.getItemID());
+                        updateReservationStmt.setInt(2, currentUserID);
+                        updateReservationStmt.setDate(3, java.sql.Date.valueOf(today));
+                        updateReservationStmt.executeUpdate();
                     }
                 }
 
-                // Lägg till i databasen
+                // Kontrollera om framtida reservation finns
+                futureReservationStmt.setInt(1, item.getItemID());
+                futureReservationStmt.setDate(2, java.sql.Date.valueOf(today));
+                ResultSet futureRs = futureReservationStmt.executeQuery();
+
+                LocalDate calculatedReturnDate = futureDate;
+                if (futureRs.next()) {
+                    LocalDate futureReservationDate = futureRs.getDate("reservationDate").toLocalDate();
+                    calculatedReturnDate = futureReservationDate.minusDays(1);
+                }
+
+                // Lägg till loanrow och hämta genererat ID
                 insertLoanRowStmt.setInt(1, loanID);
                 insertLoanRowStmt.setInt(2, item.getItemID());
-                insertLoanRowStmt.setString(3, today.toString());
-                insertLoanRowStmt.setString(4, finalEndDate.toString());
-                insertLoanRowStmt.setBoolean(5, true);
-                insertLoanRowStmt.addBatch();
+                insertLoanRowStmt.setDate(3, java.sql.Date.valueOf(today));
+                insertLoanRowStmt.setDate(4, java.sql.Date.valueOf(calculatedReturnDate));
+                insertLoanRowStmt.executeUpdate();
 
-                // Lägg till info i listan för alert
-                LoanRow row = new LoanRow(loanID, item.getItemID(), today, finalEndDate, true);
-                loanRows.add(row);
+                ResultSet generatedKeys = insertLoanRowStmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+
+                    LoanRow loanRow = new LoanRow(loanID, item.getItemID(), today, calculatedReturnDate, true);
+                    loanRows.add(loanRow);
+                }
             }
 
-            insertLoanRowStmt.executeBatch();
+            System.out.println("Lånerader har lagts till.");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
         return loanRows;
     }
- 
+
+
 }

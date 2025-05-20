@@ -12,7 +12,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- *
+ * En klass för att skapa författare och lägga till dem i vår databas
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class AddAuthor {

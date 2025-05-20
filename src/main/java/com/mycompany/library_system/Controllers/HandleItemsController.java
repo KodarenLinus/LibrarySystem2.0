@@ -108,7 +108,7 @@ public class HandleItemsController {
      */
     @FXML
     void back(ActionEvent event) throws IOException{
-        String fxmlf = "StartMenu.fxml";
+        String fxmlf = "StaffStart.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }

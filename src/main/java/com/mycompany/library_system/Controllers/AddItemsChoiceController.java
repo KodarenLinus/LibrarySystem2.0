@@ -46,7 +46,7 @@ public class AddItemsChoiceController {
      */
     @FXML
     void BackToMenu(ActionEvent event) {
-        String fxmlf = "StartMenu.fxml";
+        String fxmlf = "StaffStart.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
     }

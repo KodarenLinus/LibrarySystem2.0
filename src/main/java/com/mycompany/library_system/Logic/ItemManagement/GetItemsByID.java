@@ -1,6 +1,5 @@
 package com.mycompany.library_system.Logic.ItemManagement;
 
-import com.mycompany.library_system.Logic.ItemManagement.ItemFactory;
 import com.mycompany.library_system.Database.ConnDB;
 import com.mycompany.library_system.Database.DatabaseConnector;
 import com.mycompany.library_system.Models.Items;
