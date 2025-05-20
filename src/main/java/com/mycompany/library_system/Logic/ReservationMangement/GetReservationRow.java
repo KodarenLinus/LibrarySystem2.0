@@ -45,7 +45,7 @@ public class GetReservationRow {
         String query = "SELECT rr.*, r.reservationDate " +
             "FROM reservationRow rr " +
             "JOIN reservation r ON rr.reservationID = r.reservationID " +
-            "WHERE r.CustomerID = ?";
+            "WHERE r.CustomerID = ? AND isFullfilled = false";
         
         ArrayList<ReservationRow> reservationRows = new ArrayList<>();
 

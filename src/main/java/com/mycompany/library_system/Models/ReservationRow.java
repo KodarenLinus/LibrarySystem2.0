@@ -138,13 +138,15 @@ public class ReservationRow {
     }
 
     /**
-     * Laddar det reserverade objektet baserat på {@code itemID}.
+     * Laddar det reserverade objektet baserat på itemID.
      * 
      * @throws SQLException om ett databasfel uppstår vid hämtning av objektet
      */
     public void loadItem() throws SQLException {
-        GetItemsByID itemFetcher = new GetItemsByID();
-        this.item = itemFetcher.getItemById(this.itemID);
+        if (this.getIsFulfilled() == false) {
+            GetItemsByID itemFetcher = new GetItemsByID();
+            this.item = itemFetcher.getItemById(this.itemID);
+        }
     }
 
     /**
