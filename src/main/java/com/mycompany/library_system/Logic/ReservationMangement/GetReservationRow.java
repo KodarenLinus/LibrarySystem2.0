@@ -12,24 +12,13 @@ import java.util.ArrayList;
 /**
  * Klass som hanterar hämtning av reservationsrader från databasen.
  * 
- * Följer SRP (Single Responsibility Principle) – endast ansvarig för att hämta data relaterad till ReservationRow.
  * @author Linus, Emil, Viggo, Oliver
  */
 public class GetReservationRow {
-
     private final DatabaseConnector dbConnector;
 
     public GetReservationRow() {
         this.dbConnector = new ConnDB();
-    }
-
-    /**
-     * Konstruktor med beroendeinjektion – möjliggör enklare testning.
-     * 
-     * @param dbConnector En implementation av DatabaseConnector.
-     */
-    public GetReservationRow(DatabaseConnector dbConnector) {
-        this.dbConnector = dbConnector;
     }
 
     /**
@@ -39,22 +28,27 @@ public class GetReservationRow {
      * @throws SQLException om databasfel uppstår
      */
     public ArrayList<ReservationRow> getReservationRow() throws SQLException {
+        // Skapar en Session varibel och hämtar nuvrande userID
         Session session = Session.getInstance();
         int userId = session.getUserId();
-
-        String query = "SELECT rr.*, r.reservationDate " +
+                
+        // En ArrayList som vi lägger våra reservationRows i
+        ArrayList<ReservationRow> reservationRows = new ArrayList<>();
+        
+        // En SQL-Fråga som hämtar reservationRow och datum som tillhör den
+        String getReservationRowAndDateQuery = "SELECT rr.*, r.reservationDate " +
             "FROM reservationRow rr " +
             "JOIN reservation r ON rr.reservationID = r.reservationID " +
             "WHERE r.CustomerID = ? AND isFullfilled = false";
-        
-        ArrayList<ReservationRow> reservationRows = new ArrayList<>();
 
-        try (Connection conn = dbConnector.connect();
-             PreparedStatement getReservationRowAndDatestmt = conn.prepareStatement(query)) {
-
+        try (
+            Connection conn = dbConnector.connect();
+            PreparedStatement getReservationRowAndDatestmt = conn.prepareStatement(getReservationRowAndDateQuery)
+        ) {
             getReservationRowAndDatestmt.setInt(1, userId);
             ResultSet rs = getReservationRowAndDatestmt.executeQuery();
-
+            
+            // Loppar igenom resultsetet och stoppar reservationrows i vår ArrayLista
             while (rs.next()) {
                 reservationRows.add(mapResultSetToReservationRow(rs));
             }
@@ -71,19 +65,24 @@ public class GetReservationRow {
      * @throws SQLException om databasfel uppstår
      */
     public ArrayList<ReservationRow> getReservationRowsByReservationId(int reservationId) throws SQLException {
-        String query = "SELECT rr.*, r.reservationDate " +
+         // En SQL-Fråga som hämtar reservationRow och datum som tillhör den
+        String getReservationRowAndDateQuery = "SELECT rr.*, r.reservationDate " +
                        "FROM reservationRow rr " +
                        "JOIN reservation r ON rr.reservationID = r.reservationID " +
                        "WHERE rr.reservationID = ?";
-
+        
+        // En ArrayLista vi sparar våra ReservationsRows.
         ArrayList<ReservationRow> rows = new ArrayList<>();
 
-        try (Connection conn = dbConnector.connect();
-             PreparedStatement getReservationRowAndDatestmt = conn.prepareStatement(query)) {
+        try (
+            Connection conn = dbConnector.connect();
+            PreparedStatement getReservationRowAndDatestmt = conn.prepareStatement(getReservationRowAndDateQuery)
+        ) {
 
             getReservationRowAndDatestmt.setInt(1, reservationId);
             ResultSet rs = getReservationRowAndDatestmt.executeQuery();
-
+            
+            // Loppar igenom resultsetet och lägget till den i våran ArrayList
             while (rs.next()) {
                 rows.add(mapResultSetToReservationRow(rs));
             }

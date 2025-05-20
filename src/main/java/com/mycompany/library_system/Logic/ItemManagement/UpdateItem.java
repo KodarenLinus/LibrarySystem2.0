@@ -22,10 +22,6 @@ import java.sql.SQLException;
 public class UpdateItem {
     private final DatabaseConnector dbConnector;
     
-
-    /**
-     * Konstruktor som initialiserar databasanslutningen.
-     */
     public UpdateItem() {
         this.dbConnector = new ConnDB();
     }
@@ -38,7 +34,10 @@ public class UpdateItem {
      * @return null (ingen återkoppling på objektet hanteras här)
      */
     public Items updateItemTitle(Items item, String title) {
+        // Hämtar ItemID från vårt item objekt och spara ned det i itemID
         int itemID = item.getItemID();
+        
+        // En SQL-Fråga för att uppdatera items title
         String updateTitle = "UPDATE Item "
                 + "SET Title = ? "
                 + "WHERE ItemID = ?";

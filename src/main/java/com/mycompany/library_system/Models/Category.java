@@ -14,13 +14,6 @@ public class Category {
     private int categoryID;
     private String categoryName;
     
-    /**
-     * Skapar en ny kategori med angivet ID och namn.
-     * 
-     * @param categoryID   Unikt ID för kategorin
-     * @param categoryName Namnet på kategorin
-     */
-    
     public Category (int categoryID, String categoryName) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;

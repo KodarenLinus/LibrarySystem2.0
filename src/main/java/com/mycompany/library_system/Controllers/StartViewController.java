@@ -18,14 +18,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
 /**
- * Kontroller för startsidan där användare (utan inloggning) kan se tillgängliga objekt i biblioteket.
- * Funktioner:
- * - Visar en lista över alla objekt (böcker, DVD:er etc.)
- * - Gör det möjligt att söka efter objekt
- * - Varje klick på ett objekt visar en varning att inloggning krävs
- * - Möjlighet att navigera till inloggningsvyn
- * 
+ * Controller för startsidan där användare (utan inloggning) kan se tillgängliga objekt i biblioteket.
  * Denna vy används som en "publik katalog" innan användaren loggar in.
+ * 
+ * Fungerar tillsammans med StartView.fmxl
  * 
  * @author Linus, Emil, Oliver, Viggo
  */
@@ -65,7 +61,13 @@ public class StartViewController {
      */
     @FXML
     void itemClicked(MouseEvent event) {
+        // Sparar ned valdt item från ItemList till selectedItem
         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
+        
+        /* 
+         * Om vi klickar på ett item kommer en alert dycka 
+         * upp och berätta att man kan inte låna items om man inte loggat in
+         */
         if (selectedItem != null) {
             // Visa varning om att inloggning krävs
             title = "Inloggning krävs";

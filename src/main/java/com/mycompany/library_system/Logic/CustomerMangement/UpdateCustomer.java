@@ -63,7 +63,8 @@ public class UpdateCustomer {
                 updateStmt.setInt(5, customer.getTelNr());
                 updateStmt.setString(6, customer.getPassword());
                 updateStmt.setString(7, customer.getEmail());
-
+                
+                // Skickar till databasen
                 updateStmt.executeUpdate();
                 return true;
             } else {

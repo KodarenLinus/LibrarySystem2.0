@@ -20,7 +20,6 @@ import java.util.ArrayList;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class GetCategories {
-    
     private final DatabaseConnector dbConnector;
 
     public GetCategories () {
@@ -34,18 +33,18 @@ public class GetCategories {
      * @throws SQLException Om databasfrågan misslyckas
      */
     public ArrayList<Category> getAllCategories () throws SQLException {
+        // En ArrayList vi sparar ner all Kategorier
         ArrayList<Category> categoryList = new ArrayList<>();
-        
-        // Skapar en databasanslutning
-        Connection conn = dbConnector.connect();
-        
+      
         // En SQL-fråga för att hämta alla categorier
         String selectAllCategories = "SELECT * FROM Category";
         
         try (
+            Connection conn = dbConnector.connect();
             PreparedStatement categoryStmt = conn.prepareStatement(selectAllCategories);
             ResultSet rsCategory = categoryStmt.executeQuery();
         ) {
+            // Loppar igenom vårat resultset och lägger till kategorier till vår ArrayList
             while (rsCategory.next()) {
                 int categoryID = rsCategory.getInt("CategoryID");
                 String categoryName = rsCategory.getString("CategoryName");

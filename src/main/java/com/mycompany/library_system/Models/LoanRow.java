@@ -7,7 +7,8 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 /**
- *
+ * En LoanRow klass som vi använder när vi hämtar och skall lägga in LoanRows i databasen
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class LoanRow {
@@ -54,7 +55,12 @@ public class LoanRow {
     public boolean isActiveLoan() {
         return activeLoan;
     }
-
+    
+    /**
+     * Hämtar objektet från databasen baserat på itemID och sparar det i fältet {@code item}.
+     *
+     * @throws SQLException om databaskopplingen eller frågan misslyckas
+     */
     public void loadItem() throws SQLException {
         this.item = new GetItemsByID().getItemById(this.itemID);
     }

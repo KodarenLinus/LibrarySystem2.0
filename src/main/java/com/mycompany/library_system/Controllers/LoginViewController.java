@@ -14,7 +14,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 /**
- *
+ * En controller som hanterar login vyn
+ * 
+ * Fungerar tillsammans med LoginView.fmxl
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class LoginViewController{
@@ -45,9 +48,13 @@ public class LoginViewController{
      */
     @FXML
     private void loginButton(ActionEvent event) throws IOException {
-
+        // Spara ner värdet på vårat inloggnings försök
         boolean isLoggedIn = login.doCustomerLogin(userName.getText(), userPassword.getText());
 
+        /* 
+         * Lyckas vi med inloggning som kund skickas vi till CustomerStart vyn
+         * Annars visas ett felmeddelande som säger att vi har fel användarnamn eller lösenord
+         */
         if (isLoggedIn) {
             String fxmlf = "CustomerStart.fxml";
             ChangeWindow changeWindow = new ChangeWindow();
@@ -70,7 +77,6 @@ public class LoginViewController{
      */
     @FXML
     void back(ActionEvent event) throws IOException{
-        
         String fxmlf = "StartView.fxml";
         ChangeWindow changeWindow = new ChangeWindow();
         changeWindow.windowChange(event, fxmlf);
@@ -84,8 +90,13 @@ public class LoginViewController{
      */
     @FXML
     private void loginButtonEmployee(ActionEvent event) throws IOException{
+        // Spara ner värdet på vårat inloggnings försök
         boolean isLoggedIn = login.doStaffLogin(userName.getText(), userPassword.getText());
-
+        
+        /* 
+         * Lyckas vi med inloggning som kund skickas vi till StaffStart vyn
+         * Annars visas ett felmeddelande som säger att vi har fel användarnamn eller lösenord
+         */
         if (isLoggedIn) {
             String fxmlf = "StaffStart.fxml";
             ChangeWindow changeWindow = new ChangeWindow();

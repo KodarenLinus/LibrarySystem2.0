@@ -22,9 +22,10 @@ import java.util.stream.Collectors;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class ReserveItem {
-
+    // Logger
     private static final Logger logger = Logger.getLogger(ReserveItem.class.getName());
     
+    //Alert
     private String title;
     private String header;
     private String content;
@@ -88,10 +89,11 @@ public class ReserveItem {
      * @return ID för den skapade reservationen
      */
     private int createReservation(Connection conn, int custID, LocalDate reserveDate) throws SQLException {
-        String sql = "INSERT INTO reservation (CustomerID, ReservationDate) VALUES (?, ?)";
+        String inserReservationQuery = "INSERT INTO reservation (CustomerID, ReservationDate) "
+                + "VALUES (?, ?)";
 
         try (
-            PreparedStatement insertReservationstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
+            PreparedStatement insertReservationstmt = conn.prepareStatement(inserReservationQuery, Statement.RETURN_GENERATED_KEYS)
         ) {
             insertReservationstmt.setInt(1, custID);
             insertReservationstmt.setDate(2, Date.valueOf(reserveDate));
@@ -114,11 +116,14 @@ public class ReserveItem {
      * @return en lista med tillgängliga items
      */
     private ArrayList<Items> filterAvailableItems(Connection conn, ArrayList<Items> items, LocalDate reserveDate) throws SQLException {
+        // En ArrayList som vi sparar ner våra items i
         ArrayList<Items> validItems = new ArrayList<>();
-
+        
+        // Loppar igenom Items listan för att se vilka items som vi får reservera
         for (Items item : items) {
             LocalDate endDate = loanTimeHelper.calculateLoanEndDate(item.getItemID(), reserveDate);
-
+            
+            // Om de är valid läggs de till i vår ArrayList, om inte skickas en alert som meddelar användaren
             if (isAvailable(conn, item.getItemID(), reserveDate, endDate)) {
                 validItems.add(item);
             } else {
@@ -158,14 +163,20 @@ public class ReserveItem {
      * @return true om de finns en reservations konflikt, annars false
      */
     private boolean hasReservationConflict(Connection conn, int itemID, LocalDate start, LocalDate end) throws SQLException {
-        String sql = "SELECT 1 FROM reservationRow rr " +
+        // En SQL-Fråga för att hitta en specifik query 
+        String findReservationRowConflictQuery = "SELECT 1 FROM reservationRow rr " +
             "JOIN reservation r ON rr.reservationID = r.reservationID " +
             "WHERE rr.itemID = ? AND rr.isFullfilled = false " +
             "AND (r.reservationDate BETWEEN ? AND ? " +
             "OR ? BETWEEN r.reservationDate AND DATE_ADD(r.reservationDate, INTERVAL ? DAY))";
 
-        try (PreparedStatement findReservationRowConflictstmt = conn.prepareStatement(sql)) {
+        try (
+            PreparedStatement findReservationRowConflictstmt = conn.prepareStatement(findReservationRowConflictQuery)
+        ) {
+            // räknar om så allt blir i dagar
             long days = ChronoUnit.DAYS.between(start, end);
+            
+            // Lägger in värden i parametrarna
             findReservationRowConflictstmt.setInt(1, itemID);
             findReservationRowConflictstmt.setDate(2, Date.valueOf(start));
             findReservationRowConflictstmt.setDate(3, Date.valueOf(end));
@@ -187,13 +198,17 @@ public class ReserveItem {
      * @return true om de finns en lån konflikt, annars false
      */
     private boolean hasLoanConflict(Connection conn, int itemID, LocalDate start, LocalDate end) throws SQLException {
-        String sql = "SELECT 1 FROM loanRow " +
+        // En SQL-Fråga för att hitta lån konflikt
+        String findLoanConflictQuery = "SELECT 1 FROM loanRow " +
             "WHERE itemID = ? " +
             "AND ActiveLoan = true " +
             "AND (? BETWEEN RowLoanStartDate AND RowLoanEndDate " +
             "OR RowLoanStartDate BETWEEN ? AND ?)";
 
-        try (PreparedStatement findLoanConflictstmt = conn.prepareStatement(sql)) {
+        try (
+            PreparedStatement findLoanConflictstmt = conn.prepareStatement(findLoanConflictQuery)
+        ) {
+            // Lägger in värden i parametrarna
             findLoanConflictstmt.setInt(1, itemID);
             findLoanConflictstmt.setDate(2, Date.valueOf(start));
             findLoanConflictstmt.setDate(3, Date.valueOf(start));
@@ -212,13 +227,15 @@ public class ReserveItem {
      * @throws SQLException
      */
     private void insertReservationRows(Connection conn, int reservationID, ArrayList<Items> items) throws SQLException {
-        String sql = "INSERT INTO reservationrow (ReservationID, ItemID, IsFullfilled) VALUES (?, ?, ?)";
+        // En SQL-Fråga för att lägga in LoanRows
+        String insertReservationRowQuery = "INSERT INTO reservationrow (ReservationID, ItemID, IsFullfilled) VALUES (?, ?, ?)";
 
-        try (PreparedStatement insertReservationRowstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement insertReservationRowstmt = conn.prepareStatement(insertReservationRowQuery)) {
+            // Loppar igenom våran item ArrayList och lägget till varje item i LoanRow tabellen
             for (Items item : items) {
                 insertReservationRowstmt.setInt(1, reservationID);
                 insertReservationRowstmt.setInt(2, item.getItemID());
-                insertReservationRowstmt.setBoolean(3, false); // Ej uppfylld ännu
+                insertReservationRowstmt.setBoolean(3, false); 
                 insertReservationRowstmt.addBatch();
             }
             insertReservationRowstmt.executeBatch();

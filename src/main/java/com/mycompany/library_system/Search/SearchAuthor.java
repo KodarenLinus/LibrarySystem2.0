@@ -14,11 +14,11 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 
 /**
- *
+ * En klass som används för att söka efter författare
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class SearchAuthor {
-
     private final DatabaseConnector dbConnector;
 
     public SearchAuthor() {
@@ -37,13 +37,13 @@ public class SearchAuthor {
         ArrayList<Author> results = new ArrayList<>();
 
         // SQL-fråga för att hitta författare som inte redan är kopplade till boken
-        String query = "SELECT * FROM Author " +
+        String findAuthorQuery = "SELECT * FROM Author " +
                        "WHERE (FirstName LIKE ? OR LastName LIKE ?) " +
                        "AND AuthorID NOT IN (SELECT AuthorID FROM BookAuthor WHERE itemID = ?)";
 
         try (
-            Connection conn = dbConnector.connect(); // Öppna databasanslutning
-            PreparedStatement findAuthorStmt = conn.prepareStatement(query) // Förbered SQL-satsen
+            Connection conn = dbConnector.connect();
+            PreparedStatement findAuthorStmt = conn.prepareStatement(findAuthorQuery)
         ) {
             // Parametrar till sökningen
             findAuthorStmt.setString(1, "%" + searchText + "%");

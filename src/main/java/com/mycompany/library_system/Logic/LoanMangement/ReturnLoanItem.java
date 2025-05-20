@@ -13,11 +13,9 @@ import java.util.ArrayList;
  * ReturnLoanItem hanterar återlämning av lånade objekt.
  * Denna klass uppdaterar både låneraden och objektets tillgänglighetsstatus.
  * 
- * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class ReturnLoanItem {
-
     private final DatabaseConnector dbConnector;
 
     public ReturnLoanItem() {
@@ -31,7 +29,9 @@ public class ReturnLoanItem {
      * @param loanRows Lista med LoanRow-objekt som ska återlämnas
      */
     public void returnItem(ArrayList<LoanRow> loanRows) {
+        // En SQL-Fråga för att uppdatera LoanRow
         String updateLoanRow = "UPDATE LoanRow SET ActiveLoan = false WHERE LoanRowID = ?";
+        // En SQL-Fråga för att Uppdatera Item
         String updateItem = "UPDATE Item SET Available = true WHERE ItemID = ?";
 
         try (
@@ -39,7 +39,7 @@ public class ReturnLoanItem {
             PreparedStatement loanRowStmt = conn.prepareStatement(updateLoanRow);
             PreparedStatement itemStmt = conn.prepareStatement(updateItem);
         ) {
-
+            // Loppar igenom våran LoanRow ArrayList
             for (LoanRow loanRow : loanRows) {
                 loanRowStmt.setInt(1, loanRow.getLoanRowID());
                 itemStmt.setInt(1, loanRow.getItemID());
@@ -49,7 +49,7 @@ public class ReturnLoanItem {
             }
 
         } catch (SQLException ex) {
-            ex.printStackTrace(); // I produktion bör detta loggas på ett säkrare sätt
+            ex.printStackTrace(); 
         }
     }
 }

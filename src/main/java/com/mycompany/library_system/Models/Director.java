@@ -5,7 +5,8 @@
 package com.mycompany.library_system.Models;
 
 /**
- *
+ * En Director klass som vi använder när vi hämtar directors i databasen
+ * 
  * @author Linus
  */
 public class Director {

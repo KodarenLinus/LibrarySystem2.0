@@ -5,7 +5,8 @@
 package com.mycompany.library_system.Models;
 
 /**
- *
+ * En Genre klass som vi använder när vi hämtar och genres i databasen
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class Genre {

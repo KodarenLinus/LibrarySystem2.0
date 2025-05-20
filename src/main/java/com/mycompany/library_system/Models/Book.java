@@ -4,7 +4,6 @@
  */
 package com.mycompany.library_system.Models;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -24,18 +23,6 @@ public class Book implements Items{
     private int isbn;
     private int publisherID;
     
-    /**
-     * Skapar ett nytt Book-objekt med angivna attribut.
-     * 
-     * @param title Titel på boken
-     * @param location Plats i biblioteket
-     * @param isbn ISBN-nummer
-     * @param categoryID ID för kategori
-     * @param categoryName Namn på kategori
-     * @param genreID ID för genre
-     * @param genreName Namn på genre
-     * @param publisherID ID för utgivare
-     */
     public Book(String title, String location, int isbn, int categoryID, String categoryName, int genreID, String genreName, int publisherID) {
         this.title = title;
         this.location = location;
@@ -47,15 +34,9 @@ public class Book implements Items{
         this.publisherID = publisherID;
     }
     
-    /**
-     * Sätter det unika itemID:t, vanligtvis från databasen.
-     * 
-     * @param itemID Unikt ID för objektet
-     */
     public void setItemID(int itemID) {
         this.itemID = itemID;
     }
-    
     
     @Override
     public int getItemID() {
@@ -105,13 +86,6 @@ public class Book implements Items{
         return publisherID;
     }
     
-    /**
-    * Overrides equals-metoden från Object för att jämföra två Book-objekt.
-    * Två Book-objekt anses vara lika om de har samma itemID.
-    *
-    * @param obj Objektet som ska jämföras med det aktuella objektet.
-    * @return true om objekten är av samma klass och har samma itemID, annars false.
-    */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -120,13 +94,6 @@ public class Book implements Items{
         return itemID == other.getItemID();
     }
 
-    
-     /**
-    * Genererar ett hashvärde baserat på itemID.
-    * Detta används för att säkerställa att två lika objekt (enligt equals) får samma hashvärde.
-    *
-    * @return hashvärde för objektet.
-    */
     @Override
     public int hashCode() {
         return Objects.hash(itemID);
@@ -134,6 +101,6 @@ public class Book implements Items{
     
     @Override
     public String toString() {
-        return title; // Display only the title in ListView
+        return title; 
     }
 }

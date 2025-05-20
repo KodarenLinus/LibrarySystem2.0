@@ -5,41 +5,18 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 /**
- * Representerar en rad i en reservation, som kopplar ett objekt till en specifik reservation.
- * Innehåller information om objektets ID, reservationsdatum och om reservationen är uppfylld.
- * 
- * <p>Objektinformationen kan laddas med hjälp av {@code loadItem()}-metoden.</p>
+ * En ReservationRow klass som vi använder när vi hämtar och skall lägga in ReservationRows i databasen
  * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class ReservationRow {
-
-    /** Unikt ID för reservationsraden (vanligtvis sätts av databasen). */
     private int reservationRowID;
-
-    /** ID för den reservation denna rad tillhör. */
     private int reservationID;
-
-    /** ID för objektet som reserveras. */
     private int itemID;
-
-    /** Anger om reservationen har uppfyllts (true = uppfylld, false = ej uppfylld). */
     private boolean isFulfilled;
-
-    /** Objektet som är reserverat (kan laddas separat). */
     private Items item;
-
-    /** Datum då reservationen gjordes. */
     private LocalDate reservationDate;
 
-    /**
-     * Skapar ett nytt {@code ReservationRow}-objekt.
-     *
-     * @param reservationID ID för den övergripande reservationen
-     * @param itemID ID för objektet som reserveras
-     * @param isFulfilled om reservationen har uppfyllts
-     * @param reservationDate datumet då reservationen gjordes
-     */
     public ReservationRow(int reservationID, int itemID, boolean isFulfilled, LocalDate reservationDate) {
         this.reservationID = reservationID;
         this.itemID = itemID;
@@ -47,66 +24,30 @@ public class ReservationRow {
         this.reservationDate = reservationDate;
     }
 
-    /**
-     * Hämtar ID för denna reservationsrad.
-     *
-     * @return reservationsradens ID
-     */
     public int getReservationRowID() {
         return reservationRowID;
     }
 
-    /**
-     * Sätter ID för denna reservationsrad.
-     *
-     * @param reservationRowID nytt ID för reservationsraden
-     */
     public void setReservationRowID(int reservationRowID) {
         this.reservationRowID = reservationRowID;
     }
 
-    /**
-     * Hämtar ID för den tillhörande reservationen.
-     *
-     * @return reservationens ID
-     */
     public int getReservationID() {
         return reservationID;
     }
 
-    /**
-     * Hämtar datumet då reservationen gjordes.
-     *
-     * @return reservationsdatumet
-     */
     public LocalDate getReservationDate() {
         return reservationDate;
     }
 
-    /**
-     * Hämtar ID för det reserverade objektet.
-     *
-     * @return objektets ID
-     */
     public int getItemID() {
         return itemID;
     }
 
-
-    /**
-     * Returnerar om reservationen är uppfylld.
-     *
-     * @return true om reservationen är uppfylld, annars false
-     */
     public boolean getIsFulfilled() {
         return isFulfilled;
     }
 
-    /**
-     * Sätter om reservationen är aktiv/uppfylld.
-     *
-     * @param active true för uppfylld, false för ej uppfylld
-     */
     public void setActive(boolean active) {
         this.isFulfilled = active;
     }
@@ -123,11 +64,7 @@ public class ReservationRow {
         }
     }
 
-    /**
-     * Returnerar en strängrepresentation av reservationsraden.
-     *
-     * @return en sträng med datum och objektinformation
-     */
+
     @Override
     public String toString() {
         return (item != null ? "Datum: " + reservationDate.toString() + " -> " + item.toString() : 

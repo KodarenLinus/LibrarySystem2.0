@@ -48,6 +48,7 @@ public class GetCustomerCategory {
             PreparedStatement customerCategoryStmt = conn.prepareStatement(selectAllCustomerCategories);
             ResultSet rsCustomerCategory = customerCategoryStmt.executeQuery()
         ) {
+            // Loopar igenom vårat resultset och lägger till det i våran ArrayList customerCategoryList
             while (rsCustomerCategory.next()) {
                 int customerCategoryID = rsCustomerCategory.getInt("CustomerCategoryID");
                 String customerCategoryName = rsCustomerCategory.getString("CategoryName");
@@ -81,6 +82,7 @@ public class GetCustomerCategory {
             customerCategoryStmt.setInt(1, customerCategoryID);
             ResultSet rsCustomerCategory = customerCategoryStmt.executeQuery();
             
+            // Hämtar infromation från CustomerCategory tabellen
             if (rsCustomerCategory.next()) {
                 String customerCategoryName = rsCustomerCategory.getString("CategoryName");
                 int loanLimit = rsCustomerCategory.getInt("LoanLimit");

@@ -20,7 +20,6 @@ import java.util.ArrayList;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class GetGenres {
-
     private final DatabaseConnector dbConnector;
 
     public GetGenres() {
@@ -34,17 +33,18 @@ public class GetGenres {
      * @throws SQLException Om databasförfrågan misslyckas
      */
     public ArrayList<Genre> getAllGenres() throws SQLException {
+        // En ArrayList för våra Genres
         ArrayList<Genre> genreList = new ArrayList<>();
 
         // SQL-fråga för att hämta alla genrer
         String selectAllGenres = "SELECT * FROM Genre";
 
-        // Try-with-resources ser till att alla resurser stängs korrekt
         try (
             Connection conn = dbConnector.connect();
             PreparedStatement genreStmt = conn.prepareStatement(selectAllGenres);
             ResultSet rsGenre = genreStmt.executeQuery()
         ) {
+            // Loppar igenom vårt resultset och lägger in våra Genres i vår ArrayList
             while (rsGenre.next()) {
                 int genreID = rsGenre.getInt("GenreID");
                 String genreName = rsGenre.getString("GenreName");

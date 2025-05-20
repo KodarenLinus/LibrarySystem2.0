@@ -15,13 +15,7 @@ import javafx.fxml.FXML;
  * Hanterar navigation till olika delar av systemet såsom kundhantering, artikelhantering,
  * samt möjlighet att logga ut.
  *
- * Fungerar tillsammans med Menu.fxml.
- * 
- * Funktioner:
- * - Gå till hantering av artiklar
- * - Gå till vy för att lägga till ny artikel
- * - Gå till kundhantering
- * - Logga ut
+ * Fungerar tillsammans med StaffStart.fxml
  * 
  * @author Linus, Emil, Oliver, Viggo
  */

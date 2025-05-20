@@ -37,12 +37,6 @@ public enum CategoryType {
         return displayName;
     }
     
-    /**
-    * Returnerar enum-typen som matchar det angivna ID:t.
-    *
-    * @param id Kategorins ID från databasen
-    * @return Matchande CategoryType eller null om inget matchar
-    */
     public static CategoryType fromId(int id) {
         for (CategoryType type : values()) {
             if (type.id == id) return type;

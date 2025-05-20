@@ -16,7 +16,6 @@ import java.util.ArrayList;
  * @author Emil, Oliver, Viggo, Linus
  */
 public class GetPublisher {
-
     private final DatabaseConnector dbConnector;
 
     public GetPublisher() {
@@ -30,15 +29,18 @@ public class GetPublisher {
      * @throws SQLException Om databasförfrågan misslyckas
      */
     public ArrayList<Publisher> getAllPublishers() throws SQLException {
+        // En ArrayList för våra publishers
         ArrayList<Publisher> publisherList = new ArrayList<>();
-
-        String sql = "SELECT * FROM Publisher";
+        
+        //En SQL-Fråga för att hämta alla publishers
+        String getAllPublishersQuery = "SELECT * FROM Publisher";
 
         try (
             Connection conn = dbConnector.connect();
-            PreparedStatement findPublisherStmt = conn.prepareStatement(sql);
+            PreparedStatement findPublisherStmt = conn.prepareStatement(getAllPublishersQuery);
             ResultSet rs = findPublisherStmt.executeQuery()
         ) {
+            // Loppar igenom vårt resultset och lägger in publishers i vår ArrayList
             while (rs.next()) {
                 int publisherID = rs.getInt("PublisherID");
                 String compName = rs.getString("compName");

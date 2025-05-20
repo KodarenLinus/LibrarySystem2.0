@@ -16,7 +16,6 @@ import java.util.ArrayList;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class SearchCustomer {
-
     private final DatabaseConnector dbConnector;
 
     public SearchCustomer() {
@@ -30,8 +29,10 @@ public class SearchCustomer {
      * @return En lista med kunder som matchar sökningen
      */
     public ArrayList<Customer> searchCustomer(String searchText) {
+        // En ArrayLista vi sparar vår kunder i
         ArrayList<Customer> results = new ArrayList<>();
-
+        
+        // En SQL-Fråga för att söka efter kunder
         String customerSearch = "SELECT CustomerID, FirstName, LastName, TelNumber, Email, PasswordCustomer, CustomerCategoryID, CategoryName " +
                                 "FROM Customer WHERE FirstName LIKE ? OR LastName LIKE ?";
 
@@ -45,6 +46,7 @@ public class SearchCustomer {
 
             ResultSet rs = findCustomerStmt.executeQuery();
 
+            // Loopar igenom vårt resultset och lägger till kunder i vår ArrayLista
             while (rs.next()) {
                 int id = rs.getInt("CustomerID");
                 String firstName = rs.getString("FirstName");

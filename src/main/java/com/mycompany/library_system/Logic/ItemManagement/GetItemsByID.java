@@ -16,7 +16,6 @@ import java.sql.SQLException;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class GetItemsByID {
-
     private final DatabaseConnector dbConnector;
 
     public GetItemsByID() {
@@ -31,17 +30,20 @@ public class GetItemsByID {
      * @throws SQLException vid databasfel
      */
     public Items getItemById(int itemId) throws SQLException {
+        // Spara vårt item som null som default
         Items item = null;
-
-        String query = "SELECT * FROM item WHERE ItemID = ?";
+        
+        // En SQL-fråga som hämtar items baserat på deras ID.
+        String findItemByIDQuery = "SELECT * FROM item WHERE ItemID = ?";
 
         try (
             Connection conn = dbConnector.connect();
-            PreparedStatement findItemStmt = conn.prepareStatement(query)
+            PreparedStatement findItemStmt = conn.prepareStatement(findItemByIDQuery)
         ) {
             findItemStmt.setInt(1, itemId);
             ResultSet rs = findItemStmt.executeQuery();
-
+            
+            // Om vi får en träff skickar vi itemet till våran ItemFactory
             if (rs.next()) {
                 // Använd vår factory för att skapa rätt objekt
                 item = ItemFactory.createItemFromResultSet(rs, conn);

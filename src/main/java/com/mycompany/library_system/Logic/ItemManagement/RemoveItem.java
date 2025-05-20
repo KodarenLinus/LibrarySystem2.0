@@ -40,11 +40,12 @@ public class RemoveItem {
         try (
             Connection conn = dbConnector.connect()
         ) {
-            conn.setAutoCommit(false); // Start transaktion
+            conn.setAutoCommit(false);
 
             // Ta bort från rätt tabell först
             boolean subtypeRemoved = false;
-
+            
+            // Kolla om item är Book eller DVD
             if (item instanceof Book) {
                 subtypeRemoved = deleteBook(conn, itemID);
             } else if (item instanceof DVD) {
@@ -53,7 +54,8 @@ public class RemoveItem {
                 System.err.println("Objektet är varken Book eller DVD.");
                 return false;
             }
-
+            
+            // Om det inte blir rätt kör vi en rollback
             if (!subtypeRemoved) {
                 conn.rollback();
                 return false;
@@ -126,23 +128,27 @@ public class RemoveItem {
         String title;
         String header; 
         String content;
-        String sql = "DELETE FROM Item " +
+        
+        // En SQL-Fråga för att ta bort item
+        String deleteItemQuery = "DELETE FROM Item " +
              "WHERE ItemID = ? " +
              "AND ItemID NOT IN (" +
              "    SELECT ItemID FROM LoanRow WHERE ActiveLoan = TRUE" +
              ")";
         try (
-            PreparedStatement deleteItemStmt = conn.prepareStatement(sql)
+            PreparedStatement deleteItemStmt = conn.prepareStatement(deleteItemQuery)
         ) {
             deleteItemStmt.setInt(1, itemID);
             int rowsAffected = deleteItemStmt.executeUpdate();
-            AlertHandler alert = new AlertHandler();
+            
+            // kollar att vi tar bort ett objekt, om de inte funkar så vissas en alert
             if (rowsAffected > 0) {
                 return true;
             } else {
                 title = "Fel vid borttagning";
                 header = "Objektet kunde inte tas bort";
                 content = "Item är utlånat";
+                AlertHandler alert = new AlertHandler();
                 alert.createAlert(title, header, content);
                 return false;
             }

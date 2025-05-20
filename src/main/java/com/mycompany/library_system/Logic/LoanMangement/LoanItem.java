@@ -100,12 +100,17 @@ public class LoanItem {
     * @throws SQLException vid fel i SQL-frågan
     */
     private int getActiveLoanCount(Connection conn, int custID) throws SQLException {
-        String sql = "SELECT COUNT(loanrowID) AS total FROM LoanRow WHERE ActiveLoan = true AND LoanID IN (SELECT LoanID FROM Loan WHERE CustomerID = ?)";
+        // En SQL-Fråga som räknar antalet aktiva lån
+        String loanRowCountQuery = "SELECT COUNT(loanrowID) AS total FROM LoanRow "
+                + "WHERE ActiveLoan = true AND LoanID IN (SELECT LoanID FROM Loan WHERE CustomerID = ?)";
+        
         try (
-            PreparedStatement countLoanRowsStmt = conn.prepareStatement(sql)
+            PreparedStatement countLoanRowsStmt = conn.prepareStatement(loanRowCountQuery)
         ) {
             countLoanRowsStmt.setInt(1, custID);
             ResultSet rs = countLoanRowsStmt.executeQuery();
+            
+            // Kollar om vi får ett resultset, om vi inte får ett så är våran count 0
             return rs.next() ? rs.getInt("total") : 0;
         }
     }
@@ -119,12 +124,16 @@ public class LoanItem {
     * @throws SQLException vid fel i SQL-frågan
     */
     private int getAllowedLoanLimit(Connection conn, int custID) throws SQLException {
-        String sql = "SELECT LoanLimit FROM CustomerCategory WHERE CustomerCategoryID IN (SELECT CustomerCategoryID FROM Customer WHERE CustomerID = ?)";
+        // En SQL-Fråga för att hämta LoanLimit för en kund
+        String getLoanLimitQuery = "SELECT LoanLimit FROM CustomerCategory "
+                + "WHERE CustomerCategoryID IN (SELECT CustomerCategoryID FROM Customer WHERE CustomerID = ?)";
         try (
-            PreparedStatement findLoanLimitStmt = conn.prepareStatement(sql)
+            PreparedStatement findLoanLimitStmt = conn.prepareStatement(getLoanLimitQuery)
         ) {
             findLoanLimitStmt.setInt(1, custID);
             ResultSet rs = findLoanLimitStmt.executeQuery();
+            
+            // Hittar vi ingen loanLimit så är loanLimit = 0
             return rs.next() ? rs.getInt("LoanLimit") : 0;
         }
     }
@@ -150,9 +159,12 @@ public class LoanItem {
         String title;
         String header;
         String content;
-
+        
+        /* 
+         * Här kollar vi först om våra kundvagn + aktiva lån överskrider loanlimit 
+         * eller om vi bara har för många aktiva lån
+         */
         if (cartTooBig) {
-            //fxml = "PopUpToManyActiveLoansAndCartItems.fxml";
             title = "För Många aktiva lån + föremål i kundvagnen";
             header = "Du måste lämna tillbaka föremål eller ta bort föremål ur din kundvagn";
             content = "Gå till 'Mina lån' för att lämna tillbaka föremål eller ta bort några föremål ur kundvagnen.";
@@ -175,6 +187,7 @@ public class LoanItem {
     * @throws SQLException vid fel i SQL-frågan
     */
    private int createLoanAndReturnID(Connection conn, int custID) throws SQLException {
+        // En SQL-Fråga för att skapa ett loan
         String insertLoanSQL = "INSERT INTO loan (customerID) VALUES (?)";
 
         try (
@@ -183,7 +196,9 @@ public class LoanItem {
             insertStmt.setInt(1, custID);
             insertStmt.executeUpdate();
 
-            try (ResultSet generatedKeys = insertStmt.getGeneratedKeys()) {
+            try (
+                ResultSet generatedKeys = insertStmt.getGeneratedKeys()
+            ) {
                 if (generatedKeys.next()) {
                     return generatedKeys.getInt(1);
                 } else {
@@ -204,17 +219,18 @@ public class LoanItem {
      * @return Lista med skapade LoanRow-objekt innehållande låneinformation
      */
     private ArrayList<LoanRow> insertLoanRows(Connection conn, int loanID, ArrayList<Items> itemsToLoan) {
-        //Alert strängar
         String title;
         String header;
         String content;
         
-        //SQL frågor
+        // En SQL-Fråga för att skapa LoanRows
         String insertLoanRow = "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate, ActiveLoan) VALUES (?, ?, ?, ?, true)";
+        // En SQL-Fråga för att kolla reservations
         String checkReservation = "SELECT r.CustomerID, res.reservationDate FROM reservationrow rr " +
                 "JOIN reservation r ON rr.reservationID = r.reservationID " +
                 "JOIN reservation res ON r.reservationID = res.reservationID " +
-                "WHERE rr.itemID = ? AND res.reservationDate = ?";
+                "WHERE rr.itemID = ? AND rr.IsFullfilled = false AND res.reservationDate = ?";
+        // En SQL-Fråga för att updatera ReservationRow tabellen
         String updateReservation = "UPDATE reservationrow SET IsFullfilled = true " +
                 "WHERE itemID = ? AND reservationID IN (" +
                 "SELECT reservationID FROM reservation WHERE CustomerID = ? AND reservationDate = ?)";
@@ -251,10 +267,12 @@ public class LoanItem {
                 checkReservationStmt.setInt(1, item.getItemID());
                 checkReservationStmt.setDate(2, java.sql.Date.valueOf(today));
                 ResultSet rs = checkReservationStmt.executeQuery();
-
+                
+                // Kollar om reservation krockar med ett lån och anpassar återlämnings datum
                 if (rs.next() && rs.getDate("reservationDate") != null) {
                     LocalDate reservedDate = rs.getDate("reservationDate").toLocalDate();
                     if (reservedDate.isBefore(endDate)) {
+                        // Nya återlämnings datumet är dagen innan reservationen
                         finalEndDate = reservedDate.minusDays(1);
                     }
                 }
@@ -300,7 +318,8 @@ public class LoanItem {
         checkStmt.setDate(2, java.sql.Date.valueOf(today));
         ResultSet rs = checkStmt.executeQuery();
         
-        /**Kollar ifall det är en customers reservation, om de är det return false.
+        /*
+         * Kollar ifall det är en customers reservation, om de är det return false.
          * Om det är en customers reservation så blir reservationen uppfylld.
          * Vår metod returnerar true då.
          */

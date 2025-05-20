@@ -17,10 +17,9 @@ import java.util.ArrayList;
  * Klass som hämtar lånerader (LoanRow) för en inloggad användare.
  * Följer Single Responsibility Principle genom att endast ansvara för databaslogik kopplad till LoanRow.
  * 
- * Författare: Linus, Emil, Oliver, Viggo
+ * @author Linus, Emil, Oliver, Viggo
  */
 public class GetLoanRows {
-
     private final DatabaseConnector dbConnector;
 
     public GetLoanRows() {
@@ -36,14 +35,16 @@ public class GetLoanRows {
      * @throws SQLException om något går fel med databasåtkomst
      */
     public ArrayList<LoanRow> getAllLoanRows(boolean activeLoans) throws SQLException {
+        // En ArrayLista som vi spara våra LoanRow i
         ArrayList<LoanRow> loanRowList = new ArrayList<>();
-
-        String query = "SELECT * FROM LoanRow WHERE (ActiveLoan = ?) AND ( LoanID IN "
+        
+        // En SQL-Fråga för att hämta LoanRows
+        String getLoanRowQuery = "SELECT * FROM LoanRow WHERE (ActiveLoan = ?) AND ( LoanID IN "
                 + "(SELECT LoanID FROM Loan WHERE CustomerID = ?))";
 
         try (
             Connection conn = dbConnector.connect();
-            PreparedStatement loanRowStmt = conn.prepareStatement(query)
+            PreparedStatement loanRowStmt = conn.prepareStatement(getLoanRowQuery)
         ) {
 
             // Sätter parametrar i SQL-frågan

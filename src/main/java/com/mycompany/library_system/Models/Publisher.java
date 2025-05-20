@@ -1,7 +1,8 @@
 package com.mycompany.library_system.Models;
 
 /**
- *
+ * En Publisher klass som vi använder när vi hämtar publishers i databasen
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class Publisher {

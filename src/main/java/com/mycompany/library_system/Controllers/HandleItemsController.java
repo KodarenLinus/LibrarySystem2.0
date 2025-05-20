@@ -23,6 +23,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
 /**
+ * En controller som hanterar Items, t.ex Uppdaterar, ta bort och lägga till författare
+ * 
+ * Fungerar tillsammans med HandleItems.fmxl
  *
  * @author Linus, Emil, Oliver, Viggo
  */
@@ -62,11 +65,18 @@ public class HandleItemsController {
      */
     @FXML
     void RemoveObject(ActionEvent event) {
+        //Spara nere data från itemList från de objekt vi klickat på
         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
+        
+        /*
+         * Kollar om selectedItem inte är null. Om den inte är null tar vi bort de valda itemet
+         * är den null medellar vi användaren att de inte valt något objekt att ta bort
+         */
         if (selectedItem != null) {
             RemoveItem removeItem = new RemoveItem();
             boolean success = removeItem.deleteItem(selectedItem);
-
+            
+            // Lyckas vi ta bort itemet rensar vi listan.
             if (success) {
                 ItemList.getItems().remove(selectedItem);
             } 
@@ -86,7 +96,13 @@ public class HandleItemsController {
      */
     @FXML
     void UpdateObject(ActionEvent event) {
+        //Spara nere data från itemList från de objekt vi klickat på
         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
+        
+        /*
+         * Kollar om selectedItem inte är null. Om den inte är null så kommer en popup dycka upp.
+         * är den null medellar vi användaren att de inte valt något objekt att uppdatera
+         */
         if (selectedItem != null) {
             ObjectSession.getInstance().setCurrentItem(selectedItem);
             String fxmlFile = "UpdateTitleItem.fxml";
@@ -158,11 +174,19 @@ public class HandleItemsController {
      * @param event MouseEvent om popup kräver det (kan vara null)
      */
     private void handleAddCreator(Items item, MouseEvent event) {
+        // Det valda objektet sparar vi ner i ObjectSession
         ObjectSession.getInstance().setCurrentItem(item);
         
+        //Skapar ett pop up window
         PopUpWindow popUpWindow = new PopUpWindow();
         
+        // Spara ner ett item i ett Object
         Object choicenItem = ObjectSession.getInstance().getCurrentItem();
+        
+        /* 
+         * Kollar om choiceItem är instans av Book eller DVD.
+         * Är det en DVD medellar vi användaren att de inte går att lägga till en författare 
+         */
         if (choicenItem instanceof Book) {
             // Öppna fönster för att lägga till författare
             popUpWindow.popUp(event, "AddAuthorToBook.fxml");
@@ -178,8 +202,8 @@ public class HandleItemsController {
     
     
     /**
-    * kollar om filter är applicerad och uppdaterar listan med items.
-    */
+     * kollar om filter är applicerad och uppdaterar listan med items.
+     */
     private void applyFilter() {
        String searchTerm = SearchItem.getText();
        SearchItems searchItems = new SearchItems();

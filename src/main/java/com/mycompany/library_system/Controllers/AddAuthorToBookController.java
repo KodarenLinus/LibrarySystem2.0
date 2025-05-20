@@ -54,7 +54,7 @@ public class AddAuthorToBookController {
     /**
      * Öppnar ett nytt fönster för att skapa en ny författare.
      * 
-     * @event -> Händelsen som triggas när användaren klickar på "Lägg till författare".
+     * @event Händelsen som triggas när användaren klickar på "Lägg till författare".
      */
     @FXML
     void AddAuthor(ActionEvent event) {
@@ -67,7 +67,7 @@ public class AddAuthorToBookController {
      * Lägger till valda författare till den valda boken i databasen.
      * Visar alert beroende på om åtgärden lyckades eller misslyckades.
      * 
-     * @event -> Händelsen som triggas när användaren klickar på "Lägg till författare till book".
+     * @event Händelsen som triggas när användaren klickar på "Lägg till författare till book".
      */
     @FXML
     void AddAuthorsToBook(ActionEvent event) {
@@ -75,8 +75,16 @@ public class AddAuthorToBookController {
             AddAuthorToBook addAuthorToBook = new AddAuthorToBook();
             ArrayList<Author> authors = new ArrayList<>(AuthorsToAddToBookList.getItems());
 
+            /*
+             * Skickar in alla författare till metoden 
+             * insertToBookAuthor som ligger i AddAuthorToBook
+             */
             boolean success = addAuthorToBook.insertToBookAuthor((Book) item, authors);
-
+            
+            /*
+             * Om vi lyckas skicka in våra författare i databasen så får 
+             * användaren alert att de lyckades. misslyckas de så informerar vi användaren
+             */
             if (success) {
                 title = "Författare tillagda till " + item.toString();
                 header = "Följande författare har lagts till:";
@@ -94,7 +102,7 @@ public class AddAuthorToBookController {
             }
 
             alert.createAlert(title, header, content);
-
+        // Om vi försöker lägga till författare till DVD så dycker detta medellande upp
         } catch (ClassCastException e) {
             title = "Fel objekt valt";
             header = "Du försökte lägga till författare till något som inte är en bok.";

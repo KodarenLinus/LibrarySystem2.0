@@ -17,7 +17,6 @@ import java.sql.SQLException;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class AddAuthor {
-    
     private final DatabaseConnector dbConnector;
 
     public AddAuthor () {

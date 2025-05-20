@@ -23,7 +23,10 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.input.MouseEvent;
 
 /**
- *
+ * En controller som hanterar lämna tillbaka lån, Ta bort reservationer och att lån historik
+ * 
+ * Fungerar tillsammans med MyLoans.fmxl
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class MyLoansController {
@@ -53,17 +56,20 @@ public class MyLoansController {
     private RadioButton LateLoansRadioButton;
     
     /**
-    * Visar aktiva lån, med möjlighet att filtrera fram endast försenade lån.
-    *
-    *
-    * @param event Händelse som triggas vid klick på en relevant knapp (t.ex. "Visa lån")
-    * @throws SQLException om ett fel uppstår vid databasåtkomst
-    */
-    
+     * Visar aktiva lån, med möjlighet att filtrera fram endast försenade lån.
+     *
+     * @param event Händelse som triggas vid klick på en relevant knapp (t.ex. "Visa lån")
+     * @throws SQLException om ett fel uppstår vid databasåtkomst
+     */
     @FXML
     void ShowLateLoans(ActionEvent event) throws SQLException {
+        // Vi vill bara ha aktiva lån
         boolean activeLoan = true;
+        
+        // Skapar GetLoanRows objekt för att hämta LoanRows
         GetLoanRows getLoanRows = new GetLoanRows();
+        
+        //Hämtar alla användarens LoanRows
         ArrayList<LoanRow> allLoanRows = getLoanRows.getAllLoanRows(activeLoan);
 
         // Ladda in tillhörande objekt
@@ -96,8 +102,10 @@ public class MyLoansController {
      */
     @FXML
     void AddToReturnList(MouseEvent event) throws SQLException {
-         LoanRow selectedItem = AktiveLoansList.getSelectionModel().getSelectedItem();
-
+        // Sparar ner valt LoanRow från AktiveLoansList
+        LoanRow selectedItem = AktiveLoansList.getSelectionModel().getSelectedItem();
+        
+        // Valda LoanRows flytar vi till ReturnLoanList
         if (selectedItem != null) {
             ReturnLoanList.getItems().add(selectedItem);
             applyFilter();
@@ -112,28 +120,35 @@ public class MyLoansController {
      */
     @FXML
     void RemoveFromReturnList(MouseEvent event) throws SQLException {
-          LoanRow selectedItem = ReturnLoanList.getSelectionModel().getSelectedItem();
-
+        // Sparar ner valt LoanRow från ReturnLoanList
+        LoanRow selectedItem = ReturnLoanList.getSelectionModel().getSelectedItem();
+        
+        // Valda LoanRows flytar vi till AktiveLoansList
         if (selectedItem != null) {
-            ReturnLoanList.getItems().remove(selectedItem);
+            AktiveLoansList.getItems().remove(selectedItem);
             applyFilter();
         }
     }
     
-     /**
+    /**
      * Returnerar alla lån som lagts till i retur-listan. Listan töms efter att operationen är klar.
      * 
      * @param event Klick på "Returnera"-knappen
      */
     @FXML
     void ReturnLoans(ActionEvent event) {
+        // Skapar ett ReturnLoanItem objekt
         ReturnLoanItem returnLoanItem = new ReturnLoanItem();
+        
+        // Skapar en ArrayLista med LoanRows som vi har i return list
         ArrayList<LoanRow> loanRows = new ArrayList<>(ReturnLoanList.getItems());
+        
+        // Skickar in ArrayListan till metoden returnitem och sedan tömmer jag listan
         returnLoanItem.returnItem(loanRows);
         ReturnLoanList.getItems().clear();
     }
     
-     /**
+    /**
      * Tar bort vald reservation från listan och databasen.
      * Visar en varning om ingen reservation är vald.
      * 
@@ -141,14 +156,19 @@ public class MyLoansController {
      */
     @FXML
     void RemoveReservation(ActionEvent event) {
+        // Sparar ned valt ReservationRow från ReservationList i selectedRow
         ReservationRow selectedRow = ReservationList.getSelectionModel().getSelectedItem();
-
+        
+        /*
+         * Kollar om vi valt något ReservationRow. HAr vi valt ett kommer det att
+         * tas bort. Har vi inte valt något kommer användaren att få en alert som informerar dem
+         */
         if (selectedRow != null) {
             // Ta bort från UI-listan
             ReservationList.getItems().remove(selectedRow);
 
-            // (Valfritt) Ta bort från databasen
-            RemoveReservationRow remover = new RemoveReservationRow(); // eller visa felmeddelande i UI:t
+            // Ta bort från databasen
+            RemoveReservationRow remover = new RemoveReservationRow(); 
             remover.deleteReservationRow(selectedRow.getReservationRowID());
         } else {
             title = "Ingen reservation är vald";
@@ -181,8 +201,8 @@ public class MyLoansController {
      */
     @FXML
     public void initialize() throws SQLException  {
+        // Hämtar aktiva Lån rader
         GetLoanRows getLoanRows = new GetLoanRows();
-        GetReservationRow getReservationRow = new GetReservationRow();
         boolean activeLoan;
         
         AktiveLoansList.setCellFactory(list -> new ListCell<LoanRow>() {
@@ -251,7 +271,10 @@ public class MyLoansController {
                 }
             }
         });
-    
+         
+        // Hämtar aktiva reservations rader
+        GetReservationRow getReservationRow = new GetReservationRow();
+        
         // Laddar in alla objekt vid start
         ArrayList<ReservationRow> reservationRows = getReservationRow.getReservationRow();
         
@@ -278,15 +301,16 @@ public class MyLoansController {
         GetLoanRows getLoanRows = new GetLoanRows();
         ArrayList<LoanRow> allLoanRows = getLoanRows.getAllLoanRows(activeLoan);
         
-        // Load the item for each LoanRow before display
+        // Ladda item för varje LoanRow
         for (LoanRow row : allLoanRows) {
             try {
                 row.loadItem();
             } catch (SQLException e) {
-                e.printStackTrace(); // or handle more gracefully
+                e.printStackTrace();
             }
         }
         
+        // Rensa aktiva lån listan från LoanRows som ligger i ReturnLoanList
         allLoanRows.removeAll(ReturnLoanList.getItems());
         AktiveLoansList.getItems().setAll(allLoanRows);
     }

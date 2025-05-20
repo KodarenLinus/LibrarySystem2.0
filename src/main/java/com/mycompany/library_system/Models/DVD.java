@@ -4,15 +4,14 @@
  */
 package com.mycompany.library_system.Models;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- *
+ * En DVD klass som vi använder när vi hämtar och skall lägga in DVD i databasen
+ * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class DVD implements Items {
-    
     private int itemID;
     private String title;
     private int genreID;
@@ -23,7 +22,6 @@ public class DVD implements Items {
     private boolean available;
     private int directorID;
     
-    // Konstruktor
     public DVD (String title, String location, int categoryID, String categoryName, int genreID, String genreName, int directorID) {
         this.title = title;
         this.location = location;
@@ -82,14 +80,6 @@ public class DVD implements Items {
         return directorID;
     }
     
-    
-    /**
-    * Overrides equals-metoden från Object för att jämföra två DVD-objekt.
-    * Två DVD-objekt anses vara lika om de har samma itemID.
-    *
-    * @param obj Objektet som ska jämföras med det aktuella objektet.
-    * @return true om objekten är av samma klass och har samma itemID, annars false.
-    */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -98,13 +88,6 @@ public class DVD implements Items {
         return itemID == other.getItemID();
     }
 
-        
-    /**
-    * Genererar ett hashvärde baserat på itemID.
-    * Detta används för att säkerställa att två lika objekt (enligt equals) får samma hashvärde.
-    *
-    * @return hashvärde för objektet.
-    */
     @Override
     public int hashCode() {
         return Objects.hash(itemID);
@@ -112,6 +95,6 @@ public class DVD implements Items {
     
     @Override
     public String toString() {
-        return title; // Display only the title in ListView
+        return title; 
     }
 }

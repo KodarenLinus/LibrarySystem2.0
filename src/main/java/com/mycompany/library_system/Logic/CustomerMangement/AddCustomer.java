@@ -19,7 +19,6 @@ import java.sql.SQLException;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class AddCustomer {
-    
     private final DatabaseConnector dbConnector;
 
     public AddCustomer () {
@@ -32,7 +31,6 @@ public class AddCustomer {
      * @param Customer objekt som vi skickar till databasen
      */
     public void insertCustomer(Customer customer){
-        
         // Skapar en databasanslutning
         Connection conn = dbConnector.connect();
         
@@ -60,5 +58,4 @@ public class AddCustomer {
         }
     }
     
-
 }

@@ -17,15 +17,10 @@ import java.time.LocalDate;
  * Klass för att beräkna lånetid baserat på kategori av ett objekt.
  * Exempelvis: böcker = 1 månad, kurslitteratur = 1 vecka, DVD = 2 veckor.
  * 
- * Förbättringar:
- * - Använder try-with-resources för att stänga databasresurser automatiskt
- * - Felhantering för okända kategori-ID:n
- * - Fixat metodnamn från 'calculatetLoanEndDate' till 'calculateLoanEndDate'
  * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class GetCategoryLoanTime {
-
     private final DatabaseConnector dbConnector;
 
     public GetCategoryLoanTime() {
@@ -41,15 +36,19 @@ public class GetCategoryLoanTime {
      * @throws SQLException vid fel i SQL-frågan
      */
     public LocalDate calculateLoanEndDate(int itemID, LocalDate date) throws SQLException {
-        String getCategorySQL = "SELECT categoryID FROM item WHERE itemID = ?";
-        Connection conn = dbConnector.connect();
-        // Använder try-with-resources för att automatiskt stänga resurser
+        // En SQL-Fråga för att categoryID från ett item baserat på dess ItemID
+        String getCategorySQL = "SELECT categoryID FROM item WHERE ItemID = ?";
+       
         try (
+            Connection conn = dbConnector.connect();
             PreparedStatement categoryStmt = conn.prepareStatement(getCategorySQL);
         ) {
             categoryStmt.setInt(1, itemID);
 
-            try (ResultSet rs = categoryStmt.executeQuery()) {
+            try (
+                ResultSet rs = categoryStmt.executeQuery()
+            ) {
+                // Om det finns ett item hämtar vi dens categoryID
                 if (rs.next()) {
                     int categoryID = rs.getInt("categoryID");
 

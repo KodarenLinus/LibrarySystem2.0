@@ -19,8 +19,7 @@ import java.util.ArrayList;
  * 
  * @author Linus, Emil, Oliver, Viggo
  */
-public class AddAuthorToBook {
-    
+public class AddAuthorToBook { 
     private final DatabaseConnector dbConnector;
 
     public AddAuthorToBook () {
@@ -35,19 +34,21 @@ public class AddAuthorToBook {
      * @return true om man lyckas lägga till författare, false om ingen författare läggs till.
      */
     public boolean insertToBookAuthor(Book book, ArrayList<Author> authors) {
-        String sql = "INSERT INTO BookAuthor (ItemID, AuthorID) VALUES (?, ?)";
+        // SQL fråga som gör en insert i BookAuthor
+        String insertBookAuthor = "INSERT INTO BookAuthor (ItemID, AuthorID) VALUES (?, ?)";
 
         try (
             Connection conn = dbConnector.connect();
-            PreparedStatement addAuthorToBookStmt = conn.prepareStatement(sql);
+            PreparedStatement addAuthorToBookStmt = conn.prepareStatement(insertBookAuthor);
         ) {
-
+            // Loppar igenom våran author lista och kopplar alla authors till samma bok
             for (Author author : authors) {
                 addAuthorToBookStmt.setInt(1, book.getItemID());
                 addAuthorToBookStmt.setInt(2, author.getAuthorID());
                 addAuthorToBookStmt.addBatch();
             }
-
+            
+            // Skickar in det till databasen
             addAuthorToBookStmt.executeBatch();
             return true;
 

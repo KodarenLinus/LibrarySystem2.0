@@ -17,14 +17,6 @@ public class CustomerCategory {
     private String categoryName;
     private int loanLimit;
     
-    /**
-     * Skapar en ny kundkategori med angivet ID, namn och lånebegränsning.
-     * 
-     * @param categoryID   Det unika ID:t för kategorin
-     * @param categoryName Namnet på kundkategorin
-     * @param loanLimit    Max antal objekt kunden får låna samtidigt
-     */
-    
     public CustomerCategory (int categoryID, String categoryName, int loanLimit) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;

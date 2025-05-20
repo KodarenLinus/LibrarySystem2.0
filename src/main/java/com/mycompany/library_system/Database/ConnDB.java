@@ -9,7 +9,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- *
  * Den här klassen hanterar våran databas koppling för mySQL
  * 
  * @author Linus, Emil, Oliver, Viggo

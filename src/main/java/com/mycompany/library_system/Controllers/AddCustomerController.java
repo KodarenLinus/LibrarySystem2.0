@@ -17,7 +17,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TextField;
 
 /**
@@ -68,13 +67,19 @@ public class AddCustomerController {
      * Om en kund med samma mail finns så updateras den kunden.
      * Visar en alert vid lyckad registrering eller om något fält är felaktigt ifyllt.
      * 
-     * @param event -> Händelse för när man klickar på "Lägg till/ uppdatera kund ny kund"
+     * @param event Händelse för när man klickar på "Lägg till/ uppdatera kund ny kund"
      */
     @FXML
     void addNewCustomerOrUpdate(ActionEvent event) {
         System.out.println("test");
         CustomerCategory selectedCategory = Category.getValue();
-
+         if (!isFormValid()) {
+            title = "Alla fält är inte ifyllda";
+            header = "Du måste fylla i alla fälten"; 
+            content = "Du har missat att fylla i ett eller flera fält. Se till att allt är ifyllt.";
+            alert.createAlert(title, header, content);
+            return;
+        }
         try {
             // Skapa ett kundobjekt från inputfält
             Customer customer = new Customer(
@@ -90,7 +95,10 @@ public class AddCustomerController {
             // Försök att uppdatera kunden, annars lägg till den
             UpdateCustomer updater = new UpdateCustomer();
             boolean updated = updater.updateCustomerIfExists(customer);
-
+            /* 
+             * Om användaren uppdaterar information informerar vi att de uppdaterat.
+             * annars lägger vi till en användare 
+             */
             if (updated) {
                 title = "Uppdaterad";
                 header = "Kundinformation uppdaterad"; 
@@ -103,16 +111,17 @@ public class AddCustomerController {
                 header = "Kund har lagts till"; 
                 content = "Grattis, du har lagt till en ny kund i systemet.";
             }
-
+            //Skickar alerten
             alert.createAlert(title, header, content);
 
             // Uppdatera kundlistan i gränssnittet
             loadCustomerList();
 
-            // (valfritt) Rensa formuläret
+            //Rensa formuläret
             clearFields();
-
+        // Om vi skriver annat än heltal i telfonnummer fältet
         } catch (NumberFormatException e) {
+            // Medellar användaren att de skrivit något annat än helttal för telefonnummer
             title = "Ej tillåten input";
             header = "Telefonnummer måste vara heltal"; 
             content = "Du skrev in ogiltiga tecken i telefonnummerfältet. Använd endast siffror.";
@@ -127,6 +136,7 @@ public class AddCustomerController {
      */
     @FXML
     public void initialize() throws SQLException {
+        //Initierar kundlistan
         customerList.setCellFactory(list -> new ListCell<Customer>() {
             @Override
             protected void updateItem(Customer customer, boolean empty) {
@@ -134,13 +144,15 @@ public class AddCustomerController {
                 setText((empty || customer == null) ? null : customer.toString());
             }
         });
-
+        
+        // Lyssnar på sökbaren och matchar customerList mot sök resultatet.
         searchCustomers.textProperty().addListener((observable, oldValue, newValue) -> {
             SearchCustomer searchCustomer = new SearchCustomer();
             customerList.getItems().clear();
             customerList.getItems().addAll(searchCustomer.searchCustomer(newValue));
         });
-
+        
+        // Klickar man på en existerande användare fylls fälten i baserat på informationen i customer objektet
         customerList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, selectedCustomer) -> {
             if (selectedCustomer != null) {
                 try {
@@ -150,7 +162,8 @@ public class AddCustomerController {
                 }
             }
         });
-
+        
+        //Visar tillgängliga kategorier för kunder
         Category.setCellFactory(list -> new ListCell<CustomerCategory>() {
             @Override
             protected void updateItem(CustomerCategory category, boolean empty) {
@@ -217,5 +230,21 @@ public class AddCustomerController {
         telNr.clear();
         password.clear();
         Category.setValue(null);
+    }
+    
+    /**
+     * Validerar att alla obligatoriska fält är ifyllda.
+     * 
+     * @return true om formuläret är korrekt ifyllt, annars false
+     */
+    private boolean isFormValid() {
+        return !(telNr.getText().isEmpty() 
+              || password.getText().isEmpty()
+              || Category.getValue() == null 
+              || email.getText() == null
+              || firstName.getText().isEmpty() 
+              || lastName.getText().isEmpty()
+              || Category.getValue() == null 
+              || Category.getValue() == null);
     }
 }

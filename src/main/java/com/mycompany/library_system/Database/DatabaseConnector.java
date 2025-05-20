@@ -7,7 +7,6 @@ package com.mycompany.library_system.Database;
 import java.sql.Connection;
 
 /**
- *
  * Ett interface för databaskoppling
  * 
  * @author Linus, Emil, Oliver, Viggo

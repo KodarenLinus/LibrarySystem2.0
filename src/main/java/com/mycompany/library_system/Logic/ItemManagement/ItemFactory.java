@@ -65,12 +65,14 @@ public class ItemFactory {
      * @throws SQLException
      */
     private static boolean isBook(Connection conn, int itemId) throws SQLException {
-        String query = "SELECT 1 FROM Book WHERE itemID = ?";
+        String findBookByIDQuery = "SELECT 1 FROM Book WHERE itemID = ?";
         try (
-            PreparedStatement findBookStmt = conn.prepareStatement(query);
+            PreparedStatement findBookStmt = conn.prepareStatement(findBookByIDQuery);
         ) {
             findBookStmt.setInt(1, itemId);
-            try (ResultSet rs = findBookStmt.executeQuery()) {
+            try (
+                ResultSet rs = findBookStmt.executeQuery()
+            ) {
                 return rs.next(); // true om posten finns
             }
         }
@@ -86,12 +88,15 @@ public class ItemFactory {
      * @throws SQLException
      */
     private static int getBookISBN(Connection conn, int itemId) throws SQLException {
-        String query = "SELECT ISBN FROM Book WHERE itemID = ?";
+        String getISBNByIDQuery = "SELECT ISBN FROM Book WHERE itemID = ?";
         try (
-            PreparedStatement findISBNforBookStmt = conn.prepareStatement(query);
+            PreparedStatement findISBNforBookStmt = conn.prepareStatement(getISBNByIDQuery);
         ) {
             findISBNforBookStmt.setInt(1, itemId);
-            try (ResultSet rs = findISBNforBookStmt.executeQuery()) {
+            try (
+                ResultSet rs = findISBNforBookStmt.executeQuery()
+            ) {
+                // Retunerar ett ISBN-Nummer om vi får ett resultset
                 if (rs.next()) {
                     return rs.getInt("ISBN");
                 }
@@ -110,12 +115,16 @@ public class ItemFactory {
      * @throws SQLException
      */
     private static int getBookPublisherID(Connection conn, int itemId) throws SQLException {
-        String query = "SELECT PublisherID FROM Book WHERE itemID = ?";
+        String getPublisherByIDQuery = "SELECT PublisherID FROM Book WHERE itemID = ?";
         try (
-            PreparedStatement findPublisherIDStmt = conn.prepareStatement(query);
+            PreparedStatement findPublisherIDStmt = conn.prepareStatement(getPublisherByIDQuery);
         ) {
             findPublisherIDStmt.setInt(1, itemId);
-            try (ResultSet rs = findPublisherIDStmt.executeQuery()) {
+            
+            try (
+                ResultSet rs = findPublisherIDStmt.executeQuery();
+            ) {
+                // Retunerar publisherID om vi får ett resultset
                 if (rs.next()) {
                     return rs.getInt("PublisherID");
                 }
@@ -134,12 +143,14 @@ public class ItemFactory {
      * @throws SQLException
      */
     private static boolean isDVD(Connection conn, int itemId) throws SQLException {
-        String query = "SELECT 1 FROM DVD WHERE itemID = ?";
+        String GetDVDByIDQuery = "SELECT 1 FROM DVD WHERE itemID = ?";
         try (
-            PreparedStatement findDVDStmt = conn.prepareStatement(query)
+            PreparedStatement findDVDStmt = conn.prepareStatement(GetDVDByIDQuery)
         ) {
             findDVDStmt.setInt(1, itemId);
-            try (ResultSet rs = findDVDStmt.executeQuery()) {
+            try (
+                ResultSet rs = findDVDStmt.executeQuery();
+            ) {
                 return rs.next(); // true om posten finns
             }
         }
@@ -155,12 +166,15 @@ public class ItemFactory {
      * @throws SQLException
      */
     private static int getDVDDirectorID(Connection conn, int itemId) throws SQLException {
-        String query = "SELECT DirectorID FROM DVD WHERE itemID = ?";
+        String getDirectorByIDQuery = "SELECT DirectorID FROM DVD WHERE itemID = ?";
         try (
-            PreparedStatement findDirectorIDStmt = conn.prepareStatement(query)
+            PreparedStatement findDirectorIDStmt = conn.prepareStatement(getDirectorByIDQuery)
         ) {
             findDirectorIDStmt.setInt(1, itemId);
-            try (ResultSet rs = findDirectorIDStmt.executeQuery()) {
+            try (
+                ResultSet rs = findDirectorIDStmt.executeQuery();
+            ) {
+                // Retunerar ett directorID om det finns ett resultset
                 if (rs.next()) {
                     return rs.getInt("DirectorID");
                 }

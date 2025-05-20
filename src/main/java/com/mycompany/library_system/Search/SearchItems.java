@@ -21,7 +21,6 @@ import java.util.ArrayList;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class SearchItems {
-
     private final DatabaseConnector dbConnector;
 
     public SearchItems() {
@@ -37,7 +36,10 @@ public class SearchItems {
      * @return En lista med matchande Items-objekt
      */
     public ArrayList<Items> search(String searchText, boolean onlyAvailable) {
+        // En ArrayLista vi spara våra items i
         ArrayList<Items> results = new ArrayList<>();
+        
+        // En SQL-Fråga som vi använder för att söka upp items
         String query = "SELECT * FROM item WHERE title LIKE ?" + (onlyAvailable ? " AND available = true" : "");
 
         try (
@@ -47,7 +49,8 @@ public class SearchItems {
 
             findItemStmt.setString(1, "%" + searchText + "%");
             ResultSet rs = findItemStmt.executeQuery();
-
+            
+            // Loopar igenom vårt resultset och lägger in dem i vår ArrayLista
             while (rs.next()) {
                 Items item = ItemFactory.createItemFromResultSet(rs, conn);
                 if (item != null) results.add(item);

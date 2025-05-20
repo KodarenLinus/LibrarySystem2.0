@@ -15,15 +15,16 @@ import java.util.ArrayList;
 
 /**
  * En hjälparklass för att hämta alla regissörer (Directors) från databasen.
+ * 
  * @author Linus, Emil, Oliver, viggo
  */
 public class GetDirectors {
-    
     private final DatabaseConnector dbConnector;
 
     public GetDirectors () {
         this.dbConnector = new ConnDB();
     }
+    
     /**
      * Hämtar alla director från databasen.
      *
@@ -31,17 +32,18 @@ public class GetDirectors {
      * @throws SQLException Om databasfrågan misslyckas
      */
     public ArrayList<Director> getAllDirectors () throws SQLException {
+        // En ArrayList för våra Directors
         ArrayList<Director> directorList = new ArrayList<>();
-        
-        Connection conn = dbConnector.connect();
         
         // En SQL-fråga för att hämta alla directors
         String selectAllDirectors = "SELECT * FROM Director";
         
         try (
+            Connection conn = dbConnector.connect();
             PreparedStatement directorStmt = conn.prepareStatement(selectAllDirectors);
             ResultSet rsDirector = directorStmt.executeQuery();
         ) {
+            // Loppar igenom vårt resutset och lägger in Directors i vår ArrayList
             while (rsDirector.next()) {
                 int directorID = rsDirector.getInt("DirectorID");
                 String firstname = rsDirector.getString("Firstname");

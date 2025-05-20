@@ -10,6 +10,7 @@ import com.mycompany.library_system.Models.Items;
 import com.mycompany.library_system.Logic.LoanMangement.LoanItem;
 import com.mycompany.library_system.Search.SearchItems;
 import com.mycompany.library_system.Login.Session;
+import com.mycompany.library_system.Models.CategoryType;
 import com.mycompany.library_system.Utils.AlertHandler;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -28,14 +29,8 @@ import javafx.scene.input.MouseEvent;
 /**
  * Controller-klass för att hantera utlåning av objekt i bibliotekssystemet.
  * Användare kan söka efter objekt, filtrera, lägga till i kundvagn och genomföra utlåning.
- * Samverkar med LoanItem.fxml.
  * 
- * Funktioner:
- * - Söka efter objekt
- * - Filtrera referenslitteratur och magasin
- * - Visa reservationsstatus
- * - Lägga till och ta bort från kundvagn
- * - Skapa lån
+ * Fungerar tillsammans med LoanItem.fxml.
  * 
  * @author Linus, Emil, Oliver, Viggo
  */
@@ -51,24 +46,24 @@ public class LoanItemController {
     
     // FXML-kopplingar till gränssnittets komponenter
     @FXML
-    private ListView<Items> ItemList; // Lista med tillgängliga objekt
+    private ListView<Items> ItemList; 
 
     @FXML
-    private TextField ScearchItem; // Textfält för att söka objekt
+    private TextField ScearchItem;
 
     @FXML
-    private ListView<Items> itemCartList; // Lista med valda objekt att låna
+    private ListView<Items> itemCartList;
 
     @FXML
-    private RadioButton magazineFilterButton; // Filter för magasin
+    private RadioButton magazineFilterButton;
 
     @FXML
-    private RadioButton referensFilterButton; // Filter för referenslitteratur
+    private RadioButton referensFilterButton;
 
     /**
      * Filtrerar listan när magasin-filter aktiveras.
      * 
-     * @param event -> en radiobutton som när den är aktiv filtrerar bort tidskrifter
+     * @param event en radiobutton som när den är aktiv filtrerar bort tidskrifter
      */
     @FXML
     void FilterMagazine(ActionEvent event) {
@@ -93,12 +88,23 @@ public class LoanItemController {
      */
     @FXML
     void addToCart(MouseEvent event) {
+        // Spara ner värde från ItemList som vi valt
         Items selectedItem = ItemList.getSelectionModel().getSelectedItem();
-        final int REFERENSLITTERATUR = 4;
-        final int MAGAZINES = 5;
-
+        
+        // ID för tidskrift och referenslitratur
+        final int REFERENSLITTERATUR = CategoryType.REFRENCE_COPY.getId();
+        final int MAGAZINES = CategoryType.MAGAZINE.getId();
+        
+        /* 
+         * Kollar att vi valdt något. 
+         * Om vi valt något så kommer det läggas i våran kundvagn så länge det inte är
+         * En tidsskirft eller Referense kopia. Är det otilåtet att låna kommer användaren att informeras
+         * Om vi inte valt något så kommer inget att hända
+         */
         if (selectedItem != null) {
             int categoryId = selectedItem.getCategoryID();
+            
+            // Kollar om det är en tidsskift eller en referense kopia
             if (categoryId == REFERENSLITTERATUR || categoryId == MAGAZINES) {
                 title = "Ej tillåtet";
                 header ="Kan inte läggas till"; 
@@ -106,7 +112,8 @@ public class LoanItemController {
                 alert.createAlert(title, header, content);
                 return;
             }
-
+            
+            // Lägger till valt item i kundvagn och tar bort från ItemList
             if (!itemCartList.getItems().contains(selectedItem)) {
                 itemCartList.getItems().add(selectedItem);
                 applyFilter();
@@ -121,8 +128,13 @@ public class LoanItemController {
      */
     @FXML
     void removeFromCart(MouseEvent event) {
+        // Spara ner värde från ItemCartList som vi valt
         Items selectedItem = itemCartList.getSelectionModel().getSelectedItem();
-
+        
+         /* 
+         * Kollar att vi valdt något. 
+         * Om vi valt något så kommer det tas bort från våran kundvagn
+         */
         if (selectedItem != null) {
             itemCartList.getItems().remove(selectedItem);
             applyFilter();
@@ -150,10 +162,16 @@ public class LoanItemController {
      */
     @FXML
     void makeOrder(ActionEvent event) {
+        // LoanItem objekt
         LoanItem loanItem = new LoanItem();
+        
+        // Spara ner våran kundvagn i en items Arraylist
         ArrayList<Items> itemsToLoan = new ArrayList<>(itemCartList.getItems());
+        
+        // Hämtar nuvarande användar Session 
         Session session = Session.getInstance();
-
+        
+        // Om vårat lån går igenom töms våran kundvagn.
         if (loanItem.addToLoanRows(session.getUserId(), itemsToLoan)) {
             itemCartList.getItems().clear();
         }
@@ -208,22 +226,32 @@ public class LoanItemController {
      * Använder aktuell sökterm och filterinställningar för att uppdatera visade objekt.
      */
     private void applyFilter() {
+        // Hämtar värde från SearchItem och spara ner de
         String searchTerm = ScearchItem.getText();
+        
+        // Skapar ett searchItems objekt och skapar en lista utefrån all matchar våran sökning får i metoden search
         SearchItems searchItems = new SearchItems();
         ArrayList<Items> allItems = searchItems.search(searchTerm, true);
+        
+        // ta bort alla items som ligger i vår kundvagn
         allItems.removeAll(itemCartList.getItems());
-
+        
+        // Ny arrayLista
         ArrayList<Items> filteredItems = new ArrayList<>();
+        
+        // Kollar ifall vi filtrerat bort Tidskrifter och Referense kopior
         for (Items item : allItems) {
-            if (magazineFilterButton.isSelected() && item.getCategoryID() == 5) {
+            if (magazineFilterButton.isSelected() && item.getCategoryID() == CategoryType.MAGAZINE.getId()) {
                 continue;
             }
-            if (referensFilterButton.isSelected() && item.getCategoryID() == 4) {
+            if (referensFilterButton.isSelected() && item.getCategoryID() == CategoryType.REFRENCE_COPY.getId()) {
                 continue;
             }
+            // Ny filtrerad ArrayList
             filteredItems.add(item);
         }
-
+        
+        // ItemList innehåller filteredItems
         ItemList.getItems().setAll(filteredItems);
     }
 }

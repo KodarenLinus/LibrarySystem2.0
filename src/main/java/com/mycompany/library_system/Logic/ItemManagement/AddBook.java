@@ -18,7 +18,6 @@ import java.sql.SQLException;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class AddBook {
-    
     private final DatabaseConnector dbConnector;
 
     public AddBook () {
@@ -33,10 +32,6 @@ public class AddBook {
      * @param book Ett bokobjekt som innehåller titel, genre, kategori, plats och ISBN.
      */
     public void insertBook (Book book) {
-        
-        // Skapar en databasanslutning
-        Connection conn = dbConnector.connect();
-        
         // SQL-fråga för att infoga i Item-tabellen
         String insertToItem = "INSERT INTO Item (GenreID, CategoryID, GenreName, CategoryName, Title, Location, Available) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -46,6 +41,7 @@ public class AddBook {
                 + "VALUES (?, ?, ?)";
         
         try (
+            Connection conn = dbConnector.connect();
             PreparedStatement insertToItemStmt = conn.prepareStatement(insertToItem, PreparedStatement.RETURN_GENERATED_KEYS);
             PreparedStatement insertToBookStmt = conn.prepareStatement(insertToBook);
         ){
@@ -59,26 +55,27 @@ public class AddBook {
             insertToItemStmt.setBoolean(7, true);
             insertToItemStmt.executeUpdate();
             
-            
-        insertToItemStmt.executeUpdate();
+            // Skickar till databasen
+            insertToItemStmt.executeUpdate();
 
-        // Hämta det genererade ItemID:t
-        int generatedItemID = -1;
-        try (
-            var generatedKeys = insertToItemStmt.getGeneratedKeys();
-        ) {
-            if (generatedKeys.next()) {
-                generatedItemID = generatedKeys.getInt(1);
-            } else {
-                throw new SQLException("Misslyckades att hämta genererat ItemID.");
+            // Hämta det genererade ItemID:t
+            int generatedItemID = -1;
+            try (
+                var generatedKeys = insertToItemStmt.getGeneratedKeys();
+            ) {
+                if (generatedKeys.next()) {
+                    generatedItemID = generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Misslyckades att hämta genererat ItemID.");
+                }
             }
-        }
+            // Sätt parametrar för andra INSERT (Book)
+            insertToBookStmt.setInt(1, generatedItemID);
+            insertToBookStmt.setInt(2, book.getIsbn());
+            insertToBookStmt.setInt(3, book.getPublisherID());
 
-        // Sätt parametrar för andra INSERT (Book)
-        insertToBookStmt.setInt(1, generatedItemID);
-        insertToBookStmt.setInt(2, book.getIsbn());
-        insertToBookStmt.setInt(3, book.getPublisherID());
-        insertToBookStmt.executeUpdate();
+            // Skickar till databasen
+            insertToBookStmt.executeUpdate();
 
         } catch (SQLException ex){
             ex.printStackTrace();

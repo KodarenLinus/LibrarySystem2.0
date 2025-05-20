@@ -16,11 +16,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 
 /**
  * Controllerklass för att lägga till nya DVD:er i bibliotekssystemet.
  * Ansvarar för att hantera användarinmatning, validering och databasinmatning.
+ * 
  * Fungerar tillsammans med AddDVD.fxml.
  * 
  * @author Linus, Emil, Oliver, Viggo
@@ -70,6 +70,7 @@ public class AddDVDController {
 
     @FXML
     void addDVD(ActionEvent event) {
+        //Kollar att alla fält är i fyllda om inte informerars användaren att de finns tomma fält
         if (!isFormValid()) {
             title = "Alla fält är inte ifyllda";
             header = "Du måste fylla i alla fälten"; 
@@ -82,7 +83,7 @@ public class AddDVDController {
         // Hämtar data från genre och category combo box
         Genre selectedGenre = Genre.getValue();
         Director selectedDirector = Director.getValue();
-
+        
         AddDVD addDVD = new AddDVD();
         CategoryType dvd_ = CategoryType.DVD;
         
@@ -147,6 +148,8 @@ public class AddDVDController {
      * @return true om formuläret är korrekt ifyllt, annars false
      */
     private boolean isFormValid() {
-        return !(Title.getText().isEmpty() || Location.getText().isEmpty() || Genre.getValue() == null);
+        return !(Title.getText().isEmpty() 
+                || Location.getText().isEmpty() 
+                || Genre.getValue() == null);
     }
 }

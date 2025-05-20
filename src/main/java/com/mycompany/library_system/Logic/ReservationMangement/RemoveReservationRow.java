@@ -16,7 +16,6 @@ import java.sql.SQLException;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class RemoveReservationRow {
-    
     private final DatabaseConnector dbConnector;
 
     public RemoveReservationRow () {
@@ -30,11 +29,13 @@ public class RemoveReservationRow {
      * @return true om raden togs bort, annars false
      */
     public boolean deleteReservationRow(int reservationRowID) {
-        String sql = "DELETE FROM ReservationRow WHERE reservationRowID = ?";
+        // En SQL-Fråga för att ta bort ReservationsRows
+        String deleteReservationRowsQuery = "DELETE FROM ReservationRow "
+                + "WHERE reservationRowID = ?";
 
         try (
             Connection conn = dbConnector.connect();
-            PreparedStatement deleteReservationRowstmt = conn.prepareStatement(sql)
+            PreparedStatement deleteReservationRowstmt = conn.prepareStatement(deleteReservationRowsQuery)
         ) {
             deleteReservationRowstmt.setInt(1, reservationRowID);
             int affectedRows = deleteReservationRowstmt.executeUpdate();

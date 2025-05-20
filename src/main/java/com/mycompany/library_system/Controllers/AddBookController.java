@@ -16,7 +16,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TextField;
 
 /**
@@ -59,7 +58,7 @@ public class AddBookController {
     /**
      * Navigerar användaren till vyn för att välja objekt att lägga till (t.ex. bok eller DVD).
      *
-     * @param event -> Händelsen som triggas av användarens klick på "Tillbaka"-knappen.
+     * @param event Händelsen som triggas av användarens klick på "Tillbaka"-knappen.
      */
     @FXML
     void GoToItem(ActionEvent event) {
@@ -72,10 +71,11 @@ public class AddBookController {
      * Försöker skapa och lägga till en ny bok efter att ha validerat fälten.
      * Visar en alert vid lyckad registrering eller om något fält är felaktigt ifyllt.
      *
-     * @param event -> Händelsen som triggas när användaren klickar på "Lägg till bok".
+     * @param event Händelsen som triggas när användaren klickar på "Lägg till bok".
      */
     @FXML
     void addBook(ActionEvent event) {
+        // Om alla fält inte är i fyllda dycker detta medellande upp
         if (!isFormValid()) {
             title = "Alla fält är inte ifyllda";
             header = "Du måste fylla i alla fälten"; 
@@ -85,6 +85,7 @@ public class AddBookController {
         }
         
         try {
+            //Hämtar värden från våra FMXL Element
             int isbn = Integer.parseInt(ISBN.getText());
             Category selectedCategory = Category.getValue();
             Genre selectedGenre = Genre.getValue();
@@ -110,7 +111,7 @@ public class AddBookController {
             header = "Boken har lagts till"; 
             content = "Grattis, du har lagt till en ny bok i systemet.";
             alert.createAlert(title, header, content);
-            
+        //Om vi försöker skriva något annat än heltal i ISBN fältet
         } catch (NumberFormatException e) {
             //Skapar en alert som berättar att man skrivit annat än int i ISBN 
             title = "Ej tillåten input";
@@ -167,16 +168,16 @@ public class AddBookController {
             }
         });
 
-        // Hämta och sätt genrer
+        // Hämta och sätt publisher
         GetPublisher getPublisher = new GetPublisher();
         ArrayList<Publisher> allPublisher = getPublisher.getAllPublishers();
         Publisher.getItems().setAll(allPublisher);
     }
 
     /**
-     * Kontrollerar att alla formulärfält är ifyllda.
-     *
-     * @return true om alla fält är ifyllda, annars false.
+     * Validerar att alla obligatoriska fält är ifyllda.
+     * 
+     * @return true om formuläret är korrekt ifyllt, annars false
      */
     private boolean isFormValid() {
         return !(Title.getText().isEmpty() 

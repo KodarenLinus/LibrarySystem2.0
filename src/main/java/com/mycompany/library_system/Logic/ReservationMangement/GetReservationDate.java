@@ -12,12 +12,9 @@ import java.time.LocalDate;
 /**
  * Klass som ansvarar för att hämta reservationsdatum kopplat till ett visst item.
  * 
- * Följer SRP (Single Responsibility Principle): denna klass ansvarar endast för att läsa ut ett datum.
- * 
  * @author Linus, Emil, Oliver, Viggo
  */
 public class GetReservationDate {
-
     private final DatabaseConnector dbConnector;
 
     public GetReservationDate() {
@@ -33,15 +30,20 @@ public class GetReservationDate {
      * @throws SQLException vid databasfel
      */
     public LocalDate getReservationDateForItem(int itemId) throws SQLException {
-        String sql = "SELECT reservationDate FROM reservation WHERE "
+        // En SQL-Fråga som hämtar reservations datum från reservation tabellen för items
+        String getReservationDate = "SELECT reservationDate FROM reservation WHERE "
                 + "ReservationID IN (SELECT ReservationID FROM ReservationRow WHERE itemID = ? and isfullfilled = false)";
 
-        try (Connection conn = dbConnector.connect();
-             PreparedStatement getReservationDateStmt = conn.prepareStatement(sql);
+        try (
+            Connection conn = dbConnector.connect();
+            PreparedStatement getReservationDateStmt = conn.prepareStatement(getReservationDate);
         ) {
 
             getReservationDateStmt.setInt(1, itemId);
-            try (ResultSet rs = getReservationDateStmt.executeQuery()) {
+            try (
+                ResultSet rs = getReservationDateStmt.executeQuery()
+            ) {
+                // Retunerar reservations datum om det finns ett resultset.
                 if (rs.next()) {
                     return rs.getDate("reservationDate").toLocalDate();
                 }

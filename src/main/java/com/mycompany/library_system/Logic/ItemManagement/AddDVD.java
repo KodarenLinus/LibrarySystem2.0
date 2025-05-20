@@ -19,7 +19,6 @@ import java.sql.SQLException;
  * @author Linus, Emil, Oliver, Viggo
  */
 public class AddDVD {
-    
     private final DatabaseConnector dbConnector;
 
     public AddDVD () {
@@ -33,10 +32,6 @@ public class AddDVD {
      * @param dvd Ett DVD-objekt som innehåller titel, genre, kategori, plats och regissör.
      */
     public void insertDVD (DVD dvd) {
-        
-         // Skapar en databasanslutning
-        Connection conn = dbConnector.connect();
-        
         // SQL-fråga för att infoga i Item-tabellen
         String insertToItem = "INSERT INTO Item (GenreID, CategoryID, GenreName, CategoryName, Title, Location, Available) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -46,6 +41,7 @@ public class AddDVD {
                 + "VALUES (?, ?)";
                 
         try (
+            Connection conn = dbConnector.connect();  
             PreparedStatement insertToItemStmt = conn.prepareStatement(insertToItem, PreparedStatement.RETURN_GENERATED_KEYS);
             PreparedStatement insertToDVDStmt = conn.prepareStatement(insertToDVD);
         ){
@@ -57,6 +53,8 @@ public class AddDVD {
             insertToItemStmt.setString(5, dvd.getTitle());
             insertToItemStmt.setString(6, dvd.getLocation());
             insertToItemStmt.setBoolean(7, true);
+            
+            // Skickar till databasen
             insertToItemStmt.executeUpdate();
             
             // Hämta genererat ItemID
@@ -70,10 +68,11 @@ public class AddDVD {
                     throw new SQLException("Kunde inte hämta genererat ItemID.");
                 }
             }
-
             // Lägger till värden i DVD-tabellen
             insertToDVDStmt.setInt(1, generatedItemID);
             insertToDVDStmt.setInt(2, dvd.getDirectorID());
+            
+            // Skickar till databasen
             insertToDVDStmt.executeUpdate();
 
         } catch (SQLException ex){
