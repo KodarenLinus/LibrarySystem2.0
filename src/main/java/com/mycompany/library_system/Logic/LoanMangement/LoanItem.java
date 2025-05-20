@@ -203,36 +203,35 @@ public class LoanItem {
      * @param itemsToLoan Lista med objekt som ska lånas
      * @return Lista med skapade LoanRow-objekt innehållande låneinformation
      */
-    public ArrayList<LoanRow> insertLoanRows(Connection conn, int loanID, ArrayList<Items> itemsToLoan) {
+    private ArrayList<LoanRow> insertLoanRows(Connection conn, int loanID, ArrayList<Items> itemsToLoan) {
+        //Alert strängar
         String title;
         String header;
         String content;
         
+        //SQL frågor
+        String insertLoanRow = "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate, ActiveLoan) VALUES (?, ?, ?, ?, true)";
+        String checkReservation = "SELECT r.CustomerID, res.reservationDate FROM reservationrow rr " +
+                "JOIN reservation r ON rr.reservationID = r.reservationID " +
+                "JOIN reservation res ON r.reservationID = res.reservationID " +
+                "WHERE rr.itemID = ? AND res.reservationDate = ?";
+        String updateReservation = "UPDATE reservationrow SET IsFullfilled = true " +
+                "WHERE itemID = ? AND reservationID IN (" +
+                "SELECT reservationID FROM reservation WHERE CustomerID = ? AND reservationDate = ?)";
+         
+        //Customer som är inloggad
         int currentUserID = Session.getInstance().getUserId();
+        
+        //Dagens datum
         LocalDate today = LocalDate.now();
+        
+        //Lista med lånrader som skickats till våran databas
         ArrayList<LoanRow> loanRows = new ArrayList<>();
 
         try (
-            PreparedStatement insertLoanRowStmt = conn.prepareStatement(
-                "INSERT INTO loanrow (loanid, itemid, RowLoanStartDate, RowLoanEndDate, ActiveLoan) VALUES (?, ?, ?, ?, true)",
-                Statement.RETURN_GENERATED_KEYS
-            );
-            PreparedStatement checkReservationStmt = conn.prepareStatement(
-                "SELECT r.CustomerID, res.reservationDate FROM reservationrow rr " +
-                "JOIN reservation r ON rr.reservationID = r.reservationID " +
-                "JOIN reservation res ON r.reservationID = res.reservationID " +
-                "WHERE rr.itemID = ? AND res.reservationDate = ?"
-            );
-            PreparedStatement futureReservationStmt = conn.prepareStatement(
-                "SELECT r.reservationDate FROM reservationrow rr " +
-                "JOIN reservation r ON rr.reservationID = r.reservationID " +
-                "WHERE rr.itemID = ? AND r.reservationDate > ?"
-            );
-            PreparedStatement updateReservationStmt = conn.prepareStatement(
-                "UPDATE reservationrow SET IsFullfilled = true " +
-                "WHERE itemID = ? AND reservationID IN (" +
-                "SELECT reservationID FROM reservation WHERE CustomerID = ? AND reservationDate = ?)"
-            );
+            PreparedStatement insertLoanRowStmt = conn.prepareStatement(insertLoanRow, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement checkReservationStmt = conn.prepareStatement(checkReservation);
+            PreparedStatement updateReservationStmt = conn.prepareStatement(updateReservation);
         ) {
             for (Items item : itemsToLoan) {
                 if (!canLoanItemToday(item.getItemID(), currentUserID, today, checkReservationStmt, updateReservationStmt)) {
@@ -244,17 +243,33 @@ public class LoanItem {
                     alertHandler.createAlert(title, header, content);
                     continue;
                 }
+                //Räknar ut slut datum
+                GetCategoryLoanTime getCategoryLoanTime = new GetCategoryLoanTime();
+                LocalDate endDate = getCategoryLoanTime.calculateLoanEndDate(item.getItemID(), today);
+                LocalDate finalEndDate = endDate;
 
-                LocalDate endDate = calculateReturnDate(item.getItemID(), today, futureReservationStmt);
+                checkReservationStmt.setInt(1, item.getItemID());
+                checkReservationStmt.setDate(2, java.sql.Date.valueOf(today));
+                ResultSet rs = checkReservationStmt.executeQuery();
 
+                if (rs.next() && rs.getDate("reservationDate") != null) {
+                    LocalDate reservedDate = rs.getDate("reservationDate").toLocalDate();
+                    if (reservedDate.isBefore(endDate)) {
+                        finalEndDate = reservedDate.minusDays(1);
+                    }
+                }
+                
+                //Värden som vi skickar in i LoanRows tabelen
                 insertLoanRowStmt.setInt(1, loanID);
                 insertLoanRowStmt.setInt(2, item.getItemID());
                 insertLoanRowStmt.setDate(3, java.sql.Date.valueOf(today));
-                insertLoanRowStmt.setDate(4, java.sql.Date.valueOf(endDate));
+                insertLoanRowStmt.setDate(4, java.sql.Date.valueOf(finalEndDate));
                 insertLoanRowStmt.executeUpdate();
-
+                
+                
                 ResultSet generatedKeys = insertLoanRowStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
+                    //Skapar ett LoanRow objekt och lägger det i vår arrayList
                     LoanRow loanRow = new LoanRow(loanID, item.getItemID(), today, endDate, true);
                     loanRows.add(loanRow);
                 }
@@ -279,12 +294,16 @@ public class LoanItem {
      * @return true om objektet får lånas, annars false
      * @throws SQLException vid SQL-fel
      */
-    private boolean canLoanItemToday(int itemId, int userId, LocalDate today,
-        PreparedStatement checkStmt, PreparedStatement updateStmt) throws SQLException {
+    private boolean canLoanItemToday(int itemId, int userId, LocalDate today, PreparedStatement checkStmt, PreparedStatement updateStmt) throws SQLException {
+        //Värden för vår SQL-fråga som kollar om det är en reservation och om en customer är kopplad till den
         checkStmt.setInt(1, itemId);
         checkStmt.setDate(2, java.sql.Date.valueOf(today));
         ResultSet rs = checkStmt.executeQuery();
-
+        
+        /**Kollar ifall det är en customers reservation, om de är det return false.
+         * Om det är en customers reservation så blir reservationen uppfylld.
+         * Vår metod returnerar true då.
+         */
         if (rs.next()) {
             int reservingUserID = rs.getInt("CustomerID");
             if (reservingUserID != userId) {
@@ -299,28 +318,6 @@ public class LoanItem {
         return true;
     }
 
-    /**
-     * Beräknar ett slutdatum för utlåning, beroende på framtida reservationer.
-     *
-     * @param itemId Objektets ID
-     * @param startDate Startdatum för utlåning
-     * @param stmt Förberedd SQL-sats för framtida reservationer
-     * @return Datum då objektet ska återlämnas
-     * @throws SQLException vid SQL-fel
-     */
-    private LocalDate calculateReturnDate(int itemId, LocalDate startDate,
-                                          PreparedStatement stmt) throws SQLException {
-        stmt.setInt(1, itemId);
-        stmt.setDate(2, java.sql.Date.valueOf(startDate));
-        ResultSet rs = stmt.executeQuery();
-
-        LocalDate defaultReturnDate = startDate.plusDays(14);
-        if (rs.next()) {
-            LocalDate reservedDate = rs.getDate("reservationDate").toLocalDate();
-            return reservedDate.minusDays(1);
-        }
-        return defaultReturnDate;
-    }
 }
 
 

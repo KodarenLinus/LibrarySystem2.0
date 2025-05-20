@@ -46,7 +46,7 @@ public class LoginViewController{
     @FXML
     private void loginButton(ActionEvent event) throws IOException {
 
-        boolean isLoggedIn = login.doLogin(userName.getText(), userPassword.getText());
+        boolean isLoggedIn = login.doCustomerLogin(userName.getText(), userPassword.getText());
 
         if (isLoggedIn) {
             String fxmlf = "CustomerStart.fxml";

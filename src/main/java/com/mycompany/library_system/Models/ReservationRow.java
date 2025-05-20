@@ -75,30 +75,12 @@ public class ReservationRow {
     }
 
     /**
-     * Sätter ID för den tillhörande reservationen.
-     *
-     * @param reservationID nytt reservations-ID
-     */
-    public void setReservationID(int reservationID) {
-        this.reservationID = reservationID;
-    }
-
-    /**
      * Hämtar datumet då reservationen gjordes.
      *
      * @return reservationsdatumet
      */
     public LocalDate getReservationDate() {
         return reservationDate;
-    }
-
-    /**
-     * Sätter datumet för reservationen.
-     *
-     * @param reservationDate nytt datum
-     */
-    public void setReservationDate(LocalDate reservationDate) {
-        this.reservationDate = reservationDate;
     }
 
     /**
@@ -110,14 +92,6 @@ public class ReservationRow {
         return itemID;
     }
 
-    /**
-     * Sätter ID för det reserverade objektet.
-     *
-     * @param itemID nytt objekt-ID
-     */
-    public void setItemID(int itemID) {
-        this.itemID = itemID;
-    }
 
     /**
      * Returnerar om reservationen är uppfylld.

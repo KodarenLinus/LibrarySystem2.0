@@ -49,10 +49,6 @@ public class Session {
         return email;
     }
 
-    public String getRole() {
-        return role;
-    }
-
     public boolean isStaff() {
         return "staff".equalsIgnoreCase(role);
     }

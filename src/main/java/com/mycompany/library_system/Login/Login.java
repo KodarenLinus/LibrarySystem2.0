@@ -31,7 +31,7 @@ public class Login {
      * @param String password en sträng vi sparar lösenordet som skrivs i lösenord rutan
      * @return en boolean true eller false baserat på om man matchar användarnamn med rätt lösenord
      */
-    public boolean doLogin (String username, String password) {
+    public boolean doCustomerLogin (String username, String password) {
         
         Connection conn = dbConnector.connect();
         
