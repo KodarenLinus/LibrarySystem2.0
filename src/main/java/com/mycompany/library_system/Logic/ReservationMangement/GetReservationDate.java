@@ -34,7 +34,7 @@ public class GetReservationDate {
      */
     public LocalDate getReservationDateForItem(int itemId) throws SQLException {
         String sql = "SELECT reservationDate FROM reservation WHERE "
-                + "ReservationID IN (SELECT ReservationID FROM ReservationRow WHERE itemID = ?)";
+                + "ReservationID IN (SELECT ReservationID FROM ReservationRow WHERE itemID = ? and isfullfilled = false)";
 
         try (Connection conn = dbConnector.connect();
              PreparedStatement getReservationDateStmt = conn.prepareStatement(sql);

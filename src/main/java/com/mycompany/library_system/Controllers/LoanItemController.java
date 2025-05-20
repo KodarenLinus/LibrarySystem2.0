@@ -183,7 +183,7 @@ public class LoanItemController {
                     }
                     
                     //Sätter ut att item är reserverat om de är inom lån tid.
-                    String dateInfo = (reservationDate != null && (reservationDate.isAfter(LocalDate.now()) || reservationDate.isEqual(reservationDate))) ?
+                    String dateInfo = (reservationDate != null && (reservationDate.isAfter(LocalDate.now()) || reservationDate.isEqual(LocalDate.now()))) ?
                             " (Reserverad: " + reservationDate + ")" : " (Ej reserverad)";
                     setText(item.toString() + dateInfo);
                 }

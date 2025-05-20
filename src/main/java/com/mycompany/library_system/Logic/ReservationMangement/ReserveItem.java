@@ -160,7 +160,7 @@ public class ReserveItem {
     private boolean hasReservationConflict(Connection conn, int itemID, LocalDate start, LocalDate end) throws SQLException {
         String sql = "SELECT 1 FROM reservationRow rr " +
             "JOIN reservation r ON rr.reservationID = r.reservationID " +
-            "WHERE rr.itemID = ? " +
+            "WHERE rr.itemID = ? AND rr.isFullfilled = false " +
             "AND (r.reservationDate BETWEEN ? AND ? " +
             "OR ? BETWEEN r.reservationDate AND DATE_ADD(r.reservationDate, INTERVAL ? DAY))";
 
